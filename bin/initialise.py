@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 #
 # Initialise the databases, pack, etc, designed to be run once to setup a clean installation.
-# 
+#
 # (c) 2024 Helixiome, all rights reserved.
-# (c) 2024 
-# 
-# Author(s): 
+# (c) 2024
+#
+# Author(s):
 # Andrew P. Hutchins,
 #
 
@@ -17,7 +17,7 @@ from libmanager import libmanager, VERSION
 script_path = os.path.dirname(os.path.realpath(__file__))
 home_path = os.path.expanduser('~/GC/') # Production
 if 'demo' in VERSION:
-    home_path = os.path.join(script_path, 'GC_demo') # Demo data
+    home_path = os.path.join(script_path, '../', 'GC_demo') # Demo data
 
 logging.basicConfig(
     filename = 'initialise.log', # TODO: This is not a safe place to put this...
@@ -43,7 +43,7 @@ else:
     if os.path.exists(home_path):
         shutil.rmtree(home_path)
 
-log.info('Setting up directory tree') 
+log.info('Setting up directory tree')
 os.mkdir(home_path)
 os.mkdir(os.path.join(home_path, 'data'))
 os.mkdir(os.path.join(home_path, 'dbs'))
@@ -54,7 +54,7 @@ man._security_check()
 res = man._initialize()
 
 if 'demo' in VERSION:
-    # Setup two patients, and copy the data from 
+    # Setup two patients, and copy the data from
     man.setup('72210953309787', 'seq_data1')
     man.setup('NA12878', 'seq_data2')
 
