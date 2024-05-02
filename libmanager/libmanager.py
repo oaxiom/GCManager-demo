@@ -6,14 +6,21 @@
 # Andrew P. Hutchins,
 #
 
+# TODO:
+# 1. Fix up the exceptions
+
 import os, sqlite3, datetime
 
 from . import analysis_progress
+from . import initialise_dbs
+from . import api
 
 class libmanager:
     def __init__(self, log, home_path):
         self.log = log
         self.home_path = home_path
+
+        self.api = api.api(self, log, home_path)
 
         self.log.info("Started libmanager")
 
@@ -23,8 +30,8 @@ class libmanager:
         self.analysis_progress = analysis_progress.analysis_progress(log=log, home_path=home_path)
 
         # Open PID database
-        self.sql = sqlite3.connect(os.path.join(self.home_path, 'dbs/', "PID.db"))
-        self.db = self.sql.cursor()
+        self.db_PID = sqlite3.connect(os.path.join(self.home_path, 'dbs/', "PID.db"))
+        self.db_PID_cursor = self.db_PID.cursor()
 
     def _security_check(self):
         '''
@@ -40,31 +47,34 @@ class libmanager:
 
         return True
 
-    def _initialize(self):
+    def _initialize(self, demo:bool = False):
         '''
         **Purpose**
             Internal method to setup the empty databases
 
 
         '''
-        # Setup the PID database;
-        # TODO: Setup the date properly.
-        self.db.execute('CREATE TABLE patients (PID TEXT, SID TEXT, analysis_done TEXT, date_added TEXT, date_analysis TEXT, data_dir TEXT)')
-        self.sql.commit()
+        initialise_dbs.init_dbs(home_path)
 
-        # summary statistics DB:
-        self.db.execute('CREATE TABLE summary_statistics (PID TEXT, SID TEXT, aligned_reads INT)')
-        self.sql.commit()
-
-        # TODO: Setup the disease code database, by packing the raw data
-        disease_db = sqlite3.connect(os.path.join(self.home_path, "dbs/", "disease_codes.db"))
-        c = disease_db.cursor()
-        c.execute('CREATE TABLE diseasecodes (dis_code TEXT, desc_en TEXT, desc_cn TEXT)')
-        # TODO: Load from spreadsheet;
-        disease_db.commit()
-        disease_db.close()
+        if demo:
+            initialise_dbs.build_demo_data(home_path)
 
         return True
+
+    def get_patients_table(self) -> list:
+        '''
+        **Purpose**
+            Return a list of lists in the form:
+
+            PatientID | analysis_complete
+
+        '''
+        # TODO: Enable fuzzy searching
+
+        self.db_PID_cursor.execute('SELECT PID, analysis_done FROM patients')
+        results = self.db_PID_cursor.fetchall()
+
+        return results
 
     def patient_exists(self, patient_id:str):
         '''
@@ -85,7 +95,7 @@ class libmanager:
 
         return r[0]
 
-    def setup(self, patient_id: str, seq_id: str):
+    def add_patient(self, patient_id: str, seq_id: str):
         '''
         **Purpose**
             Setup new patient id, with a seq id, and validate all initial QC.

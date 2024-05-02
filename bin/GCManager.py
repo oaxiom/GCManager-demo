@@ -72,10 +72,11 @@ def main(man, args):
         pass
 
     elif args.mode == 'analyze':
+        # See runner.py Currently in testing
         pass
 
     elif args.mode == 'report':
-        assert args.diseasecode, 'diseascode must be specified'
+        assert args.diseasecode, 'diseasecode must be specified'
         # TODO: Check the disease code is in the DB.
         return man.generate_report(patient_id, args.diseasecode)
 
