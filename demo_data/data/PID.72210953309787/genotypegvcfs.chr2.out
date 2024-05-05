@@ -1,0 +1,77 @@
+Using GATK jar /export/approved/gatk-4.5.0.0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx30G -XX:ParallelGCThreads=4 -jar /export/approved/gatk-4.5.0.0/gatk-package-4.5.0.0-local.jar GenotypeGVCFs -R /export/home/andrew/genome/hg38_v0_20231023/Homo_sapiens_assembly38.fasta -L chr2 -V called.chr2.recal.g.vcf.gz -O genotype.chr2.vcf.gz
+03:33:39.968 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/export/approved/gatk-4.5.0.0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+03:34:03.234 INFO  GenotypeGVCFs - ------------------------------------------------------------
+03:34:09.726 INFO  GenotypeGVCFs - The Genome Analysis Toolkit (GATK) v4.5.0.0
+03:34:09.726 INFO  GenotypeGVCFs - For support and documentation go to https://software.broadinstitute.org/gatk/
+03:34:09.728 INFO  GenotypeGVCFs - Executing as andrew@compute-0-4 on Linux v5.15.0-102-generic amd64
+03:34:09.728 INFO  GenotypeGVCFs - Java runtime: OpenJDK 64-Bit Server VM v19.0.2+7-Ubuntu-0ubuntu322.04
+03:34:09.728 INFO  GenotypeGVCFs - Start Date/Time: May 2, 2024 at 3:33:39 AM UTC
+03:34:09.728 INFO  GenotypeGVCFs - ------------------------------------------------------------
+03:34:09.729 INFO  GenotypeGVCFs - ------------------------------------------------------------
+03:34:09.730 INFO  GenotypeGVCFs - HTSJDK Version: 4.1.0
+03:34:09.730 INFO  GenotypeGVCFs - Picard Version: 3.1.1
+03:34:09.731 INFO  GenotypeGVCFs - Built for Spark Version: 3.5.0
+03:34:09.731 INFO  GenotypeGVCFs - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+03:34:09.732 INFO  GenotypeGVCFs - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+03:34:09.732 INFO  GenotypeGVCFs - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+03:34:09.732 INFO  GenotypeGVCFs - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+03:34:09.733 INFO  GenotypeGVCFs - Deflater: IntelDeflater
+03:34:09.733 INFO  GenotypeGVCFs - Inflater: IntelInflater
+03:34:09.733 INFO  GenotypeGVCFs - GCS max retries/reopens: 20
+03:34:09.734 INFO  GenotypeGVCFs - Requester pays: disabled
+03:34:09.735 INFO  GenotypeGVCFs - Initializing engine
+03:34:12.859 INFO  FeatureManager - Using codec VCFCodec to read file file:///data3/andrew/genomes/analysis/APH_subsampled/called.chr2.recal.g.vcf.gz
+03:34:17.756 INFO  IntervalArgumentCollection - Processing 242193529 bp from intervals
+03:34:17.840 INFO  GenotypeGVCFs - Done initializing engine
+03:34:19.357 INFO  ProgressMeter - Starting traversal
+03:34:19.358 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+03:34:21.434 WARN  ReferenceConfidenceVariantContextMerger - Detected invalid annotations: When trying to merge variant contexts at location chr2:15953 the annotation MLEAC=[1, 0] was not a numerical value and was ignored
+03:34:22.209 WARN  InbreedingCoeff - InbreedingCoeff will not be calculated at position chr2:15953 and possibly subsequent; at least 10 samples must have called genotypes
+03:34:29.376 INFO  ProgressMeter -         chr2:2215812              0.2                 47000         281549.5
+03:34:39.375 INFO  ProgressMeter -         chr2:6560673              0.3                140000         419664.3
+03:34:50.871 INFO  ProgressMeter -        chr2:10052535              0.5                216000         411271.9
+03:35:01.272 INFO  ProgressMeter -        chr2:15054940              0.7                323000         462386.4
+03:35:16.275 INFO  ProgressMeter -        chr2:20059130              0.9                430000         453299.6
+03:35:26.292 INFO  ProgressMeter -        chr2:26691567              1.1                570000         510958.7
+03:35:36.301 INFO  ProgressMeter -        chr2:35491484              1.3                755000         588762.8
+03:35:46.580 INFO  ProgressMeter -        chr2:41082390              1.5                872000         599855.5
+03:35:56.584 INFO  ProgressMeter -        chr2:47640272              1.6               1010000         623302.9
+03:36:06.917 INFO  ProgressMeter -        chr2:51087562              1.8               1081000         603023.5
+03:36:16.941 INFO  ProgressMeter -        chr2:57114865              2.0               1205000         614895.3
+03:36:27.131 INFO  ProgressMeter -        chr2:62505275              2.1               1316000         617975.8
+03:36:37.719 INFO  ProgressMeter -        chr2:70068229              2.3               1474000         639202.1
+03:36:47.739 INFO  ProgressMeter -        chr2:77094851              2.5               1619000         654670.4
+03:36:58.812 INFO  ProgressMeter -        chr2:83083955              2.7               1739000         654362.1
+03:37:08.830 INFO  ProgressMeter -        chr2:86625378              2.8               1811000         641171.6
+03:37:19.327 INFO  ProgressMeter -        chr2:91968072              3.0               1895000         631782.5
+03:37:29.987 INFO  ProgressMeter -       chr2:101305439              3.2               2047000         644294.9
+03:37:39.989 INFO  ProgressMeter -       chr2:106645418              3.3               2159000         645666.2
+03:37:50.079 INFO  ProgressMeter -       chr2:112336061              3.5               2261000         643795.8
+03:38:00.091 INFO  ProgressMeter -       chr2:116336084              3.7               2342000         636609.1
+03:38:10.322 INFO  ProgressMeter -       chr2:122581245              3.8               2474000         642700.3
+03:38:20.327 INFO  ProgressMeter -       chr2:127976631              4.0               2585000         643656.6
+03:38:39.691 INFO  ProgressMeter -       chr2:134335361              4.3               2712000         625048.0
+03:38:49.705 INFO  ProgressMeter -       chr2:141511472              4.5               2860000         634742.1
+03:38:59.713 INFO  ProgressMeter -       chr2:148801257              4.7               3006000         643329.5
+03:39:09.738 INFO  ProgressMeter -       chr2:156020123              4.8               3155000         651906.6
+03:39:19.757 INFO  ProgressMeter -       chr2:161439380              5.0               3268000         652736.2
+03:39:29.927 INFO  ProgressMeter -       chr2:167365662              5.2               3387000         654349.5
+03:39:40.610 INFO  ProgressMeter -       chr2:174359076              5.4               3535000         660233.5
+03:39:50.959 INFO  ProgressMeter -       chr2:181364030              5.5               3683000         666407.3
+03:40:00.981 INFO  ProgressMeter -       chr2:187732258              5.7               3810000         669160.7
+03:40:10.993 INFO  ProgressMeter -       chr2:195185345              5.9               3963000         676214.5
+03:40:21.630 INFO  ProgressMeter -       chr2:201398930              6.0               4091000         677559.1
+03:40:32.080 INFO  ProgressMeter -       chr2:209427357              6.2               4259000         685606.7
+03:40:42.292 INFO  ProgressMeter -       chr2:217399843              6.4               4427000         693646.1
+03:40:52.293 INFO  ProgressMeter -       chr2:221336702              6.5               4513000         689123.4
+03:41:02.295 INFO  ProgressMeter -       chr2:228868882              6.7               4670000         695397.5
+03:41:12.329 INFO  ProgressMeter -       chr2:236709646              6.9               4837000         702762.9
+03:41:26.504 INFO  ProgressMeter -       chr2:242016787              7.1               4952000         695595.2
+03:41:26.599 INFO  ProgressMeter -       chr2:242178814              7.1               4955102         695877.8
+03:41:26.599 INFO  ProgressMeter - Traversal complete. Processed 4955102 total variants in 7.1 minutes.
+03:41:38.559 INFO  GenotypeGVCFs - Shutting down engine
+[May 2, 2024 at 3:41:38 AM UTC] org.broadinstitute.hellbender.tools.walkers.GenotypeGVCFs done. Elapsed time: 7.98 minutes.
+Runtime.totalMemory()=436207616
+Stage 5: Genotyped chrom
