@@ -11,6 +11,12 @@
 
 import sys, os, shutil, logging
 
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(levelname)-8s: %(message)s',
+    datefmt='%m-%d %H:%M')
+log = logging.getLogger(f'GCmanager initialise')
+
 sys.path.append('../')
 from libmanager import libmanager, VERSION
 
@@ -19,18 +25,8 @@ home_path = os.path.expanduser('~/GC/') # Production
 if 'demo' in VERSION:
     home_path = os.path.join(script_path, '../', 'GC_demo') # Demo data
 
-logging.basicConfig(
-    filename = 'initialise.log', # TODO: This is not a safe place to put this...
-    filemode = 'w',
-    level=logging.DEBUG,
-    format='%(levelname)-8s: %(message)s',
-    datefmt='%m-%d %H:%M',
-    )
-log = logging.getLogger(f'GCmanager initialise')
-
 log.info(f'GCManager {VERSION} initialise')
 log.info('Copyright 2024 Helixiome, all rights reserved')
-
 log.info("###### Initialising a clean GC")
 log.info(f'Home PATH={home_path}')
 
@@ -40,6 +36,7 @@ if 'demo' not in VERSION:
         log.error(f'Home PATH={home_path} already exists, will not overwrite!')
         sys.exit(-1)
 else:
+    # if demo, then overwrite existing
     if os.path.exists(home_path):
         shutil.rmtree(home_path)
 
@@ -51,11 +48,10 @@ os.mkdir(os.path.join(home_path, 'dbs'))
 man = libmanager.libmanager(log=log, home_path=home_path)
 
 man._security_check()
-res = man._initialize()
 
-if 'demo' in VERSION:
-    # Setup two patients, and copy the data from
-    man.setup('72210953309787', 'seq_data1')
-    man.setup('NA12878', 'seq_data2')
+if 'demo' not in VERSION:
+    res = man._initialize()
+else:
+    res = man._initialize(True)
 
 sys.exit(res)

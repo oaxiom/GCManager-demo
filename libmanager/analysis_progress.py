@@ -38,12 +38,4 @@ class analysis_progress:
             'annotate': oh.readline(),
             }
 
-    def add_patient(self, patient_id:str, data_dir:str):
-        self.patient_id = patient_id
-        self.data_dir = data_dir
 
-        self.filename = os.path.join(data_dir, "progress.txt")
-
-        oh = open(self.filename, 'wt')
-        oh.write('0\n0\n0\n0\n0\n')
-        oh.close()

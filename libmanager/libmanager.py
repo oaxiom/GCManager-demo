@@ -19,6 +19,8 @@ class libmanager:
     def __init__(self, log, home_path):
         self.log = log
         self.home_path = home_path
+        self.db_path = os.path.join(self.home_path, 'dbs/')
+        self.data_path = os.path.join(self.home_path, 'data/')
 
         self.api = api.api(self, log, home_path)
 
@@ -54,12 +56,25 @@ class libmanager:
 
 
         '''
-        initialise_dbs.init_dbs(home_path)
+        initialise_dbs.init_dbs(self.home_path, self.log)
 
         if demo:
-            initialise_dbs.build_demo_data(home_path)
+            initialise_dbs.build_demo_data(self, self.home_path, self.log)
 
         return True
+
+    def _sql_booler(self, v):
+        if v == 1: return True
+        return False
+
+    def _sql_yesno(self, v, lang='CN'):
+        if lang == 'EN':
+            if v == '1': return 'Yes'
+            return 'No'
+
+        elif lang == 'CN':
+            if v == '1': return '是'
+            return '不'
 
     def get_patients_table(self) -> list:
         '''
@@ -76,6 +91,53 @@ class libmanager:
 
         return results
 
+    def get_patients_data_table(self) -> list:
+        '''
+        **Purpose**
+            Return all of the pateinet_data table;
+        '''
+        self.db_PID_cursor.execute('SELECT * FROM patient_data')
+        results = self.db_PID_cursor.fetchall()
+
+        print(results)
+
+        clean_results = []
+
+        # Convert the 1/0 to Yes, No
+        for row in results:
+            row = list(row)
+            print(row)
+            row[2] = self._sql_yesno(row[2])
+            row[3] = self._sql_yesno(row[3])
+            row[4] = self._sql_yesno(row[4])
+            clean_results.append(row)
+
+        return clean_results
+
+    def get_vcf_path(self, patient_id: str) -> str:
+        '''
+        **Purpose**
+            Return the VCF filename;
+        '''
+        self.db_PID_cursor.execute('SELECT analysis_done FROM patients WHERE PID= :patient_id', {'patient_id': patient_id})
+        analysis_done = self.db_PID_cursor.fetchone()
+
+        print(analysis_done[0])
+
+        if not analysis_done[0]:
+            self.log.error(f'Asked for {patient_id} VCF file, but VCF file is not avaialble')
+            raise LookupError(f'Asked for {patient_id} VCF file, but VCF file is not avaialble')
+
+        vcf_path = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.recalibrated_snps_recalibrated_indels.vcf.gz')
+
+        print(vcf_path)
+
+        if not os.path.exists(vcf_path):
+            self.log.error(f'Asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
+            raise LookupError(f'Asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
+
+        return vcf_path
+
     def patient_exists(self, patient_id:str):
         '''
         **Purpose**
@@ -87,7 +149,7 @@ class libmanager:
             False or the patient data as a dict
 
         '''
-        r = self.db.execute('SELECT * from patients WHERE pid=?', (patient_id, ))
+        r = self.db_PID_cursor.execute('SELECT * from patients WHERE pid=?', (patient_id, ))
         r = r.fetchall()
 
         if not r: return False
@@ -119,15 +181,14 @@ class libmanager:
             'date_analysis': 'null',
             'data_dir': data_dir,
             }
-        self.db.execute('INSERT INTO patients VALUES (:patient_id, :seq_id, :analysis_done, :date_added, :date_analysis, :data_dir)', newpid_row)
-        self.db.execute('INSERT INTO summary_statistics VALUES (:patient_id, :seq_id, 0)', newpid_row)
-        self.sql.commit()
+        self.db_PID_cursor.execute('INSERT INTO patients VALUES (:patient_id, :seq_id, :analysis_done, :date_added, :date_analysis, :data_dir)', newpid_row)
+        self.db_PID_cursor.execute('INSERT INTO summary_statistics VALUES (:patient_id, :seq_id, 0)', newpid_row)
+        self.db_PID_cursor.execute('INSERT INTO patient_data VALUES (:patient_id, "0Gb", 0, 0, 0)', newpid_row)
+        self.db_PID.commit()
 
         if os.path.exists(data_dir):
             raise Exception(f'Trying to add {patient_id} but the data directory {data_dir} already exists')
         os.mkdir(data_dir)
-
-        self.analysis_progress.add_patient(patient_id, data_dir)
 
         return True
 
@@ -136,7 +197,7 @@ class libmanager:
         **Purpose**
             Return the summary statistics for the patient_id
         '''
-        r = self.db.execute('SELECT * from summary_statistics WHERE pid=?', (patient_id, ))
+        r = self.db_PID_cursor.execute('SELECT * from summary_statistics WHERE pid=?', (patient_id, ))
         r = r.fetchall()
 
         if not r: return False
@@ -152,6 +213,6 @@ class libmanager:
             Save the file into the ~/analysis/patient_id/patient_id.disease_code.pdf
 
         **Returns**
-            Location of the save PDF file
+            Location of the saved PDF file
         '''
         return f'~/data/{patient_id}.{disease_code}.pdf'

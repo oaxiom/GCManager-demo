@@ -36,7 +36,7 @@ class api:
 
         table = self.manager.get_patients_table()
 
-        # Returns a
+        # Returns a list of tuples,
         return table
 
     def populate_report_generator(self):
@@ -45,12 +45,12 @@ class api:
 
         return None
 
-    def export_vcf(self, patient_id: str):
+    def export_vcf(self, patient_id: str) -> str:
         # Backend: Report Generator
         # Backend: Patient Data Manager
         # Doctorend: Report Generator
 
-        return None
+        return self.manager.get_vcf_path(patient_id)
 
     def export_cram(self, patient_id: str):
         # Backend: Report Generator
@@ -96,10 +96,10 @@ class api:
 
         return None
 
-    def populate_patient_data_list(self):
+    def populate_patient_data_list(self) -> str:
         # Backend: Patient Data Manager
-
-        return None
+        table = self.manager.get_patients_data_table()
+        return table
 
     def clean_free_space(self) -> bool:
         # Backend: Patient Data Manager
