@@ -9,7 +9,7 @@
 # TODO:
 # 1. Fix up the exceptions
 
-import os, sqlite3, datetime
+import os, sys, sqlite3, datetime
 
 from . import analysis_progress
 from . import initialise_dbs
@@ -35,6 +35,10 @@ class libmanager:
         self.db_PID = sqlite3.connect(os.path.join(self.home_path, 'dbs/', "PID.db"))
         self.db_PID_cursor = self.db_PID.cursor()
 
+        # disease code databse:
+        self.db_disease_codes = sqlite3.connect(os.path.join(self.home_path, 'dbs/', "disease_codes.db"))
+        self.db_disease_codes_cursor = self.db_disease_codes.cursor()
+
     def _security_check(self):
         '''
         **Purpose**
@@ -56,7 +60,7 @@ class libmanager:
 
 
         '''
-        initialise_dbs.init_dbs(self.home_path, self.log)
+        initialise_dbs.init_dbs(self.home_path, os.path.join(os.path.split(sys.argv[0])[0], '../'), self.log)
 
         if demo:
             initialise_dbs.build_demo_data(self, self.home_path, self.log)
@@ -113,6 +117,19 @@ class libmanager:
             clean_results.append(row)
 
         return clean_results
+
+    def get_disbd_table(self, lang='CN') -> list:
+        '''
+        **Purpose**
+            Return all of the pateinet_data table;
+        '''
+        if lang == 'CN':
+            self.db_disease_codes_cursor.execute('SELECT * FROM diseasecodes')
+        else:
+            self.db_disease_codes_cursor.execute('SELECT * FROM diseasecodes')
+        results = self.db_disease_codes_cursor.fetchall()
+
+        return results
 
     def get_vcf_path(self, patient_id: str) -> str:
         '''

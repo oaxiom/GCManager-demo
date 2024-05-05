@@ -39,11 +39,11 @@ class api:
         # Returns a list of tuples,
         return table
 
-    def populate_report_generator(self):
+    def populate_report_generator(self) -> list:
         # Backend: Report Generator
         # Doctorend: Report Generator
 
-        return None
+        return self.manager.get_disbd_table()
 
     def export_vcf(self, patient_id: str) -> str:
         # Backend: Report Generator

@@ -1,7 +1,7 @@
 
 import sys, os, sqlite3, shutil, glob, datetime
 
-def init_dbs(home_path, log):
+def init_dbs(home_path, script_path, log):
     log.info('Setting up tables')
 
     # Setup the PID database;
@@ -23,7 +23,15 @@ def init_dbs(home_path, log):
     disease_db = sqlite3.connect(os.path.join(home_path, "dbs/", "disease_codes.db"))
     disease_dbc = disease_db.cursor()
     disease_dbc.execute('CREATE TABLE diseasecodes (dis_code TEXT, desc_en TEXT, desc_cn TEXT)')
-    # TODO: Load from spreadsheet;
+    # Load from spreadsheet
+    oh = open(os.path.join(script_path, 'disDB', 'disease_targets.csv'), 'rt')
+    for line in oh:
+        if line.startswith('\ufeffcode'): # Excel stupidity;
+            continue
+        # TODO: Fix potential bug for comma's in names
+        line = line.strip().split(',') # comma's in names...
+        disease_dbc.execute('INSERT INTO diseasecodes VALUES (?, ?, ?)', line)
+    oh.close()
     disease_db.commit()
     disease_db.close()
 
@@ -85,5 +93,4 @@ def build_demo_data(man, home_path, log):
 
     db_PID.commit()
     db_PID.close()
-
 
