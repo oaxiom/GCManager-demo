@@ -91,12 +91,10 @@ class api:
 
         return None
 
-    def view_logs(self, patient_id:str) -> str:
+    def get_logs(self, patient_id:str) -> str:
         # Backend: Patient Data Manager
 
-        self.manager.get_logs(patient_id)
-
-        return None
+        return self.manager.get_logs(patient_id)
 
     def populate_patient_data_list(self) -> str:
         # Backend: Patient Data Manager

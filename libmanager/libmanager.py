@@ -9,7 +9,7 @@
 # TODO:
 # 1. Fix up the exceptions
 
-import os, sys, sqlite3, datetime
+import os, sys, sqlite3, datetime, glob
 
 from . import analysis_progress
 from . import initialise_dbs
@@ -180,6 +180,46 @@ class libmanager:
 
         return vcf_path
 
+    def _get_log_fileA(self, stage:int, out_glob_filenames) -> list:
+        '''
+        **Purpose**
+            Abstraction for *.outs
+        '''
+        results = []
+
+        results.append(f'#############')
+        results.append(f'#### Stage {stage}: {stagedata.stages[stage]}')
+        results.append(f'#############')
+        stage1_outs = glob.glob(out_glob_filenames)
+        if not stage1_outs:
+            results.append('Stage {stage} is incomplete')
+            return True, results
+
+        for f in sorted(list(stage1_outs)):
+            with open(f, 'rt') as oh:
+                results += oh.read().split('\n')
+
+        return False, results
+
+    def _get_log_fileB(self, stage:int, out_filename:str) -> list:
+        '''
+        **Purpose**
+            Abstraction for *.outs
+        '''
+        results = []
+
+        results.append(f'#############')
+        results.append(f'#### Stage {stage}: {stagedata.stages[stage]}')
+        results.append(f'#############')
+        if not os.path.exists(out_filename):
+            results.append('Stage {stage} is incomplete')
+            return True, results
+
+        with open(out_filename, 'rt') as oh:
+            results += oh.read().split('\n')
+
+        return False, results
+
     def get_logs(self, patient_id: str) -> str:
         '''
         **Purpose**
@@ -195,13 +235,22 @@ class libmanager:
         results = []
 
         # Collect by stage order;
-        results.append('Stage 1: Align to Genome')
-        stage1_outs = glob.glob()
-        for
+        # Stage 1:
+        is_completed, result = self._get_log_fileA(1, os.path.join(log_path, '*.align.out'))
+        results += result
+        if is_completed: return '\n'.join(results)
+
+        # Stage 2:
+        is_completed, result = self._get_log_fileA(2, os.path.join(log_path, '*.bqsr.out'))
+        results += result
+        if is_completed: return '\n'.join(results)
+
+        # Stage 3:
+        is_completed, result = self._get_log_fileB(3, os.path.join(log_path, 'merge_bams.out'))
+        results += result
+        if is_completed: return '\n'.join(results)
 
         return '\n'.join(results)
-
-
 
     def get_cram_path(self, patient_id: str) -> str:
         '''

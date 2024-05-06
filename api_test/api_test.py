@@ -62,3 +62,5 @@ cmd_process("man.api.populate_report_generator()")
 # Expected Result:
 # [('DT00001', 'Stroke', '中风'), ('DT00002', 'Type 1 Diabetes (T1D)', '1 型糖尿病 (T1D)'), ('DT00003', 'Type 2 Diabetes (T2D)', '二型糖尿病（T2D）'), ('DT00004', 'Amyotrophic Lateral Sclerosis (ALS)', '肌萎缩侧索硬化症（ALS）'), ('DT00006', 'Chronic Obstructive Pulmonary Disease (COPD)', '慢性阻塞性肺病（COPD）'), ('DT00007', 'Chronic Obstructive Pulmonary Disease (COPD) in never smokers', '从不吸烟者的慢性阻塞性肺病（COPD）'), ('DT00008', 'Rheumatoid Arthritis (RA)', '类风湿性关节炎（RA）'), ('DT00009', "Parkinson's Disease (PD)", '帕金森病（PD）'), ('DT00010', "Crohn's Disease (CD)", '克罗恩病（CD）'), ('DT00011', 'Hypertension', '高血压'), ('DT00012', 'Nasopharyngeal Carcinoma', '鼻咽癌'), ('DT00013', 'Systemic Lupus Erythematosus (SLE)', '系统性红斑狼疮（SLE）'), ('DT00014', 'Idiopathic Pulmonary Fibrosis (IPF)', '特发性肺纤维化（IPF）'), ('DT00015', 'Osteoarthritis (OA)', '骨关节炎（OA）'), ('DT00016', 'Ulcerative Colitis', '溃疡性结肠炎')]
 
+cmd_process("man.api.get_logs('72210953309787')")
+# Expected Result

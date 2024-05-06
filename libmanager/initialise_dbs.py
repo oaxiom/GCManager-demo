@@ -47,6 +47,7 @@ def build_demo_data(man, home_path, log):
     # Copy all the progress and logs;
     [shutil.copy(f, '../GC_demo/data/PID.72210953309787/') for f in glob.glob('../demo_data/data/PID.72210953309787/*.out')]
     shutil.copy('../demo_data/data/PID.72210953309787/72210953309787.recalibrated_snps_recalibrated_indels.vcf.gz', '../GC_demo/data/PID.72210953309787/')
+    shutil.copy('../demo_data/data/PID.72210953309787/72210953309787_subsample.sorted.dedupe.recal.cram', '../GC_demo/data/PID.72210953309787/')
     #[shutil.copy(f, '../GC_demo/data/PID.72210953309787/') for f in glob.glob('../demo_data/data/PID.72210953309787/*.cram')]
 
     [shutil.copy(f, '../GC_demo/data/PID.NA12878/') for f in glob.glob('../demo_data/data/PID.NA12878/*.out')]
@@ -66,8 +67,8 @@ def build_demo_data(man, home_path, log):
             'data_dir': '../GC_demo/data/PID.72210953309787/',
             'aligned_reads': 1000000,
             'space_used': '7.1Gb',
-            'data_packed': 0,
-            'cram_avaialable': 0,
+            'data_packed': datetime.datetime.now().isoformat(' '),
+            'cram_avaialable': 1,
             'vcf_available': 1,
         }
     db_PID_cursor.execute('UPDATE patients SET analysis_done = :analysis_done, date_added= :date_added, date_analysis = :date_analysis, data_dir = :data_dir WHERE PID = :patient_id', newpid_row)
