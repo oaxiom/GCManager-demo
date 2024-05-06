@@ -14,6 +14,7 @@ import os, sys, sqlite3, datetime
 from . import analysis_progress
 from . import initialise_dbs
 from . import api
+from . import stagedata
 
 class libmanager:
     def __init__(self, log, home_path):
@@ -103,14 +104,11 @@ class libmanager:
         self.db_PID_cursor.execute('SELECT * FROM patient_data')
         results = self.db_PID_cursor.fetchall()
 
-        print(results)
-
         clean_results = []
 
         # Convert the 1/0 to Yes, No
         for row in results:
             row = list(row)
-            print(row)
             row[2] = self._sql_yesno(row[2])
             row[3] = self._sql_yesno(row[3])
             row[4] = self._sql_yesno(row[4])
@@ -131,29 +129,102 @@ class libmanager:
 
         return results
 
+    def _check_analysis_is_complete(self, patient_id: str) -> bool:
+        """
+        **Purpose**
+            check that the analysis is complete
+        """
+        self.db_PID_cursor.execute('SELECT analysis_done FROM patients WHERE PID= :patient_id', {'patient_id': patient_id})
+        analysis_done = self.db_PID_cursor.fetchone()
+        if analysis_done[0]: return True
+        return False
+
+    def _check_cram_vcf_status(self, patient_id:str, to_check:str) -> bool:
+        """
+        **Purpose**
+            Check if a VCF or CRAM exisits.
+
+        """
+        assert to_check in ('vcf', 'cram'), f'{to_check} is not valid'
+
+        if to_check == 'vcf':
+            self.db_PID_cursor.execute('SELECT vcf_available FROM patient_data WHERE PID= :patient_id', {'patient_id': patient_id})
+        elif to_check == 'cram':
+            self.db_PID_cursor.execute('SELECT cram_avaialable FROM patient_data WHERE PID= :patient_id', {'patient_id': patient_id})
+
+        analysis_done = self.db_PID_cursor.fetchone()
+        if int(analysis_done[0]):
+            return True
+        return False
+
     def get_vcf_path(self, patient_id: str) -> str:
         '''
         **Purpose**
             Return the VCF filename;
         '''
-        self.db_PID_cursor.execute('SELECT analysis_done FROM patients WHERE PID= :patient_id', {'patient_id': patient_id})
-        analysis_done = self.db_PID_cursor.fetchone()
+        self.patient_exists(patient_id)
 
-        print(analysis_done[0])
+        if not self._check_analysis_is_complete(patient_id):
+            self.log.error(f'Asked for {patient_id} VCF file, but VCF file is not avaialble, analysis is incomplete')
+            raise LookupError(f'Asked for {patient_id} VCF file, but VCF file is not avaialble, analysis is incomplete')
 
-        if not analysis_done[0]:
-            self.log.error(f'Asked for {patient_id} VCF file, but VCF file is not avaialble')
-            raise LookupError(f'Asked for {patient_id} VCF file, but VCF file is not avaialble')
+        if not self._check_cram_vcf_status(patient_id, 'vcf'):
+            self.log.warning(f'Asked for {patient_id} VCF file, but VCF file is not avaialble')
+            return False
 
         vcf_path = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.recalibrated_snps_recalibrated_indels.vcf.gz')
-
-        print(vcf_path)
 
         if not os.path.exists(vcf_path):
             self.log.error(f'Asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
             raise LookupError(f'Asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
 
         return vcf_path
+
+    def get_logs(self, patient_id: str) -> str:
+        '''
+        **Purpose**
+            collect and send all the log data
+
+        '''
+        self.patient_exists(patient_id)
+
+        # Note that this still returns even if the analysis is incomplete;
+
+        log_path = os.path.join(self.data_path, f'PID.{patient_id}')
+
+        results = []
+
+        # Collect by stage order;
+        results.append('Stage 1: Align to Genome')
+        stage1_outs = glob.glob()
+        for
+
+        return '\n'.join(results)
+
+
+
+    def get_cram_path(self, patient_id: str) -> str:
+        '''
+        **Purpose**
+            Return the VCF filename;
+        '''
+        self.patient_exists(patient_id)
+
+        if not self._check_analysis_is_complete(patient_id):
+            self.log.error(f'Asked for {patient_id} CRAM file, but CRAM file is not avaialble, analysis is incomplete')
+            raise LookupError(f'Asked for {patient_id} CRAM file, but CRAM file is not avaialble, analysis is incomplete')
+
+        if not self._check_cram_vcf_status(patient_id, 'cram'):
+            self.log.warning(f'Asked for {patient_id} CRAM file, but CRAM file is not avaialble')
+            return False
+
+        cram_path = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.recalibrated_snps_recalibrated_indels.vcf.gz')
+
+        if not os.path.exists(cram_path):
+            self.log.error(f'Asked for {patient_id} CRAM file, but CRAM file does not exist (although it was reported to exist)')
+            raise LookupError(f'Asked for {patient_id} CRAM file, but CRAM file does not exist (although it was reported to exist)')
+
+        return cram_path
 
     def patient_exists(self, patient_id:str):
         '''

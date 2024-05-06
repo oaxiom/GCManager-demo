@@ -52,11 +52,11 @@ class api:
 
         return self.manager.get_vcf_path(patient_id)
 
-    def export_cram(self, patient_id: str):
+    def export_cram(self, patient_id: str) -> str:
         # Backend: Report Generator
         # Backend: Patient Data Manager
 
-        return None
+        return self.manager.get_cram_path(patient_id)
 
     def export_report(self, patient_id: str, selected_report:str):
         # Backend: Report Generator
@@ -73,7 +73,7 @@ class api:
     def add_new_patient(self, patient_id: str, sequence_data_id: str, sequence_data_files: str):
         # Backend: Add New Patient
 
-        return
+        return None
 
     def report_current_anaylsis_stage(self, patient_id:str):
         # Backend: Analysis State
@@ -91,8 +91,10 @@ class api:
 
         return None
 
-    def view_logs(self, patient_id:str):
+    def view_logs(self, patient_id:str) -> str:
         # Backend: Patient Data Manager
+
+        self.manager.get_logs(patient_id)
 
         return None
 
