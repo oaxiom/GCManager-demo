@@ -11,14 +11,10 @@
 
 import sys, os, shutil, logging
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(levelname)-8s: %(message)s',
-    datefmt='%m-%d %H:%M')
-log = logging.getLogger(f'GCmanager initialise')
-
 sys.path.append('../')
-from libmanager import libmanager, VERSION
+from libmanager import libmanager, VERSION, logger
+
+log = logger.logger()
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 home_path = os.path.expanduser('~/GC/') # Production

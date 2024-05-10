@@ -12,6 +12,10 @@ tinyglbase
 import sys, os, csv, copy, pickle, gzip, functools
 from operator import itemgetter
 from .progress import progressbar
+from . import logger
+
+def qdeepcopy(anobject):
+    return pickle.loads(pickle.dumps(anobject, -1))
 
 class UnRecognisedCSVFormatError(Exception):
     """
@@ -26,8 +30,10 @@ class UnRecognisedCSVFormatError(Exception):
         Format and ouput a series of messages so that I can see why the csv is not loading.
         """
         oh = open(file_handle, "rU")
-        config.log.error("csv/tsv file did not pass the csv parser")
-        config.log.error("Message: %s" % message)
+
+        self.log = logger.logger()
+        self.log.error("csv/tsv file did not pass the csv parser")
+        self.log.error("Message: %s" % message)
         print("-----------------------")
         print("CSV Diagnostic:")
         if "skiplines" in format: # skip the lines.
@@ -89,7 +95,7 @@ class UnRecognisedCSVFormatError(Exception):
             print("  No specified format (glbase will guess)")
 
         print("-----------------------")
-        config.log.error("End of error output")
+        self.log.error("End of error output")
 
 class UnrecognisedFileFormatError(Exception):
     """
@@ -103,7 +109,7 @@ class UnrecognisedFileFormatError(Exception):
         Format and ouput a series of messages so that I can see why the csv is not loading.
         """
         oh = open(file_handle, "rU")
-        config.log.critical("Unrecognised file format")
+        self.log.critical("Unrecognised file format")
         print("-----------------------")
         print("Diagnostic:")
         print("0:", oh.readline().rstrip("\r\n"))
@@ -119,7 +125,7 @@ class UnrecognisedFileFormatError(Exception):
             )
 
         print("-----------------------")
-        config.log.critical("%s" % (message,))
+        self.log.critical("%s" % (message,))
         print()
 
 def glload(
@@ -155,9 +161,9 @@ def glload(
 
     try:
         cons = len(newl._conditions) # expression-like object
-        config.log.info("Loaded '%s' binary file with %s items, %s conditions" % (filename, len(newl), cons))
+        self.log.info("Loaded '%s' binary file with %s items, %s conditions" % (filename, len(newl), cons))
     except AttributeError:
-        config.log.info("Loaded '%s' binary file with %s items" % (filename, len(newl)))
+        self.log.info("Loaded '%s' binary file with %s items" % (filename, len(newl)))
 
     if name:
         newl.name = name
@@ -275,30 +281,31 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             gl = genelist(..., format=format.full_bed)
 
     """
-    def __init__(self, filename=None, loadable_list=None, gzip=False, **kargs):
+    def __init__(self, filename=None,
+        loadable_list=None,
+        gzip=False,
+        format:dict =None,
+        force_tsv:bool = False,
+        **kargs):
+        assert format, 'You must provide a format'
+
+        self.log = logger.logger()
         self.linearData = []
-        self.dataByChr = None # this is private, use get by loc.
         self.debug = False
-        self.draw = draw(self)
         self.name = "Generic List"
         self.metadata = {} # container for various metadata's to extract figures from.
         self.__deathline = None # Error reporting in load_CSV()
         self.__deathindx = None
 
-        format = sniffer
-        if "format" in kargs:
-            format = kargs["format"] # I expect a filename = is coming.
-
-        if "force_tsv" in kargs and kargs["force_tsv"]:
-            format["force_tsv"] = True
+        if force_tsv: format["force_tsv"] = True
 
         if filename:
             if "format" in kargs:
                 self.load(filename=filename, format=format, gzip=gzip)
             else:
                 raise AssertionError('Due to excessive ambiguity the sniffing function of genelists has been removed and you now MUST provide a format argument, you can reenable this feature by specifying the sniffer: format=format.sniffer')
+            self.log.info(f"genelist: loaded '{filename}' found {len(self.linearData):,} items")
 
-            config.log.info(f"genelist: loaded '{filename}' found {len(self.linearData):,} items")
         elif loadable_list:
             self.load_list(loadable_list)
 
@@ -337,29 +344,6 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             self.name = "".join(self.filename.split(".")[:-1])
         else:
             self.name = self.filename
-
-        if format:
-            if "special" in format: # special loads
-                if format["special"] == "fasta":
-                    self.linearData = utils.convertFASTAtoDict(filename=filename, gzip_input=gzip)
-                    # See if I can parse names into a location?
-                    try:
-                        for item in self.linearData:
-                            item["loc"] = location(loc=item["name"])
-                    except Exception:
-                        pass
-                    self._optimiseData()
-                    return True
-                if format["special"] == "hmmer_tbl":
-                    self.linearData = _load_hmmer_tbl(filename, gzip=gzip)
-                    self._optimiseData()
-                    return True
-                elif format['special'] == 'hmmer_domtbl':
-                    self.linearData = _load_hmmer_domtbl(filename, gzip=gzip)
-                    self._optimiseData()
-                    return True
-        else:
-            raise AssertionError('Due to excessive ambiguity the sniffing function of genelists has been removed and you now MUST provide a format argument')
 
         csv_headers = frozenset(["csv", "xls", "tsv", "txt", "bed"])
         if filename.split(".")[-1].lower() in csv_headers: # check the last one for a csv-like header
@@ -426,7 +410,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             except Exception:
                 # oh dear. Die.
                 if self.__deathline:
-                    config.log.error(f"Died on line: '{self.__deathline}'")
+                    self.log.error(f"Died on line: '{self.__deathline}'")
                 raise UnRecognisedCSVFormatError("'%s' appears mangled, the file does not fit the format specifier" % self.fullfilename, self.fullfilename, format)
 
     def _loadCSV(self, **kargs):
@@ -544,51 +528,10 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         (Internal)
         Call me after modifying the data to bin and build the internal tables.
         """
-        self.dataByChr = None
         if not self.linearData: # list is empty, not possible to optimise anything...
             return False
 
         keys = self.keys()
-
-        # Guess a loc key
-        loc_key = None
-        if "tss_loc" in keys: # always use tss_loc in preference of loc, if available
-            loc_key = "tss_loc"
-        elif "loc" in keys:
-            loc_key = "loc" # Don't change this though. annotate() relies on the bucket system using tss_loc
-
-        if "tss_loc" in keys and "loc" in keys:
-            config.log.warning("List contains both 'tss_loc' and 'loc'. By default glbase will use 'tss_loc' for overlaps/collisions/annotations")
-
-        self.dataByChr = {}
-        self.dataByChrIndexLookBack = {}
-        self.buckets = {}
-        if loc_key:
-            for n, item in enumerate(self.linearData): # build the chromosome quick search maps.
-                chr = item[loc_key]["chr"]
-                if chr not in self.dataByChr:
-                    self.dataByChr[chr] = []
-                    self.dataByChrIndexLookBack[chr] = []
-                self.dataByChr[chr].append(item)
-                self.dataByChrIndexLookBack[chr].append(n) # oh sweet, sweet dirty hack...
-                # I can't remember what this look-back is for, but you
-                # can use it to get the linearData index even though looking at the
-                # dataByChr data It is not documented for a reason!
-
-                if chr not in self.buckets:
-                    self.buckets[chr] = {}
-                # work out the bucket(s) for the location.
-                # which bucket is left and right in?
-                left_buck = (item[loc_key]["left"]//config.bucket_size)*config.bucket_size
-                right_buck = ((item[loc_key]["right"]+config.bucket_size)//config.bucket_size)*config.bucket_size
-                buckets_reqd = list(range(left_buck, right_buck, config.bucket_size))
-
-                #print n, item[loc_key], buckets_reqd, left_buck, right_buck, len(buckets_reqd)
-
-                for b in buckets_reqd:
-                    if b not in self.buckets[chr]:
-                        self.buckets[chr][b] = []
-                    self.buckets[chr][b].append(n) # use index to maintain uniqueness.
 
         self.qkeyfind = {}
         for index, item in enumerate(self.linearData):
@@ -600,11 +543,12 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
                     if item[key] not in self.qkeyfind[key]:
                         self.qkeyfind[key][item[key]] = []
                     self.qkeyfind[key][item[key]].append(index)
+
                 except TypeError:
                     # TODO: This is indeed present if the genelist is an expresion object;
                     # The item in unhashable and cannot be added to the qkeyfind
                     # This should be pretty rare if not impossible.
-                    #config.log.error(f'!Unhashable key: {key} for qkeyfind system')
+                    #self.log.error(f'!Unhashable key: {key} for qkeyfind system')
                     pass
 
                 # Now to do a find you just go:
@@ -636,6 +580,13 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         if item_indeces:
             return([self.linearData[i] for i in item_indeces])
         return None
+
+    def keys(self):
+        """
+        return a list of all the valid keys for this geneList
+        """
+        if not self.linearData: return [] # Match python dict default
+        return [key for key in self.linearData[0]] # Not exhaustive
 
     def get(self, key, value, mode="greedy"):
         """
@@ -727,6 +678,42 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         _findDataByKeyLazy|Greedy()
         """
         return self._findDataByKeyLazy(key, value) # not found;
+
+    def save(self, filename=None):
+        """
+        **Purpose**
+
+            Save the genelist as a binary representation.
+            This is guaranteed to be available for all geneList representations, with
+            the only exception being the delayedlists. As that wouldn't
+            make any sense as delayedlists are not copied into memory.
+
+            You can use this method to cache the file. It's particularly useful for large files
+            that get processed once but are then used a lot.
+
+            loading the list back into memory is relatively quick.
+
+            list = glload("path/to/filename.glb")
+
+            I generally used extension is glb. Although you can use
+            whatever you like.
+
+        **Arguments**
+
+            filename
+                filename (and path, if you like) to save the file to
+
+        **Result**
+
+            returns None
+            Saves a binary representation of the geneList
+
+        """
+        assert filename, "no filename specified"
+
+        with open(filename, "wb") as oh:
+            pickle.dump(self, oh, -1)
+        self.log.info(f"Saved binary version: '{filename}'")
 
     def saveTSV(self, filename=None, **kargs):
         """
@@ -841,7 +828,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             oh = open(filename, "w")
 
         if not self.linearData: # data is empty, fail graciously.
-            config.log.error(f"csv file '{filename}' is empty, no file written")
+            self.log.error(f"csv file '{filename}' is empty, no file written")
             oh.close()
             return None
 
@@ -874,7 +861,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
                     line.append("") # a blank key, fail gracefully.
             writer.writerow(line)
         oh.close()
-        config.log.info(f"Saved '{filename}'")
+        self.log.info(f"Saved '{filename}'")
         return None
 
     def sort(self, key=None, reverse=False):
@@ -977,6 +964,36 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
 
         return out
 
+    def __len__(self):
+        """
+        (Override)
+        get the length of the list
+        """
+        return len(self.linearData)
+
+    def __shallowcopy__(self):
+        raise Exception("__shallowcopy__() is NOT supposrted for genelists, use gl.deepcopy() or gl.shallowcopy()")
+
+    def __deepcopy__(self, fake_arg):
+        raise Exception("__deepcopy__() is NOT supported for genelists, use gl.deepcopy() or gl.shallowcopy()")
+
+    def deepcopy(self):
+        """
+        Confer copy to mean a deepcopy as opposed to a shallowcopy.
+
+        This is required as genelists are compound lists.
+        """
+        return pickle.loads(pickle.dumps(self, -1)) # This is 2-3x faster and presumably uses less memory
+
+    def shallowcopy(self):
+        """
+        (New)
+
+        Some weird behaviour here, I know, this is so I can still get access to
+        the shallow copy mechanism even though 90% of the operations are copies.
+        """
+        return copy.copy(self) # But doesnt this just call __copy__() anyway?
+
     def _collectIdenticalKeys(self, gene_list):
         """
         (Internal)
@@ -999,7 +1016,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             # assumes all keys are in the dict
 
         newl._optimiseData()
-        config.log.info("getColumns: got only the columns: %s" % ", ".join(return_keys))
+        self.log.info("getColumns: got only the columns: %s" % ", ".join(return_keys))
         return newl
 
     def getRowsByKey(self, key=None, values=None, use_re=True, case_sensitive=True,
@@ -1058,12 +1075,12 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
                     for k in item: # no key specified, check all.
                         for r in list_of_items:
                             if r.search(str(item[k])):
-                                newl.linearData.append(utils.qdeepcopy(item))
+                                newl.linearData.append(qdeepcopy(item))
             else:
                 for item in self.linearData:
                     for r in list_of_items:
                         if r.search(str(item[key])): # sometimes gene names accidentally get stored as numbers
-                            newl.linearData.append(utils.qdeepcopy(item))
+                            newl.linearData.append(qdeepcopy(item))
         else: # no re.
             if not key: # split here for clarity.
                 for item in self.linearData:
@@ -1080,10 +1097,10 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         if newl:
             newl._optimiseData()
         else:
-            if not silent: config.log.info("getRowsByKey: Found 0 items")
+            if not silent: self.log.info("getRowsByKey: Found 0 items")
             return None
 
-        if not silent: config.log.info(f"getRowsByKey: Found {len(newl)} items")
+        if not silent: self.log.info(f"getRowsByKey: Found {len(newl)} items")
 
         return newl
 
@@ -1122,10 +1139,10 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
 
         if remove:
             newl = [item for item in newgl.linearData if value not in item[key]]
-            config.log.info('filter_by_in: Removed {} entries'.format(len(self) - len(newl)))
+            self.log.info('filter_by_in: Removed {} entries'.format(len(self) - len(newl)))
         else:
             newl = [item for item in newgl.linearData if value in item[key]]
-            config.log.info('filter_by_in: Kept {} matching entries'.format(len(self) - len(newl)))
+            self.log.info('filter_by_in: Kept {} matching entries'.format(len(self) - len(newl)))
 
         newgl.linearData = newl
         newgl._optimiseData()
@@ -1190,7 +1207,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         ret = self.shallowcopy()
         ret.load_list(new_expn) # In case I make optimisations to load_list()
 
-        config.log.info("filter_by_value: Filtered expression for ['%s' %s %s], found: %s" % (key, evaluator, value, len(ret)))
+        self.log.info("filter_by_value: Filtered expression for ['%s' %s %s], found: %s" % (key, evaluator, value, len(ret)))
         return ret
 
     def map(self, genelist=None, peaklist=None, microarray=None, genome=None, key=None,
@@ -1301,7 +1318,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             newl.name = gene_list.name
 
         newl.linearData = []
-        for index, item in enumerate(gene_list):
+        for index, item in enumerate(gene_list.linearData):
             if greedy:
                 results = self._findDataByKeyGreedy(map_key, item[map_key])
             else:
@@ -1312,7 +1329,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             if results:
                 if logic == "and":
                     for r in results:
-                        new_entry = utils.qdeepcopy(r) # inherit from the right
+                        new_entry = qdeepcopy(r) # inherit from the right
                         new_entry.update(item) # Key items inherit from the right hand side
 
                         # add a special case for expression objects:
@@ -1332,20 +1349,20 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
                                     elif "err" in new_entry: # Only one list has an err key, output a warning and kill it.
                                         if not __warning_assymetric_errs:
                                             __warning_assymetric_errs = True
-                                            config.log.warning("map: Only one of the two lists has an 'err' key, deleting it")
+                                            self.log.warning("map: Only one of the two lists has an 'err' key, deleting it")
                                         del new_entry["err"]
 
                         newl.linearData.append(new_entry)
             elif logic == "notright":
-                newl.linearData.append(utils.qdeepcopy(item)) # only inherit from the right, can't inheret from the left, as no matching map
+                newl.linearData.append(qdeepcopy(item)) # only inherit from the right, can't inheret from the left, as no matching map
 
             p.update(index)
 
         if not silent:
             if logic == "notright":
-                config.log.info("map: '%s' vs '%s', using '%s' via '%s', kept: %s items" % (self.name, gene_list.name, map_key, logic, len(newl)))
+                self.log.info("map: '%s' vs '%s', using '%s' via '%s', kept: %s items" % (self.name, gene_list.name, map_key, logic, len(newl)))
             else:
-                config.log.info("map: '%s' vs '%s', using '%s', found: %s items" % (self.name, gene_list.name, map_key, len(newl)))
+                self.log.info("map: '%s' vs '%s', using '%s', found: %s items" % (self.name, gene_list.name, map_key, len(newl)))
 
         if len(newl.linearData):
             newl._optimiseData()
@@ -1391,7 +1408,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             item[key] = value
 
         newl._optimiseData()
-        config.log.info("addEmptyKey: Added a new key '%s'" % key)
+        self.log.info("addEmptyKey: Added a new key '%s'" % key)
         return(newl)
 
     def removeDuplicates(self, key=None):
@@ -1457,7 +1474,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             newl.linearData = new_data_to_load
             newl._optimiseData()
 
-            config.log.info("removeDuplicates: {} duplicates, list now {} items long".format(len(self)-len(newl), len(newl)))
+            self.log.info("removeDuplicates: {} duplicates, list now {} items long".format(len(self)-len(newl), len(newl)))
             return newl
 
         else:
@@ -1474,7 +1491,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
 
             newl._optimiseData()
 
-            config.log.info("removeDuplicates: {} duplicates, list now {} items long".format(len(self) - len(newl), len(newl)))
+            self.log.info("removeDuplicates: {} duplicates, list now {} items long".format(len(self) - len(newl), len(newl)))
             return newl
 
     def removeExactDuplicates(self):
@@ -1503,7 +1520,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
 
         newl._optimiseData()
 
-        config.log.info("removeExactDuplicates: %s exact duplicates" % (len(self) - len(newl)))
+        self.log.info("removeExactDuplicates: %s exact duplicates" % (len(self) - len(newl)))
         return newl
 
     def removeEmptyDataByKey(self, key=None):
@@ -1560,7 +1577,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
 
         newl._optimiseData()
 
-        config.log.info("Removed empty data in %s key: %s entries" % (key, len(self) - len(newl)))
+        self.log.info("Removed empty data in %s key: %s entries" % (key, len(self) - len(newl)))
         return newl
 
     def load_list(self, list_to_load, name=False):
@@ -1597,7 +1614,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         except Exception:
             raise AssertionError("Type Error, the list of items appears not to contain a dictionary item")
 
-        self.linearData = utils.qdeepcopy(list_to_load)
+        self.linearData = qdeepcopy(list_to_load)
 
         if name: # Overwrite name if set
             self.name = name
@@ -1664,7 +1681,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
 
         newl = []
 
-        newl = utils.qdeepcopy(self.linearData) # copy
+        newl = qdeepcopy(self.linearData) # copy
         [newitem.update({new_key_name: newitem[old_key_name]}) for newitem in newl] # in-place modify
         if not keep_old_key:
             [newitem.pop(old_key_name) for newitem in newl]
@@ -1681,7 +1698,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         newgl = self.shallowcopy()
         newgl.linearData = newl
         newgl._optimiseData()
-        config.log.info("Renamed key '%s' to '%s'" % (old_key_name, new_key_name))
+        self.log.info("Renamed key '%s' to '%s'" % (old_key_name, new_key_name))
         return newgl
 
     def repairKey(self, key_to_repair, fill_in_key, **kargs):
@@ -1706,7 +1723,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
                 replaced += 1
         newl._optimiseData()
 
-        config.log.info('repairKey: Repaired %s keys' % replaced)
+        self.log.info('repairKey: Repaired %s keys' % replaced)
         return newl
 
     def splitKeyValue(self, key, key_sep=" ", val_sep=":"):
@@ -1770,7 +1787,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             newl.linearData.append(newk)
 
         newl._optimiseData()
-        config.log.info("splitKeyValue: split '%s' into ~'%s'%s'%s' key value pairs" % (key, len(k), val_sep, len(v)))
+        self.log.info("splitKeyValue: split '%s' into ~'%s'%s'%s' key value pairs" % (key, len(k), val_sep, len(v)))
         return newl
 
     def joinKey(self, new_key_name, formatter, keyA, keyB, keep_originals=False):
@@ -1843,7 +1860,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
                 removed += 1
 
         newl._optimiseData()
-        config.log.info("remove: removed %s items" % removed)
+        self.log.info("remove: removed %s items" % removed)
         return newl
 
 genelist = Genelist # Hack alert! Basically used only in map() for some dodgy old code I do not want to refactor.

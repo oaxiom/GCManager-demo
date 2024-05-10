@@ -15,10 +15,11 @@ from . import analysis_progress
 from . import initialise_dbs
 from . import api
 from . import stagedata
+from . import logger
 
 class libmanager:
     def __init__(self, log, home_path):
-        self.log = log
+        self.log = logger.logger()
         self.home_path = home_path
         self.db_path = os.path.join(self.home_path, 'dbs/')
         self.data_path = os.path.join(self.home_path, 'data/')
