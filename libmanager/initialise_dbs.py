@@ -29,7 +29,6 @@ def init_dbs(home_path, script_path, log):
     ohCN = open(os.path.join(script_path, 'disDB', 'selectable_conditions_CN.txt'), 'rt')
     for did, (lineEN, lineCN) in enumerate(zip(ohEN, ohCN)):
         if not (lineEN and lineCN): continue
-
         disease_dbc.execute('INSERT INTO diseasecodes VALUES (?, ?, ?)', (f'D{did+1}', lineEN.strip(), lineCN.strip()))
     ohEN.close()
     ohCN.close()
@@ -47,13 +46,13 @@ def build_demo_data(man, home_path, log):
     # TODO: Add partially complete one;
 
     # Copy all the progress and logs;
-    [shutil.copy(f, '../GC_demo/data/PID.72210953309787/') for f in glob.glob('../demo_data/data/PID.72210953309787/*.out')]
-    shutil.copy('../demo_data/data/PID.72210953309787/72210953309787.recalibrated_snps_recalibrated_indels.vcf.gz', '../GC_demo/data/PID.72210953309787/')
-    shutil.copy('../demo_data/data/PID.72210953309787/72210953309787_subsample.sorted.dedupe.recal.cram', '../GC_demo/data/PID.72210953309787/')
+    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.72210953309787/')) for f in glob.glob('../demo_data/data/PID.72210953309787/*.out')]
+    shutil.copy('../demo_data/data/PID.72210953309787/72210953309787.recalibrated_snps_recalibrated_indels.vcf.gz', os.path.join(home_path, 'data', 'PID.72210953309787/'))
+    shutil.copy('../demo_data/data/PID.72210953309787/72210953309787_subsample.sorted.dedupe.recal.cram', os.path.join(home_path, 'data', 'PID.72210953309787/'))
     #[shutil.copy(f, '../GC_demo/data/PID.72210953309787/') for f in glob.glob('../demo_data/data/PID.72210953309787/*.cram')]
 
-    [shutil.copy(f, '../GC_demo/data/PID.NA12878/') for f in glob.glob('../demo_data/data/PID.NA12878/*.out')]
-    shutil.copy('../demo_data/data/PID.NA12878/NA12878.recalibrated_snps_recalibrated_indels.vcf.gz', '../GC_demo/data/PID.NA12878/')
+    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.NA12878/')) for f in glob.glob('../demo_data/data/PID.NA12878/*.out')]
+    shutil.copy('../demo_data/data/PID.NA12878/NA12878.recalibrated_snps_recalibrated_indels.vcf.gz', os.path.join(home_path, 'data', 'PID.NA12878/'))
 
     # Add fake details of the analysis to the database;
 
@@ -66,7 +65,7 @@ def build_demo_data(man, home_path, log):
             'analysis_done': 1,
             'date_added': datetime.datetime.now().isoformat(' '),
             'date_analysis': datetime.datetime.now().isoformat(' '),
-            'data_dir': '../GC_demo/data/PID.72210953309787/',
+            'data_dir': os.path.join(home_path, 'data', 'PID.72210953309787/'),
             'aligned_reads': 1000000,
             'space_used': '7.1Gb',
             'data_packed': datetime.datetime.now().isoformat(' '),
@@ -83,7 +82,7 @@ def build_demo_data(man, home_path, log):
             'analysis_done': 1,
             'date_added': datetime.datetime.now().isoformat(' '),
             'date_analysis': datetime.datetime.now().isoformat(' '),
-            'data_dir': '../GC_demo/data/PID.NA12878/',
+            'data_dir': os.path.join(home_path, 'data', 'PID.NA12878/'),
             'aligned_reads': 2000000,
             'space_used': '12.0Gb',
             'data_packed': 0,
