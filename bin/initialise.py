@@ -18,6 +18,8 @@ log = logger.logger()
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 home_path = os.path.expanduser('~/GCMData/') # Production
+if 'demo' in VERSION:
+    home_path = os.path.expanduser('~/GCMDataDEMO/') # Demo data
 
 log.info(f'GCManager {VERSION} initialise')
 log.info('Copyright 2024 Helixiome, all rights reserved')
