@@ -1,0 +1,826 @@
+Using GATK jar /export/approved/gatk-4.5.0.0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4 -jar /export/approved/gatk-4.5.0.0/gatk-package-4.5.0.0-local.jar VariantRecalibrator -R /export/home/andrew/genome/hg38_v0_20231023/Homo_sapiens_assembly38.fasta -V genotype.raw.vcf.gz -O recalibrate_SNP.recal --max-gaussians 6 --tranches-file recalibrate_SNP.tranches --rscript-file vqsr_snp_plots.R -tranche 100.0 -tranche 99.9 -tranche 99.0 -tranche 90.0 -resource:hapmap,known=false,training=true,truth=true,prior=15.0 /export/home/andrew/genome/hg38_v0_20231023/hapmap_3.3.hg38.vcf.gz -resource:omni,known=false,training=true,truth=true,prior=12.0 /export/home/andrew/genome/hg38_v0_20231023/1000G_omni2.5.hg38.vcf.gz -resource:1000G,known=false,training=true,truth=false,prior=10.0 /export/home/andrew/genome/hg38_v0_20231023/1000G_phase1.snps.high_confidence.hg38.vcf.gz -resource:dbsnp,known=true,training=false,truth=false,prior=7.0 /export/home/andrew/genome/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf -tranche 100.0 -tranche 99.95 -tranche 99.9 -tranche 99.8 -tranche 99.6 -tranche 99.5 -tranche 99.4 -tranche 99.3 -tranche 99.0 -tranche 98.0 -tranche 97.0 -tranche 90.0 -an QD -an MQRankSum -an ReadPosRankSum -an FS -an MQ -an SOR -an DP -mode SNP
+03:45:05.771 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/export/approved/gatk-4.5.0.0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+03:45:28.597 INFO  VariantRecalibrator - ------------------------------------------------------------
+03:45:28.612 INFO  VariantRecalibrator - The Genome Analysis Toolkit (GATK) v4.5.0.0
+03:45:28.612 INFO  VariantRecalibrator - For support and documentation go to https://software.broadinstitute.org/gatk/
+03:45:28.614 INFO  VariantRecalibrator - Executing as andrew@compute-0-4 on Linux v5.15.0-102-generic amd64
+03:45:28.614 INFO  VariantRecalibrator - Java runtime: OpenJDK 64-Bit Server VM v19.0.2+7-Ubuntu-0ubuntu322.04
+03:45:28.614 INFO  VariantRecalibrator - Start Date/Time: May 2, 2024 at 3:45:05 AM UTC
+03:45:28.614 INFO  VariantRecalibrator - ------------------------------------------------------------
+03:45:28.614 INFO  VariantRecalibrator - ------------------------------------------------------------
+03:45:28.615 INFO  VariantRecalibrator - HTSJDK Version: 4.1.0
+03:45:28.616 INFO  VariantRecalibrator - Picard Version: 3.1.1
+03:45:28.616 INFO  VariantRecalibrator - Built for Spark Version: 3.5.0
+03:45:28.616 INFO  VariantRecalibrator - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+03:45:28.616 INFO  VariantRecalibrator - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+03:45:28.617 INFO  VariantRecalibrator - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+03:45:28.617 INFO  VariantRecalibrator - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+03:45:28.617 INFO  VariantRecalibrator - Deflater: IntelDeflater
+03:45:28.617 INFO  VariantRecalibrator - Inflater: IntelInflater
+03:45:28.617 INFO  VariantRecalibrator - GCS max retries/reopens: 20
+03:45:28.618 INFO  VariantRecalibrator - Requester pays: disabled
+03:45:28.618 INFO  VariantRecalibrator - Initializing engine
+03:45:29.153 INFO  FeatureManager - Using codec VCFCodec to read file file:///export/home/andrew/genome/hg38_v0_20231023/hapmap_3.3.hg38.vcf.gz
+03:45:29.568 INFO  FeatureManager - Using codec VCFCodec to read file file:///export/home/andrew/genome/hg38_v0_20231023/1000G_omni2.5.hg38.vcf.gz
+03:45:29.878 INFO  FeatureManager - Using codec VCFCodec to read file file:///export/home/andrew/genome/hg38_v0_20231023/1000G_phase1.snps.high_confidence.hg38.vcf.gz
+03:45:30.064 INFO  FeatureManager - Using codec VCFCodec to read file file:///export/home/andrew/genome/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf
+03:45:30.517 INFO  FeatureManager - Using codec VCFCodec to read file file:///data3/andrew/genomes/analysis/APH_subsampled/genotype.raw.vcf.gz
+03:45:31.138 INFO  VariantRecalibrator - Done initializing engine
+03:45:33.024 INFO  TrainingSet - Found hapmap track: 	Known = false 	Training = true 	Truth = true 	Prior = Q15.0
+03:45:33.025 INFO  TrainingSet - Found omni track: 	Known = false 	Training = true 	Truth = true 	Prior = Q12.0
+03:45:33.025 INFO  TrainingSet - Found 1000G track: 	Known = false 	Training = true 	Truth = false 	Prior = Q10.0
+03:45:33.025 INFO  TrainingSet - Found dbsnp track: 	Known = true 	Training = false 	Truth = false 	Prior = Q7.0
+03:45:33.068 WARN  GATKVariantContextUtils - Can't determine output variant file format from output file extension "recal". Defaulting to VCF.
+03:45:34.001 INFO  ProgressMeter - Starting traversal
+03:45:34.002 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+03:45:44.931 INFO  ProgressMeter -        chr1:10986390              0.2                  9000          49423.4
+03:45:56.287 INFO  ProgressMeter -        chr1:19181505              0.4                 17000          45772.8
+03:46:08.108 INFO  ProgressMeter -        chr1:23091660              0.6                 21000          36944.7
+03:46:18.109 INFO  ProgressMeter -        chr1:29204775              0.7                 25000          34009.0
+03:46:36.713 INFO  ProgressMeter -        chr1:33010795              1.0                 28000          26789.6
+03:46:50.733 INFO  ProgressMeter -        chr1:35730209              1.3                 30000          23458.9
+03:47:00.823 INFO  ProgressMeter -        chr1:63977694              1.4                 51000          35245.3
+03:47:10.984 INFO  ProgressMeter -        chr1:72450441              1.6                 58000          35883.3
+03:47:22.389 INFO  ProgressMeter -        chr1:78068201              1.8                 63000          34875.4
+03:47:34.762 INFO  ProgressMeter -        chr1:82012150              2.0                 67000          33289.2
+03:47:47.929 INFO  ProgressMeter -        chr1:84325556              2.2                 69000          30912.4
+03:47:59.547 INFO  ProgressMeter -        chr1:86410548              2.4                 71000          29269.5
+03:48:09.915 INFO  ProgressMeter -       chr1:115714251              2.6                 97000          37328.7
+03:48:20.453 INFO  ProgressMeter -       chr1:155587180              2.8                112000          40372.2
+03:48:38.486 INFO  ProgressMeter -       chr1:175003452              3.1                128000          41629.9
+03:48:51.242 INFO  ProgressMeter -       chr1:177671232              3.3                130000          39545.9
+03:49:01.552 INFO  ProgressMeter -       chr1:191368202              3.5                141000          40761.3
+03:49:12.223 INFO  ProgressMeter -       chr1:210075577              3.6                156000          42892.5
+03:49:24.128 INFO  ProgressMeter -       chr1:234575817              3.8                177000          46148.8
+03:49:34.340 INFO  ProgressMeter -       chr1:236666900              4.0                179000          44687.3
+03:49:47.323 INFO  ProgressMeter -       chr1:240804127              4.2                183000          43344.2
+03:50:15.385 INFO  ProgressMeter -       chr1:244623171              4.7                187000          39874.5
+03:50:25.752 INFO  ProgressMeter -        chr2:26161197              4.9                216000          44421.6
+03:50:37.510 INFO  ProgressMeter -        chr2:30646669              5.1                220000          43491.6
+03:50:49.174 INFO  ProgressMeter -        chr2:32053448              5.3                221000          42072.4
+03:51:00.684 INFO  ProgressMeter -        chr2:34064941              5.4                223000          40957.3
+03:51:11.109 INFO  ProgressMeter -        chr2:36665958              5.6                226000          40224.7
+03:51:22.837 INFO  ProgressMeter -        chr2:38805561              5.8                228000          39216.4
+03:51:34.392 INFO  ProgressMeter -        chr2:41872425              6.0                231000          38458.3
+03:51:47.350 INFO  ProgressMeter -        chr2:46881093              6.2                236000          37927.2
+03:51:58.511 INFO  ProgressMeter -        chr2:52704591              6.4                241000          37606.4
+03:52:10.768 INFO  ProgressMeter -        chr2:60872961              6.6                247000          37352.0
+03:52:29.303 INFO  ProgressMeter -        chr2:62519303              6.9                248000          35829.5
+03:52:43.969 INFO  ProgressMeter -        chr2:64587703              7.2                249000          34746.9
+03:58:37.754 INFO  ProgressMeter -        chr2:65547079             13.1                250000          19138.7
+03:58:47.809 INFO  ProgressMeter -        chr2:86760864             13.2                265000          20030.1
+03:58:58.013 INFO  ProgressMeter -       chr2:128704032             13.4                298000          22238.5
+03:59:12.561 INFO  ProgressMeter -       chr2:129643983             13.6                299000          21916.6
+03:59:41.960 INFO  ProgressMeter -       chr2:131331567             14.1                300000          21227.5
+04:00:00.738 INFO  ProgressMeter -       chr2:132181248             14.4                301000          20836.8
+04:00:12.337 INFO  ProgressMeter -       chr2:138956334             14.6                306000          20903.2
+04:00:22.850 INFO  ProgressMeter -       chr2:145301078             14.8                311000          20993.5
+04:00:37.636 INFO  ProgressMeter -       chr2:146694113             15.1                312000          20716.4
+04:01:13.689 INFO  ProgressMeter -       chr2:148231546             15.7                313000          19985.4
+04:01:24.409 INFO  ProgressMeter -       chr2:178035535             15.8                338000          21338.2
+04:01:39.539 INFO  ProgressMeter -       chr2:179426862             16.1                339000          21066.0
+04:01:53.763 INFO  ProgressMeter -       chr2:180436943             16.3                340000          20821.4
+04:02:14.526 INFO  ProgressMeter -       chr2:181385501             16.7                341000          20449.3
+04:02:27.619 INFO  ProgressMeter -       chr2:182870137             16.9                342000          20244.3
+04:02:37.650 INFO  ProgressMeter -       chr2:216635607             17.1                371000          21745.8
+04:02:50.358 INFO  ProgressMeter -       chr2:218018188             17.3                372000          21537.0
+04:03:22.215 INFO  ProgressMeter -       chr2:219421958             17.8                373000          20950.9
+04:03:38.232 INFO  ProgressMeter -       chr2:220225916             18.1                374000          20696.7
+04:03:48.644 INFO  ProgressMeter -       chr2:232056366             18.2                384000          21048.0
+04:03:59.259 INFO  ProgressMeter -          chr3:378894             18.4                394000          21388.7
+04:04:14.831 INFO  ProgressMeter -         chr3:1852359             18.7                396000          21198.6
+04:04:34.706 INFO  ProgressMeter -         chr3:2546180             19.0                397000          20881.9
+04:04:48.952 INFO  ProgressMeter -         chr3:3169474             19.2                398000          20676.2
+04:04:59.129 INFO  ProgressMeter -        chr3:14783747             19.4                410000          21113.6
+04:05:11.323 INFO  ProgressMeter -        chr3:18754026             19.6                413000          21047.8
+04:05:33.340 INFO  ProgressMeter -        chr3:20371219             20.0                414000          20711.4
+04:05:43.570 INFO  ProgressMeter -        chr3:30585103             20.2                423000          20982.7
+04:05:53.803 INFO  ProgressMeter -        chr3:65109725             20.3                450000          22134.8
+04:06:06.094 INFO  ProgressMeter -        chr3:67107676             20.5                452000          22011.4
+04:06:40.597 INFO  ProgressMeter -        chr3:69060418             21.1                454000          21506.5
+04:07:02.657 INFO  ProgressMeter -        chr3:70237075             21.5                455000          21184.9
+04:07:12.832 INFO  ProgressMeter -        chr3:73484471             21.6                458000          21157.5
+04:07:25.417 INFO  ProgressMeter -       chr3:101514986             21.9                483000          22098.3
+04:07:38.657 INFO  ProgressMeter -       chr3:102769898             22.1                484000          21922.7
+04:08:04.742 INFO  ProgressMeter -       chr3:103929145             22.5                485000          21543.8
+04:08:21.777 INFO  ProgressMeter -       chr3:104729208             22.8                486000          21319.3
+04:08:33.529 INFO  ProgressMeter -       chr3:107651763             23.0                489000          21268.2
+04:08:52.675 INFO  ProgressMeter -       chr3:108892123             23.3                490000          21019.9
+04:09:12.799 INFO  ProgressMeter -       chr3:110881670             23.6                492000          20806.4
+04:09:23.778 INFO  ProgressMeter -       chr3:115394006             23.8                496000          20814.4
+04:09:36.755 INFO  ProgressMeter -       chr3:120136563             24.0                500000          20793.6
+04:09:52.528 INFO  ProgressMeter -       chr3:122437008             24.3                502000          20651.0
+04:10:08.060 INFO  ProgressMeter -       chr3:123443751             24.6                503000          20474.1
+04:10:24.142 INFO  ProgressMeter -       chr3:124687666             24.8                504000          20293.4
+04:10:35.931 INFO  ProgressMeter -       chr3:125815226             25.0                505000          20174.1
+04:10:45.968 INFO  ProgressMeter -       chr3:146025025             25.2                522000          20714.8
+04:10:56.353 INFO  ProgressMeter -       chr3:163639330             25.4                536000          21125.2
+04:11:06.430 INFO  ProgressMeter -       chr3:164199439             25.5                537000          21025.5
+04:11:43.581 INFO  ProgressMeter -       chr3:165721745             26.2                538000          20566.0
+04:11:54.581 INFO  ProgressMeter -       chr3:193371492             26.3                559000          21220.1
+04:12:12.640 INFO  ProgressMeter -       chr3:194559856             26.6                560000          21017.9
+04:12:37.949 INFO  ProgressMeter -       chr3:195980493             27.1                562000          20764.2
+04:12:54.502 INFO  ProgressMeter -       chr3:197715391             27.3                564000          20627.9
+04:13:06.056 INFO  ProgressMeter -        chr4:24739526             27.5                589000          21391.6
+04:13:18.385 INFO  ProgressMeter -        chr4:32731327             27.7                596000          21485.4
+04:13:47.478 INFO  ProgressMeter -        chr4:34888991             28.2                597000          21151.8
+04:14:00.675 INFO  ProgressMeter -        chr4:39122799             28.4                602000          21164.0
+04:14:11.151 INFO  ProgressMeter -        chr4:40195863             28.6                603000          21069.8
+04:14:21.435 INFO  ProgressMeter -        chr4:43315300             28.8                606000          21048.6
+04:14:31.788 INFO  ProgressMeter -        chr4:65250038             29.0                627000          21648.2
+04:14:42.807 INFO  ProgressMeter -        chr4:69080053             29.1                632000          21683.4
+04:14:53.536 INFO  ProgressMeter -        chr4:70596302             29.3                634000          21619.4
+04:15:09.179 INFO  ProgressMeter -        chr4:71745878             29.6                635000          21462.6
+04:15:19.454 INFO  ProgressMeter -        chr4:72540459             29.8                636000          21372.7
+04:15:40.215 INFO  ProgressMeter -        chr4:73591161             30.1                637000          21160.3
+04:15:50.929 INFO  ProgressMeter -        chr4:74764070             30.3                638000          21068.6
+04:16:01.100 INFO  ProgressMeter -       chr4:105581741             30.5                663000          21772.2
+04:16:19.365 INFO  ProgressMeter -       chr4:113747319             30.8                669000          21751.8
+04:16:34.483 INFO  ProgressMeter -       chr4:115893595             31.0                671000          21639.6
+04:16:47.635 INFO  ProgressMeter -       chr4:116952536             31.2                672000          21519.7
+04:16:59.768 INFO  ProgressMeter -       chr4:119322264             31.4                674000          21444.9
+04:17:22.279 INFO  ProgressMeter -       chr4:122618699             31.8                677000          21286.2
+04:17:34.727 INFO  ProgressMeter -       chr4:123507922             32.0                678000          21179.5
+04:17:45.046 INFO  ProgressMeter -       chr4:136509033             32.2                689000          21408.1
+04:17:55.248 INFO  ProgressMeter -       chr4:153873686             32.4                703000          21728.3
+04:18:17.253 INFO  ProgressMeter -       chr4:156989355             32.7                706000          21576.5
+04:18:42.229 INFO  ProgressMeter -       chr4:157945787             33.1                707000          21335.6
+04:18:53.414 INFO  ProgressMeter -       chr4:159042382             33.3                708000          21246.3
+04:19:03.897 INFO  ProgressMeter -       chr4:185519206             33.5                737000          22001.1
+04:19:18.359 INFO  ProgressMeter -       chr4:187042956             33.7                739000          21903.3
+04:19:29.304 INFO  ProgressMeter -       chr4:188549069             33.9                741000          21844.4
+04:19:39.375 INFO  ProgressMeter -       chr4:189650928             34.1                743000          21795.5
+04:19:54.441 INFO  ProgressMeter -          chr5:172371             34.3                744000          21665.3
+04:20:11.395 INFO  ProgressMeter -         chr5:3832241             34.6                749000          21632.9
+04:20:21.527 INFO  ProgressMeter -        chr5:30288076             34.8                777000          22332.7
+04:20:32.735 INFO  ProgressMeter -        chr5:35918105             35.0                783000          22384.9
+04:20:50.713 INFO  ProgressMeter -        chr5:37393315             35.3                784000          22223.2
+04:21:11.215 INFO  ProgressMeter -        chr5:39651299             35.6                786000          22066.1
+04:21:29.274 INFO  ProgressMeter -        chr5:44328451             35.9                790000          21992.6
+04:21:39.556 INFO  ProgressMeter -        chr5:49600077             36.1                792000          21943.6
+04:21:49.601 INFO  ProgressMeter -        chr5:58122824             36.3                801000          22090.5
+04:21:59.959 INFO  ProgressMeter -        chr5:91537646             36.4                824000          22617.1
+04:22:10.315 INFO  ProgressMeter -       chr5:124162681             36.6                850000          23220.7
+04:22:22.447 INFO  ProgressMeter -       chr5:137266314             36.8                860000          23364.9
+04:22:37.254 INFO  ProgressMeter -       chr5:140668682             37.1                862000          23263.2
+04:22:50.205 INFO  ProgressMeter -       chr5:143466277             37.3                864000          23182.2
+04:23:12.999 INFO  ProgressMeter -       chr5:144931991             37.6                865000          22974.8
+04:23:23.179 INFO  ProgressMeter -       chr5:174673476             37.8                889000          23506.3
+04:23:33.590 INFO  ProgressMeter -        chr6:17253754             38.0                912000          24004.3
+04:23:48.040 INFO  ProgressMeter -        chr6:37286633             38.2                937000          24507.0
+04:24:04.169 INFO  ProgressMeter -        chr6:40148525             38.5                939000          24387.8
+04:24:22.237 INFO  ProgressMeter -        chr6:43643232             38.8                942000          24275.9
+04:24:34.762 INFO  ProgressMeter -        chr6:44828183             39.0                943000          24171.6
+04:24:44.781 INFO  ProgressMeter -        chr6:77255877             39.2                972000          24808.8
+04:24:55.946 INFO  ProgressMeter -        chr6:96039693             39.4                987000          25072.6
+04:25:07.173 INFO  ProgressMeter -       chr6:109479396             39.6                998000          25232.1
+04:25:17.488 INFO  ProgressMeter -       chr6:114392159             39.7               1002000          25223.6
+04:25:30.800 INFO  ProgressMeter -       chr6:116986693             39.9               1004000          25133.5
+04:25:48.166 INFO  ProgressMeter -       chr6:118072488             40.2               1005000          24977.6
+04:26:01.609 INFO  ProgressMeter -       chr6:119194819             40.5               1006000          24864.0
+04:26:36.610 INFO  ProgressMeter -       chr6:127016554             41.0               1012000          24656.8
+04:36:33.244 INFO  ProgressMeter -       chr6:128851702             51.0               1013000          19867.7
+04:42:25.523 INFO  ProgressMeter -       chr6:130035980             56.9               1014000          17833.7
+04:42:36.117 INFO  ProgressMeter -       chr6:149113629             57.0               1027000          18006.4
+04:42:48.234 INFO  ProgressMeter -       chr6:153699759             57.2               1031000          18012.8
+04:43:03.393 INFO  ProgressMeter -       chr6:156385129             57.5               1033000          17968.4
+04:43:15.468 INFO  ProgressMeter -       chr6:157821698             57.7               1034000          17923.0
+04:43:35.039 INFO  ProgressMeter -       chr6:160893541             58.0               1037000          17874.0
+04:43:48.492 INFO  ProgressMeter -       chr6:161943867             58.2               1038000          17822.3
+04:43:58.676 INFO  ProgressMeter -         chr7:2715119             58.4               1051000          17993.1
+04:44:09.256 INFO  ProgressMeter -        chr7:20731369             58.6               1070000          18263.3
+04:44:21.542 INFO  ProgressMeter -        chr7:28934871             58.8               1077000          18318.7
+04:44:41.949 INFO  ProgressMeter -        chr7:31504071             59.1               1079000          18247.2
+04:44:57.906 INFO  ProgressMeter -        chr7:33163015             59.4               1081000          18199.1
+04:45:22.962 INFO  ProgressMeter -        chr7:36017730             59.8               1083000          18105.5
+04:45:40.137 INFO  ProgressMeter -        chr7:36999988             60.1               1084000          18035.9
+04:45:50.859 INFO  ProgressMeter -        chr7:48177709             60.3               1093000          18131.8
+04:46:01.700 INFO  ProgressMeter -        chr7:54496771             60.5               1100000          18193.4
+04:46:11.872 INFO  ProgressMeter -        chr7:57672516             60.6               1103000          18192.0
+04:46:23.574 INFO  ProgressMeter -        chr7:65100856             60.8               1109000          18232.3
+04:46:35.593 INFO  ProgressMeter -        chr7:68206916             61.0               1112000          18221.6
+04:47:03.800 INFO  ProgressMeter -        chr7:70712046             61.5               1114000          18114.8
+04:47:21.093 INFO  ProgressMeter -        chr7:72298876             61.8               1116000          18062.7
+04:47:32.160 INFO  ProgressMeter -        chr7:93782174             62.0               1132000          18267.1
+04:47:44.412 INFO  ProgressMeter -       chr7:105933797             62.2               1141000          18351.9
+04:47:58.779 INFO  ProgressMeter -       chr7:109679663             62.4               1144000          18329.5
+04:48:16.533 INFO  ProgressMeter -       chr7:112317901             62.7               1146000          18274.9
+04:48:32.245 INFO  ProgressMeter -       chr7:113760754             63.0               1147000          18214.8
+04:49:02.204 INFO  ProgressMeter -       chr7:115222402             63.5               1148000          18087.3
+04:49:12.374 INFO  ProgressMeter -       chr7:144757402             63.6               1172000          18416.2
+04:49:22.566 INFO  ProgressMeter -       chr7:158781926             63.8               1187000          18602.3
+04:49:33.877 INFO  ProgressMeter -         chr8:1833648             64.0               1190000          18594.4
+04:49:49.530 INFO  ProgressMeter -         chr8:3282788             64.3               1192000          18550.0
+04:50:01.585 INFO  ProgressMeter -         chr8:3705423             64.5               1193000          18507.7
+04:50:11.655 INFO  ProgressMeter -         chr8:4432864             64.6               1195000          18490.6
+04:50:21.965 INFO  ProgressMeter -         chr8:6200021             64.8               1199000          18503.3
+04:50:32.771 INFO  ProgressMeter -        chr8:10743234             65.0               1205000          18544.3
+04:50:43.178 INFO  ProgressMeter -        chr8:12882223             65.2               1208000          18541.0
+04:50:53.377 INFO  ProgressMeter -        chr8:19828398             65.3               1219000          18661.1
+04:51:05.841 INFO  ProgressMeter -        chr8:24554646             65.5               1223000          18663.0
+04:51:19.201 INFO  ProgressMeter -        chr8:27415068             65.8               1226000          18645.4
+04:51:46.532 INFO  ProgressMeter -        chr8:28230445             66.2               1227000          18532.3
+04:51:56.617 INFO  ProgressMeter -        chr8:63125964             66.4               1252000          18862.0
+04:52:06.633 INFO  ProgressMeter -        chr8:89016134             66.5               1269000          19070.1
+04:52:16.719 INFO  ProgressMeter -       chr8:104811966             66.7               1280000          19187.0
+04:52:39.750 INFO  ProgressMeter -       chr8:107445893             67.1               1282000          19107.0
+04:52:50.383 INFO  ProgressMeter -       chr8:108409529             67.3               1283000          19071.5
+04:53:22.375 INFO  ProgressMeter -       chr8:111312835             67.8               1284000          18936.3
+04:53:32.451 INFO  ProgressMeter -       chr8:132040941             68.0               1300000          19124.9
+04:53:42.879 INFO  ProgressMeter -       chr8:133087071             68.1               1301000          19090.8
+04:53:56.326 INFO  ProgressMeter -       chr8:134069874             68.4               1302000          19042.9
+04:54:14.001 INFO  ProgressMeter -       chr8:135944564             68.7               1304000          18990.3
+04:54:30.986 INFO  ProgressMeter -       chr8:136840268             68.9               1305000          18926.8
+04:54:47.912 INFO  ProgressMeter -       chr8:137751460             69.2               1306000          18864.2
+04:54:58.028 INFO  ProgressMeter -        chr9:17320394             69.4               1334000          19221.8
+04:55:09.481 INFO  ProgressMeter -        chr9:20054674             69.6               1337000          19212.2
+04:55:23.045 INFO  ProgressMeter -        chr9:22383817             69.8               1339000          19178.6
+04:55:43.799 INFO  ProgressMeter -        chr9:24947049             70.2               1341000          19112.6
+04:56:04.427 INFO  ProgressMeter -        chr9:25831251             70.5               1342000          19033.6
+04:56:27.431 INFO  ProgressMeter -        chr9:27120782             70.9               1343000          18944.7
+04:56:37.514 INFO  ProgressMeter -        chr9:84178772             71.1               1378000          19392.5
+04:56:47.760 INFO  ProgressMeter -       chr9:112335937             71.2               1400000          19654.8
+04:57:01.022 INFO  ProgressMeter -       chr9:113209791             71.5               1401000          19608.0
+04:57:25.888 INFO  ProgressMeter -       chr9:114494929             71.9               1402000          19508.9
+04:57:46.463 INFO  ProgressMeter -       chr9:115569139             72.2               1403000          19430.1
+04:57:59.539 INFO  ProgressMeter -       chr9:116824609             72.4               1404000          19385.4
+04:58:09.659 INFO  ProgressMeter -        chr10:7949489             72.6               1433000          19739.9
+04:58:19.967 INFO  ProgressMeter -       chr10:27632229             72.8               1452000          19954.4
+04:58:31.262 INFO  ProgressMeter -       chr10:43247348             73.0               1468000          20122.2
+04:58:41.986 INFO  ProgressMeter -       chr10:61457802             73.1               1487000          20332.8
+04:59:04.654 INFO  ProgressMeter -       chr10:62523816             73.5               1488000          20241.9
+04:59:19.179 INFO  ProgressMeter -       chr10:63556142             73.8               1489000          20189.0
+04:59:37.370 INFO  ProgressMeter -       chr10:64632760             74.1               1490000          20119.9
+04:59:47.518 INFO  ProgressMeter -       chr10:98773688             74.2               1518000          20451.3
+04:59:57.712 INFO  ProgressMeter -      chr10:130611480             74.4               1547000          20794.4
+05:00:07.785 INFO  ProgressMeter -        chr11:6889896             74.6               1560000          20921.9
+05:00:19.734 INFO  ProgressMeter -       chr11:24711505             74.8               1579000          21120.3
+05:00:32.930 INFO  ProgressMeter -       chr11:27567069             75.0               1583000          21111.7
+05:00:54.788 INFO  ProgressMeter -       chr11:28898919             75.3               1584000          21022.9
+05:01:05.990 INFO  ProgressMeter -       chr11:30124007             75.5               1585000          20984.2
+05:01:17.335 INFO  ProgressMeter -       chr11:67484929             75.7               1616000          21341.2
+05:01:27.640 INFO  ProgressMeter -       chr11:79760192             75.9               1626000          21424.6
+05:01:41.443 INFO  ProgressMeter -       chr11:87578644             76.1               1633000          21451.8
+05:01:51.543 INFO  ProgressMeter -       chr11:88482682             76.3               1634000          21417.6
+05:02:07.862 INFO  ProgressMeter -       chr11:89490448             76.6               1635000          21354.6
+05:02:27.656 INFO  ProgressMeter -       chr11:90876551             76.9               1636000          21276.0
+05:02:38.189 INFO  ProgressMeter -      chr11:103528377             77.1               1649000          21396.2
+05:02:50.437 INFO  ProgressMeter -      chr11:107272776             77.3               1653000          21391.4
+05:03:00.462 INFO  ProgressMeter -      chr11:112106864             77.4               1657000          21396.9
+05:03:12.008 INFO  ProgressMeter -      chr11:117791924             77.6               1662000          21408.3
+05:03:22.112 INFO  ProgressMeter -      chr11:119043282             77.8               1663000          21374.8
+05:03:53.155 INFO  ProgressMeter -      chr11:120023932             78.3               1664000          21246.4
+05:04:03.427 INFO  ProgressMeter -      chr11:130584363             78.5               1673000          21314.7
+05:04:13.609 INFO  ProgressMeter -       chr12:17577188             78.7               1696000          21561.1
+05:04:27.417 INFO  ProgressMeter -       chr12:27987648             78.9               1707000          21637.7
+05:04:40.148 INFO  ProgressMeter -       chr12:30073429             79.1               1709000          21604.9
+05:04:59.074 INFO  ProgressMeter -       chr12:31798383             79.4               1711000          21544.3
+05:05:13.079 INFO  ProgressMeter -       chr12:35346328             79.7               1714000          21518.8
+05:05:24.279 INFO  ProgressMeter -       chr12:38739341             79.8               1716000          21493.5
+05:05:52.521 INFO  ProgressMeter -       chr12:40310063             80.3               1717000          21380.0
+05:06:03.155 INFO  ProgressMeter -       chr12:69931661             80.5               1741000          21631.1
+05:06:14.236 INFO  ProgressMeter -       chr12:79942214             80.7               1749000          21680.8
+05:06:24.442 INFO  ProgressMeter -      chr12:101965174             80.8               1766000          21845.4
+05:06:35.739 INFO  ProgressMeter -      chr12:113596754             81.0               1773000          21881.1
+05:06:45.872 INFO  ProgressMeter -      chr12:130432832             81.2               1790000          22044.9
+05:06:57.018 INFO  ProgressMeter -       chr13:30104028             81.4               1812000          22264.9
+05:07:07.643 INFO  ProgressMeter -       chr13:34026696             81.6               1816000          22265.6
+05:07:17.752 INFO  ProgressMeter -       chr13:40870527             81.7               1823000          22305.4
+05:07:28.048 INFO  ProgressMeter -       chr13:44165109             81.9               1826000          22295.3
+05:07:38.640 INFO  ProgressMeter -       chr13:45808272             82.1               1827000          22259.5
+05:07:49.185 INFO  ProgressMeter -       chr13:51846525             82.3               1832000          22272.7
+05:07:59.263 INFO  ProgressMeter -       chr13:85523402             82.4               1864000          22615.6
+05:08:09.359 INFO  ProgressMeter -       chr14:19451979             82.6               1894000          22932.8
+05:08:19.451 INFO  ProgressMeter -       chr14:31113320             82.8               1906000          23031.1
+05:08:29.528 INFO  ProgressMeter -       chr14:37838271             82.9               1912000          23056.9
+05:08:39.854 INFO  ProgressMeter -       chr14:47634010             83.1               1920000          23105.4
+05:08:49.935 INFO  ProgressMeter -       chr14:51947350             83.3               1924000          23106.8
+05:09:00.153 INFO  ProgressMeter -       chr14:85152809             83.4               1950000          23371.3
+05:09:10.450 INFO  ProgressMeter -       chr15:33283667             83.6               1984000          23729.9
+05:09:22.721 INFO  ProgressMeter -       chr15:58209083             83.8               2006000          23934.5
+05:09:35.889 INFO  ProgressMeter -       chr15:64608724             84.0               2012000          23943.4
+05:09:46.022 INFO  ProgressMeter -       chr15:77966906             84.2               2023000          24026.0
+05:09:59.100 INFO  ProgressMeter -       chr15:86585196             84.4               2030000          24046.9
+05:10:09.680 INFO  ProgressMeter -       chr15:90818771             84.6               2034000          24044.1
+05:10:22.077 INFO  ProgressMeter -       chr15:94311308             84.8               2038000          24032.7
+05:10:32.272 INFO  ProgressMeter -        chr16:4006926             85.0               2049000          24114.1
+05:10:42.390 INFO  ProgressMeter -        chr16:8834492             85.1               2057000          24160.3
+05:10:52.531 INFO  ProgressMeter -       chr16:22722146             85.3               2069000          24253.1
+05:11:02.579 INFO  ProgressMeter -       chr16:64624208             85.5               2093000          24486.3
+05:11:12.607 INFO  ProgressMeter -         chr17:820077             85.6               2121000          24765.5
+05:11:22.780 INFO  ProgressMeter -       chr17:40848836             85.8               2154000          25101.1
+05:11:33.122 INFO  ProgressMeter -       chr17:59753065             86.0               2168000          25213.6
+05:11:43.345 INFO  ProgressMeter -        chr18:3329632             86.2               2192000          25442.3
+05:11:53.645 INFO  ProgressMeter -       chr18:28212742             86.3               2210000          25600.2
+05:12:03.799 INFO  ProgressMeter -       chr18:57492696             86.5               2234000          25827.6
+05:12:14.086 INFO  ProgressMeter -       chr18:80112075             86.7               2260000          26076.5
+05:12:24.357 INFO  ProgressMeter -       chr19:22368570             86.8               2280000          26255.4
+05:12:35.763 INFO  ProgressMeter -       chr19:23599556             87.0               2281000          26209.5
+05:12:46.175 INFO  ProgressMeter -       chr19:32917047             87.2               2289000          26249.1
+05:12:56.556 INFO  ProgressMeter -       chr19:39546162             87.4               2294000          26254.4
+05:13:07.063 INFO  ProgressMeter -       chr19:40693813             87.6               2295000          26213.3
+05:13:17.100 INFO  ProgressMeter -       chr20:13049214             87.7               2323000          26482.5
+05:13:27.266 INFO  ProgressMeter -       chr20:32761150             87.9               2351000          26750.0
+05:13:37.395 INFO  ProgressMeter -       chr20:54088791             88.1               2366000          26869.1
+05:13:47.432 INFO  ProgressMeter -       chr21:30556674             88.2               2405000          27260.2
+05:13:57.534 INFO  ProgressMeter -       chr21:43035601             88.4               2417000          27344.0
+05:14:07.649 INFO  ProgressMeter -       chr22:45124896             88.6               2454000          27709.8
+05:14:09.882 INFO  ProgressMeter -       chr22:50149702             88.6               2460691          27773.7
+05:14:15.929 INFO  ProgressMeter - Traversal complete. Processed 2460691 total variants in 88.6 minutes.
+05:14:16.089 INFO  VariantDataManager - QD: 	 mean = 24.54	 standard deviation = 7.69
+05:14:16.332 INFO  VariantDataManager - MQRankSum: 	 mean = -0.00	 standard deviation = 0.09
+05:14:16.686 INFO  VariantDataManager - ReadPosRankSum: 	 mean = 0.02	 standard deviation = 0.89
+05:14:17.005 INFO  VariantDataManager - FS: 	 mean = 0.44	 standard deviation = 1.48
+05:14:17.189 INFO  VariantDataManager - MQ: 	 mean = 59.92	 standard deviation = 0.96
+05:14:17.372 INFO  VariantDataManager - SOR: 	 mean = 1.31	 standard deviation = 0.79
+05:14:17.555 INFO  VariantDataManager - DP: 	 mean = 4.26	 standard deviation = 2.03
+05:14:19.031 INFO  VariantDataManager - Annotation order is: [MQ, QD, MQRankSum, DP, SOR, FS, ReadPosRankSum]
+05:14:25.010 INFO  VariantDataManager - Training with 1772648 variants after standard deviation thresholding.
+05:14:25.039 INFO  GaussianMixtureModel - Initializing model with 100 k-means iterations...
+05:15:41.500 INFO  VariantRecalibratorEngine - Finished iteration 0.
+05:16:11.773 INFO  VariantRecalibratorEngine - Finished iteration 5. 	Current change in mixture coefficients = 0.19948
+05:16:40.738 INFO  VariantRecalibratorEngine - Finished iteration 10. 	Current change in mixture coefficients = 0.04724
+05:17:09.730 INFO  VariantRecalibratorEngine - Finished iteration 15. 	Current change in mixture coefficients = 0.01492
+05:17:38.786 INFO  VariantRecalibratorEngine - Finished iteration 20. 	Current change in mixture coefficients = 0.00816
+05:18:07.799 INFO  VariantRecalibratorEngine - Finished iteration 25. 	Current change in mixture coefficients = 0.00916
+05:18:36.801 INFO  VariantRecalibratorEngine - Finished iteration 30. 	Current change in mixture coefficients = 0.01417
+05:19:05.823 INFO  VariantRecalibratorEngine - Finished iteration 35. 	Current change in mixture coefficients = 0.01765
+05:19:35.070 INFO  VariantRecalibratorEngine - Finished iteration 40. 	Current change in mixture coefficients = 0.00255
+05:19:40.892 INFO  VariantRecalibratorEngine - Convergence after 41 iterations!
+05:19:45.796 INFO  VariantRecalibratorEngine - Evaluating full set of 2122179 variants...
+05:20:56.403 INFO  VariantDataManager - Selected worst 29456 scoring variants --> variants with LOD <= -5.0000.
+05:20:56.403 INFO  GaussianMixtureModel - Initializing model with 100 k-means iterations...
+05:20:56.804 INFO  VariantRecalibratorEngine - Finished iteration 0.
+05:20:56.989 INFO  VariantRecalibratorEngine - Finished iteration 5. 	Current change in mixture coefficients = 0.06082
+05:20:57.162 INFO  VariantRecalibratorEngine - Finished iteration 10. 	Current change in mixture coefficients = 0.05245
+05:20:57.338 INFO  VariantRecalibratorEngine - Finished iteration 15. 	Current change in mixture coefficients = 0.01337
+05:20:57.439 INFO  VariantRecalibratorEngine - Convergence after 18 iterations!
+05:20:57.502 INFO  VariantRecalibratorEngine - Evaluating full set of 2122179 variants...
+05:21:31.841 INFO  TrancheManager - Finding 16 tranches for 2122179 variants
+05:21:33.594 INFO  TrancheManager -   TruthSensitivityTranche threshold 100.00 => selection metric threshold 0.000
+05:21:39.001 INFO  TrancheManager -   Found tranche for 100.000: 0.000 threshold starting with variant 0; running score is 0.000 
+05:21:39.002 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=100.00 minVQSLod=-1024926.4653 known=(2023163 @ 2.0748) novel=(99016 @ 1.4392) truthSites(1033004 accessible, 1033004 called), name=anonymous]
+05:21:39.002 INFO  TrancheManager -   TruthSensitivityTranche threshold 99.90 => selection metric threshold 0.001
+05:21:39.568 INFO  TrancheManager -   Found tranche for 99.900: 0.001 threshold starting with variant 97427; running score is 0.001 
+05:21:39.569 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=99.90 minVQSLod=-2.7313 known=(1975583 @ 2.0846) novel=(49169 @ 1.7285) truthSites(1033004 accessible, 1031970 called), name=anonymous]
+05:21:39.569 INFO  TrancheManager -   TruthSensitivityTranche threshold 99.00 => selection metric threshold 0.010
+05:21:40.094 INFO  TrancheManager -   Found tranche for 99.000: 0.010 threshold starting with variant 207193; running score is 0.010 
+05:21:40.095 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=99.00 minVQSLod=3.4143 known=(1880463 @ 2.0932) novel=(34523 @ 1.9068) truthSites(1033004 accessible, 1022673 called), name=anonymous]
+05:21:40.095 INFO  TrancheManager -   TruthSensitivityTranche threshold 90.00 => selection metric threshold 0.100
+05:21:40.577 INFO  TrancheManager -   Found tranche for 90.000: 0.100 threshold starting with variant 590312; running score is 0.100 
+05:21:40.577 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=90.00 minVQSLod=6.3985 known=(1519752 @ 2.1047) novel=(12115 @ 1.7563) truthSites(1033004 accessible, 929703 called), name=anonymous]
+05:21:40.577 INFO  TrancheManager -   TruthSensitivityTranche threshold 100.00 => selection metric threshold 0.000
+05:21:41.052 INFO  TrancheManager -   Found tranche for 100.000: 0.000 threshold starting with variant 0; running score is 0.000 
+05:21:41.053 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=100.00 minVQSLod=-1024926.4653 known=(2023163 @ 2.0748) novel=(99016 @ 1.4392) truthSites(1033004 accessible, 1033004 called), name=anonymous]
+05:21:41.053 INFO  TrancheManager -   TruthSensitivityTranche threshold 99.95 => selection metric threshold 0.000
+05:21:41.535 INFO  TrancheManager -   Found tranche for 99.950: 0.000 threshold starting with variant 87877; running score is 0.001 
+05:21:41.536 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=99.95 minVQSLod=-3.3657 known=(1982092 @ 2.0839) novel=(52210 @ 1.6960) truthSites(1033004 accessible, 1032487 called), name=anonymous]
+05:21:41.536 INFO  TrancheManager -   TruthSensitivityTranche threshold 99.90 => selection metric threshold 0.001
+05:21:42.012 INFO  TrancheManager -   Found tranche for 99.900: 0.001 threshold starting with variant 97427; running score is 0.001 
+05:21:42.012 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=99.90 minVQSLod=-2.7313 known=(1975583 @ 2.0846) novel=(49169 @ 1.7285) truthSites(1033004 accessible, 1031970 called), name=anonymous]
+05:21:42.012 INFO  TrancheManager -   TruthSensitivityTranche threshold 99.80 => selection metric threshold 0.002
+05:21:42.486 INFO  TrancheManager -   Found tranche for 99.800: 0.002 threshold starting with variant 129301; running score is 0.002 
+05:21:42.486 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=99.80 minVQSLod=-0.7799 known=(1951727 @ 2.0881) novel=(41151 @ 1.8479) truthSites(1033004 accessible, 1030937 called), name=anonymous]
+05:21:42.487 INFO  TrancheManager -   TruthSensitivityTranche threshold 99.60 => selection metric threshold 0.004
+05:21:42.960 INFO  TrancheManager -   Found tranche for 99.600: 0.004 threshold starting with variant 176852; running score is 0.004 
+05:21:53.566 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=99.60 minVQSLod=1.3279 known=(1909109 @ 2.0927) novel=(36218 @ 1.9254) truthSites(1033004 accessible, 1028871 called), name=anonymous]
+05:21:53.567 INFO  TrancheManager -   TruthSensitivityTranche threshold 99.50 => selection metric threshold 0.005
+05:21:54.087 INFO  TrancheManager -   Found tranche for 99.500: 0.005 threshold starting with variant 186617; running score is 0.005 
+05:21:54.087 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=99.50 minVQSLod=1.7513 known=(1899633 @ 2.0932) novel=(35929 @ 1.9233) truthSites(1033004 accessible, 1027838 called), name=anonymous]
+05:21:54.088 INFO  TrancheManager -   TruthSensitivityTranche threshold 99.40 => selection metric threshold 0.006
+05:21:54.607 INFO  TrancheManager -   Found tranche for 99.400: 0.006 threshold starting with variant 191659; running score is 0.006 
+05:21:54.607 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=99.40 minVQSLod=2.0474 known=(1894826 @ 2.0930) novel=(35694 @ 1.9176) truthSites(1033004 accessible, 1026805 called), name=anonymous]
+05:21:54.607 INFO  TrancheManager -   TruthSensitivityTranche threshold 99.30 => selection metric threshold 0.007
+05:21:55.127 INFO  TrancheManager -   Found tranche for 99.300: 0.007 threshold starting with variant 195715; running score is 0.007 
+05:21:55.128 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=99.30 minVQSLod=2.3935 known=(1891122 @ 2.0931) novel=(35342 @ 1.9096) truthSites(1033004 accessible, 1025772 called), name=anonymous]
+05:21:55.128 INFO  TrancheManager -   TruthSensitivityTranche threshold 99.00 => selection metric threshold 0.010
+05:21:55.646 INFO  TrancheManager -   Found tranche for 99.000: 0.010 threshold starting with variant 207193; running score is 0.010 
+05:21:55.647 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=99.00 minVQSLod=3.4143 known=(1880463 @ 2.0932) novel=(34523 @ 1.9068) truthSites(1033004 accessible, 1022673 called), name=anonymous]
+05:21:55.647 INFO  TrancheManager -   TruthSensitivityTranche threshold 98.00 => selection metric threshold 0.020
+05:21:56.166 INFO  TrancheManager -   Found tranche for 98.000: 0.020 threshold starting with variant 234859; running score is 0.020 
+05:21:56.166 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=98.00 minVQSLod=4.6669 known=(1856004 @ 2.0941) novel=(31316 @ 1.9229) truthSites(1033004 accessible, 1012343 called), name=anonymous]
+05:21:56.166 INFO  TrancheManager -   TruthSensitivityTranche threshold 97.00 => selection metric threshold 0.030
+05:21:56.685 INFO  TrancheManager -   Found tranche for 97.000: 0.030 threshold starting with variant 280999; running score is 0.030 
+05:21:56.685 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=97.00 minVQSLod=5.3785 known=(1821727 @ 2.0956) novel=(19453 @ 1.7629) truthSites(1033004 accessible, 1002013 called), name=anonymous]
+05:21:56.685 INFO  TrancheManager -   TruthSensitivityTranche threshold 90.00 => selection metric threshold 0.100
+05:21:57.198 INFO  TrancheManager -   Found tranche for 90.000: 0.100 threshold starting with variant 590312; running score is 0.100 
+05:21:57.199 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=90.00 minVQSLod=6.3985 known=(1519752 @ 2.1047) novel=(12115 @ 1.7563) truthSites(1033004 accessible, 929703 called), name=anonymous]
+05:21:57.203 INFO  VariantRecalibrator - Writing out recalibration table...
+05:39:41.746 INFO  VariantRecalibrator - Writing out visualization Rscript file...
+05:39:43.715 INFO  VariantRecalibrator - Building MQ x QD plot...
+05:39:52.494 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:39:53.126 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:39:59.883 INFO  VariantRecalibrator - Building MQ x MQRankSum plot...
+05:40:09.648 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:40:10.130 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:40:12.698 INFO  VariantRecalibrator - Building MQ x DP plot...
+05:40:12.702 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:40:13.163 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:40:13.404 INFO  VariantRecalibrator - Building MQ x SOR plot...
+05:40:13.405 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:40:13.868 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:40:26.623 INFO  VariantRecalibrator - Building MQ x FS plot...
+05:40:26.624 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:40:27.085 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:40:27.320 INFO  VariantRecalibrator - Building MQ x ReadPosRankSum plot...
+05:40:27.324 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:40:27.782 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:40:28.020 INFO  VariantRecalibrator - Building QD x MQRankSum plot...
+05:40:28.021 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:40:28.471 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:40:28.708 INFO  VariantRecalibrator - Building QD x DP plot...
+05:40:28.709 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:40:29.189 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:40:45.289 INFO  VariantRecalibrator - Building QD x SOR plot...
+05:40:45.291 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:40:45.768 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:40:46.005 INFO  VariantRecalibrator - Building QD x FS plot...
+05:40:46.006 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:40:46.452 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:40:46.675 INFO  VariantRecalibrator - Building QD x ReadPosRankSum plot...
+05:40:46.676 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:40:47.133 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:40:47.362 INFO  VariantRecalibrator - Building MQRankSum x DP plot...
+05:40:47.364 INFO  VariantRecalibratorEngine - Evaluating full set of 3721 variants...
+05:40:47.826 INFO  VariantRecalibratorEngine - Evaluating full set of 3721 variants...
+05:40:48.068 INFO  VariantRecalibrator - Building MQRankSum x SOR plot...
+05:40:48.069 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:40:48.519 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:40:48.751 INFO  VariantRecalibrator - Building MQRankSum x FS plot...
+05:40:48.752 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:40:49.203 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:40:49.429 INFO  VariantRecalibrator - Building MQRankSum x ReadPosRankSum plot...
+05:40:49.430 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:40:49.883 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:41:16.183 INFO  VariantRecalibrator - Building DP x SOR plot...
+05:41:16.184 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:41:16.755 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:41:17.037 INFO  VariantRecalibrator - Building DP x FS plot...
+05:41:17.038 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:41:17.601 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:41:17.837 INFO  VariantRecalibrator - Building DP x ReadPosRankSum plot...
+05:41:17.838 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:41:18.304 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:41:18.531 INFO  VariantRecalibrator - Building SOR x FS plot...
+05:41:18.532 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:41:18.976 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:41:19.197 INFO  VariantRecalibrator - Building SOR x ReadPosRankSum plot...
+05:41:19.198 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:41:19.653 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:41:19.878 INFO  VariantRecalibrator - Building FS x ReadPosRankSum plot...
+05:41:19.879 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:41:20.324 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:42:24.317 INFO  VariantRecalibrator - Executing: Rscript /data3/andrew/genomes/analysis/APH_subsampled/vqsr_snp_plots.R
+05:44:43.533 INFO  VariantRecalibrator - Shutting down engine
+[May 2, 2024 at 5:44:43 AM UTC] org.broadinstitute.hellbender.tools.walkers.vqsr.VariantRecalibrator done. Elapsed time: 119.63 minutes.
+Runtime.totalMemory()=1488453632
+org.broadinstitute.hellbender.utils.R.RScriptExecutorException: 
+Rscript exited with 1
+Command Line: Rscript -e tempLibDir = '/tmp/Rlib.14363228923433138479';source('/data3/andrew/genomes/analysis/APH_subsampled/vqsr_snp_plots.R');
+Stdout: 
+Stderr: During startup - Warning messages:
+1: Setting LC_TIME failed, using "C" 
+2: Setting LC_MONETARY failed, using "C" 
+3: Setting LC_PAPER failed, using "C" 
+4: Setting LC_MEASUREMENT failed, using "C" 
+Error in library(ggplot2) : there is no package called ?ggplot2?
+Calls: source -> withVisible -> eval -> eval -> library
+Execution halted
+
+	at org.broadinstitute.hellbender.utils.R.RScriptExecutor.getScriptException(RScriptExecutor.java:79)
+	at org.broadinstitute.hellbender.utils.R.RScriptExecutor.getScriptException(RScriptExecutor.java:18)
+	at org.broadinstitute.hellbender.utils.runtime.ScriptExecutor.executeCuratedArgs(ScriptExecutor.java:112)
+	at org.broadinstitute.hellbender.utils.R.RScriptExecutor.exec(RScriptExecutor.java:125)
+	at org.broadinstitute.hellbender.tools.walkers.vqsr.VariantRecalibrator.createVisualizationScript(VariantRecalibrator.java:1146)
+	at org.broadinstitute.hellbender.tools.walkers.vqsr.VariantRecalibrator.onTraversalSuccess(VariantRecalibrator.java:706)
+	at org.broadinstitute.hellbender.engine.GATKTool.doWork(GATKTool.java:1102)
+	at org.broadinstitute.hellbender.cmdline.CommandLineProgram.runTool(CommandLineProgram.java:149)
+	at org.broadinstitute.hellbender.cmdline.CommandLineProgram.instanceMainPostParseArgs(CommandLineProgram.java:198)
+	at org.broadinstitute.hellbender.cmdline.CommandLineProgram.instanceMain(CommandLineProgram.java:217)
+	at org.broadinstitute.hellbender.Main.runCommandLineProgram(Main.java:166)
+	at org.broadinstitute.hellbender.Main.mainEntry(Main.java:209)
+	at org.broadinstitute.hellbender.Main.main(Main.java:306)
+Stage 7: VariantRecalibrator SNPs
+Using GATK jar /export/approved/gatk-4.5.0.0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8g -XX:+UseParallelGC -XX:ParallelGCThreads=4 -jar /export/approved/gatk-4.5.0.0/gatk-package-4.5.0.0-local.jar VariantRecalibrator -R /export/home/andrew/genome/hg38_v0_20231023/Homo_sapiens_assembly38.fasta -V genotype.raw.vcf.gz -O recalibrate_INDEL.recal --max-gaussians 4 --tranches-file recalibrate_INDEL.tranches --rscript-file vqsr_indel_plots.R -resource:mills,known=false,training=true,truth=true,prior=12.0 /export/home/andrew/genome/hg38_v0_20231023/Homo_sapiens_assembly38.known_indels.vcf.gz -resource:dbsnp,known=true,training=false,truth=false,prior=2.0 /export/home/andrew/genome/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf -an QD -an DP -an FS -an SOR -an ReadPosRankSum -an MQRankSum -mode INDEL
+05:45:08.668 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/export/approved/gatk-4.5.0.0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+05:45:14.494 INFO  VariantRecalibrator - ------------------------------------------------------------
+05:45:14.499 INFO  VariantRecalibrator - The Genome Analysis Toolkit (GATK) v4.5.0.0
+05:45:14.499 INFO  VariantRecalibrator - For support and documentation go to https://software.broadinstitute.org/gatk/
+05:45:14.500 INFO  VariantRecalibrator - Executing as andrew@compute-0-4 on Linux v5.15.0-102-generic amd64
+05:45:14.500 INFO  VariantRecalibrator - Java runtime: OpenJDK 64-Bit Server VM v19.0.2+7-Ubuntu-0ubuntu322.04
+05:45:14.500 INFO  VariantRecalibrator - Start Date/Time: May 2, 2024 at 5:45:08 AM UTC
+05:45:14.500 INFO  VariantRecalibrator - ------------------------------------------------------------
+05:45:14.501 INFO  VariantRecalibrator - ------------------------------------------------------------
+05:45:14.502 INFO  VariantRecalibrator - HTSJDK Version: 4.1.0
+05:45:14.502 INFO  VariantRecalibrator - Picard Version: 3.1.1
+05:45:14.502 INFO  VariantRecalibrator - Built for Spark Version: 3.5.0
+05:45:14.502 INFO  VariantRecalibrator - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+05:45:14.502 INFO  VariantRecalibrator - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+05:45:14.503 INFO  VariantRecalibrator - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+05:45:14.503 INFO  VariantRecalibrator - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+05:45:14.503 INFO  VariantRecalibrator - Deflater: IntelDeflater
+05:45:14.503 INFO  VariantRecalibrator - Inflater: IntelInflater
+05:45:14.503 INFO  VariantRecalibrator - GCS max retries/reopens: 20
+05:45:14.504 INFO  VariantRecalibrator - Requester pays: disabled
+05:45:14.504 INFO  VariantRecalibrator - Initializing engine
+05:45:16.461 INFO  FeatureManager - Using codec VCFCodec to read file file:///export/home/andrew/genome/hg38_v0_20231023/Homo_sapiens_assembly38.known_indels.vcf.gz
+05:45:19.783 INFO  FeatureManager - Using codec VCFCodec to read file file:///export/home/andrew/genome/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf
+05:45:23.141 INFO  FeatureManager - Using codec VCFCodec to read file file:///data3/andrew/genomes/analysis/APH_subsampled/genotype.raw.vcf.gz
+05:45:24.489 INFO  VariantRecalibrator - Done initializing engine
+05:45:30.281 INFO  TrainingSet - Found mills track: 	Known = false 	Training = true 	Truth = true 	Prior = Q12.0
+05:45:36.764 INFO  TrainingSet - Found dbsnp track: 	Known = true 	Training = false 	Truth = false 	Prior = Q2.0
+05:45:36.814 WARN  GATKVariantContextUtils - Can't determine output variant file format from output file extension "recal". Defaulting to VCF.
+05:45:39.419 INFO  ProgressMeter - Starting traversal
+05:45:39.420 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+05:45:49.554 INFO  ProgressMeter -        chr1:78068201              0.2                 63000         373149.1
+05:45:59.575 INFO  ProgressMeter -       chr1:194000271              0.3                143000         425700.8
+05:46:09.590 INFO  ProgressMeter -        chr2:28925449              0.5                218000         433543.3
+05:46:19.920 INFO  ProgressMeter -       chr2:121958415              0.7                292000         432603.3
+05:46:30.007 INFO  ProgressMeter -       chr2:201673017              0.8                358000         424615.0
+05:46:40.100 INFO  ProgressMeter -        chr3:38462939              1.0                429000         424199.5
+05:46:50.102 INFO  ProgressMeter -       chr3:116755317              1.2                497000         421889.6
+05:47:00.172 INFO  ProgressMeter -       chr3:194559856              1.3                560000         416093.9
+05:47:10.227 INFO  ProgressMeter -        chr4:74764070              1.5                638000         421553.4
+05:47:20.332 INFO  ProgressMeter -       chr4:156989355              1.7                706000         419775.8
+05:47:30.442 INFO  ProgressMeter -        chr5:40470476              1.9                787000         425321.1
+05:47:40.545 INFO  ProgressMeter -       chr5:107251915              2.0                835000         413622.3
+05:47:50.993 INFO  ProgressMeter -       chr5:149105886              2.2                868000         395828.9
+05:48:01.123 INFO  ProgressMeter -        chr6:24084169              2.4                919000         389123.7
+05:48:11.277 INFO  ProgressMeter -        chr6:83099329              2.5                977000         386021.1
+05:48:21.422 INFO  ProgressMeter -       chr6:160893541              2.7               1037000         384071.7
+05:48:31.528 INFO  ProgressMeter -        chr7:53509967              2.9               1099000         383131.5
+05:48:41.650 INFO  ProgressMeter -       chr7:105933797              3.0               1141000         375681.1
+05:48:51.670 INFO  ProgressMeter -        chr8:13499293              3.2               1209000         377321.2
+05:49:01.754 INFO  ProgressMeter -        chr8:70747652              3.4               1256000         372455.3
+05:49:11.783 INFO  ProgressMeter -       chr8:118690378              3.5               1289000         364187.7
+05:49:21.792 INFO  ProgressMeter -        chr9:20054674              3.7               1337000         360746.9
+05:49:31.931 INFO  ProgressMeter -        chr9:86103037              3.9               1379000         355855.7
+05:49:42.123 INFO  ProgressMeter -         chr10:711159              4.0               1423000         351789.4
+05:49:52.186 INFO  ProgressMeter -       chr10:60270967              4.2               1486000         352738.7
+05:50:02.207 INFO  ProgressMeter -      chr10:114880130              4.4               1530000         349333.7
+05:50:12.264 INFO  ProgressMeter -       chr11:23124084              4.5               1577000         346792.8
+05:50:22.324 INFO  ProgressMeter -       chr11:78268368              4.7               1625000         344641.1
+05:50:32.369 INFO  ProgressMeter -      chr11:109724918              4.9               1655000         338966.9
+05:50:42.391 INFO  ProgressMeter -        chr12:7864882              5.0               1685000         333696.4
+05:50:52.453 INFO  ProgressMeter -       chr12:24464323              5.2               1703000         326419.3
+05:51:02.534 INFO  ProgressMeter -       chr12:69931661              5.4               1741000         323292.5
+05:51:15.730 INFO  ProgressMeter -       chr12:71056484              5.6               1742000         310784.7
+05:51:25.826 INFO  ProgressMeter -       chr13:30104028              5.8               1812000         313851.4
+05:51:35.958 INFO  ProgressMeter -      chr13:107890132              5.9               1886000         317385.5
+05:51:46.027 INFO  ProgressMeter -       chr14:86850866              6.1               1952000         319470.2
+05:51:56.118 INFO  ProgressMeter -       chr15:82334673              6.3               2027000         322858.1
+05:52:06.196 INFO  ProgressMeter -       chr15:98037640              6.4               2041000         316617.4
+05:52:16.272 INFO  ProgressMeter -       chr16:34175400              6.6               2077000         314022.1
+05:52:31.127 INFO  ProgressMeter -       chr16:35872124              6.9               2078000         302836.7
+05:52:41.291 INFO  ProgressMeter -       chr17:27742074              7.0               2146000         305212.5
+05:52:51.326 INFO  ProgressMeter -       chr18:10612990              7.2               2199000         305483.1
+05:53:01.486 INFO  ProgressMeter -        chr19:9699362              7.4               2269000         307963.8
+05:53:11.487 INFO  ProgressMeter -       chr19:57055850              7.5               2310000         306592.4
+05:53:21.577 INFO  ProgressMeter -       chr21:14860536              7.7               2388000         310024.5
+05:53:31.687 INFO  ProgressMeter -       chr21:29492828              7.9               2404000         305421.1
+05:53:40.212 INFO  ProgressMeter -       chr22:50149702              8.0               2460691         307079.7
+05:53:40.212 INFO  ProgressMeter - Traversal complete. Processed 2460691 total variants in 8.0 minutes.
+05:53:40.265 INFO  VariantDataManager - QD: 	 mean = 25.62	 standard deviation = 6.90
+05:53:40.332 INFO  VariantDataManager - DP: 	 mean = 4.13	 standard deviation = 1.77
+05:53:40.422 INFO  VariantDataManager - FS: 	 mean = 0.34	 standard deviation = 1.32
+05:53:40.510 INFO  VariantDataManager - SOR: 	 mean = 1.35	 standard deviation = 0.78
+05:53:40.600 INFO  VariantDataManager - ReadPosRankSum: 	 mean = 0.03	 standard deviation = 0.88
+05:53:40.716 INFO  VariantDataManager - MQRankSum: 	 mean = -0.01	 standard deviation = 0.17
+05:53:41.067 INFO  VariantDataManager - Annotation order is: [QD, DP, SOR, MQRankSum, FS, ReadPosRankSum]
+05:53:41.098 INFO  VariantDataManager - Training with 200970 variants after standard deviation thresholding.
+05:53:41.224 INFO  GaussianMixtureModel - Initializing model with 100 k-means iterations...
+05:53:51.282 INFO  VariantRecalibratorEngine - Finished iteration 0.
+05:53:56.885 INFO  VariantRecalibratorEngine - Finished iteration 5. 	Current change in mixture coefficients = 0.25799
+05:53:59.240 INFO  VariantRecalibratorEngine - Finished iteration 10. 	Current change in mixture coefficients = 0.00296
+05:54:03.647 INFO  VariantRecalibratorEngine - Convergence after 11 iterations!
+05:54:04.085 INFO  VariantRecalibratorEngine - Evaluating full set of 338512 variants...
+05:54:11.583 INFO  VariantDataManager - Selected worst 8215 scoring variants --> variants with LOD <= -5.0000.
+05:54:20.419 INFO  GaussianMixtureModel - Initializing model with 100 k-means iterations...
+05:54:20.548 INFO  VariantRecalibratorEngine - Finished iteration 0.
+05:54:20.596 INFO  VariantRecalibratorEngine - Finished iteration 5. 	Current change in mixture coefficients = 0.02773
+05:54:20.642 INFO  VariantRecalibratorEngine - Finished iteration 10. 	Current change in mixture coefficients = 0.00698
+05:54:20.688 INFO  VariantRecalibratorEngine - Finished iteration 15. 	Current change in mixture coefficients = 0.02582
+05:54:20.725 INFO  VariantRecalibratorEngine - Convergence after 19 iterations!
+05:54:20.751 INFO  VariantRecalibratorEngine - Evaluating full set of 338512 variants...
+05:54:26.023 INFO  TrancheManager - Finding 4 tranches for 338512 variants
+05:54:27.712 INFO  TrancheManager -   TruthSensitivityTranche threshold 100.00 => selection metric threshold 0.000
+05:54:27.815 INFO  TrancheManager -   Found tranche for 100.000: 0.000 threshold starting with variant 0; running score is 0.000 
+05:54:27.815 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=100.00 minVQSLod=-474157.8657 known=(312871 @ 0.0000) novel=(25641 @ 0.0000) truthSites(201167 accessible, 201167 called), name=anonymous]
+05:54:27.816 INFO  TrancheManager -   TruthSensitivityTranche threshold 99.90 => selection metric threshold 0.001
+05:54:27.918 INFO  TrancheManager -   Found tranche for 99.900: 0.001 threshold starting with variant 2164; running score is 0.001 
+05:54:27.918 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=99.90 minVQSLod=-8.5058 known=(312172 @ 0.0000) novel=(24176 @ 0.0000) truthSites(201167 accessible, 200965 called), name=anonymous]
+05:54:27.918 INFO  TrancheManager -   TruthSensitivityTranche threshold 99.00 => selection metric threshold 0.010
+05:54:27.997 INFO  TrancheManager -   Found tranche for 99.000: 0.010 threshold starting with variant 9347; running score is 0.010 
+05:54:27.997 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=99.00 minVQSLod=-3.0016 known=(306363 @ 0.0000) novel=(22802 @ 0.0000) truthSites(201167 accessible, 199155 called), name=anonymous]
+05:54:27.997 INFO  TrancheManager -   TruthSensitivityTranche threshold 90.00 => selection metric threshold 0.100
+05:54:28.077 INFO  TrancheManager -   Found tranche for 90.000: 0.100 threshold starting with variant 57943; running score is 0.100 
+05:54:28.078 INFO  TrancheManager -   TruthSensitivityTranche is TruthSensitivityTranche targetTruthSensitivity=90.00 minVQSLod=3.3954 known=(264612 @ 0.0000) novel=(15957 @ 0.0000) truthSites(201167 accessible, 181050 called), name=anonymous]
+05:54:28.080 INFO  VariantRecalibrator - Writing out recalibration table...
+05:54:31.390 INFO  VariantRecalibrator - Writing out visualization Rscript file...
+05:54:37.276 INFO  VariantRecalibrator - Building QD x DP plot...
+05:54:43.116 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:43.420 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:43.717 INFO  VariantRecalibrator - Building QD x SOR plot...
+05:54:43.722 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:43.952 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:44.149 INFO  VariantRecalibrator - Building QD x MQRankSum plot...
+05:54:44.151 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:44.376 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:44.622 INFO  VariantRecalibrator - Building QD x FS plot...
+05:54:44.624 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:54:44.849 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:54:45.042 INFO  VariantRecalibrator - Building QD x ReadPosRankSum plot...
+05:54:45.044 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:54:45.282 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:54:45.470 INFO  VariantRecalibrator - Building DP x SOR plot...
+05:54:45.472 INFO  VariantRecalibratorEngine - Evaluating full set of 3721 variants...
+05:54:45.717 INFO  VariantRecalibratorEngine - Evaluating full set of 3721 variants...
+05:54:45.910 INFO  VariantRecalibrator - Building DP x MQRankSum plot...
+05:54:45.911 INFO  VariantRecalibratorEngine - Evaluating full set of 3721 variants...
+05:54:46.148 INFO  VariantRecalibratorEngine - Evaluating full set of 3721 variants...
+05:54:46.337 INFO  VariantRecalibrator - Building DP x FS plot...
+05:54:46.339 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:46.565 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:46.746 INFO  VariantRecalibrator - Building DP x ReadPosRankSum plot...
+05:54:46.747 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:46.976 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:47.150 INFO  VariantRecalibrator - Building SOR x MQRankSum plot...
+05:54:47.151 INFO  VariantRecalibratorEngine - Evaluating full set of 3721 variants...
+05:54:47.381 INFO  VariantRecalibratorEngine - Evaluating full set of 3721 variants...
+05:54:47.557 INFO  VariantRecalibrator - Building SOR x FS plot...
+05:54:47.558 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:47.775 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:47.951 INFO  VariantRecalibrator - Building SOR x ReadPosRankSum plot...
+05:54:47.952 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:48.181 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:48.356 INFO  VariantRecalibrator - Building MQRankSum x FS plot...
+05:54:48.357 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:48.576 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:48.751 INFO  VariantRecalibrator - Building MQRankSum x ReadPosRankSum plot...
+05:54:48.752 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:48.973 INFO  VariantRecalibratorEngine - Evaluating full set of 3660 variants...
+05:54:49.148 INFO  VariantRecalibrator - Building FS x ReadPosRankSum plot...
+05:54:49.149 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:54:49.363 INFO  VariantRecalibratorEngine - Evaluating full set of 3600 variants...
+05:55:25.450 INFO  VariantRecalibrator - Executing: Rscript /data3/andrew/genomes/analysis/APH_subsampled/vqsr_indel_plots.R
+05:56:15.683 INFO  VariantRecalibrator - Shutting down engine
+[May 2, 2024 at 5:56:15 AM UTC] org.broadinstitute.hellbender.tools.walkers.vqsr.VariantRecalibrator done. Elapsed time: 11.12 minutes.
+Runtime.totalMemory()=1123024896
+org.broadinstitute.hellbender.utils.R.RScriptExecutorException: 
+Rscript exited with 1
+Command Line: Rscript -e tempLibDir = '/tmp/Rlib.7951850113721688732';source('/data3/andrew/genomes/analysis/APH_subsampled/vqsr_indel_plots.R');
+Stdout: 
+Stderr: During startup - Warning messages:
+1: Setting LC_TIME failed, using "C" 
+2: Setting LC_MONETARY failed, using "C" 
+3: Setting LC_PAPER failed, using "C" 
+4: Setting LC_MEASUREMENT failed, using "C" 
+Error in library(ggplot2) : there is no package called ?ggplot2?
+Calls: source -> withVisible -> eval -> eval -> library
+Execution halted
+
+	at org.broadinstitute.hellbender.utils.R.RScriptExecutor.getScriptException(RScriptExecutor.java:79)
+	at org.broadinstitute.hellbender.utils.R.RScriptExecutor.getScriptException(RScriptExecutor.java:18)
+	at org.broadinstitute.hellbender.utils.runtime.ScriptExecutor.executeCuratedArgs(ScriptExecutor.java:112)
+	at org.broadinstitute.hellbender.utils.R.RScriptExecutor.exec(RScriptExecutor.java:125)
+	at org.broadinstitute.hellbender.tools.walkers.vqsr.VariantRecalibrator.createVisualizationScript(VariantRecalibrator.java:1146)
+	at org.broadinstitute.hellbender.tools.walkers.vqsr.VariantRecalibrator.onTraversalSuccess(VariantRecalibrator.java:706)
+	at org.broadinstitute.hellbender.engine.GATKTool.doWork(GATKTool.java:1102)
+	at org.broadinstitute.hellbender.cmdline.CommandLineProgram.runTool(CommandLineProgram.java:149)
+	at org.broadinstitute.hellbender.cmdline.CommandLineProgram.instanceMainPostParseArgs(CommandLineProgram.java:198)
+	at org.broadinstitute.hellbender.cmdline.CommandLineProgram.instanceMain(CommandLineProgram.java:217)
+	at org.broadinstitute.hellbender.Main.runCommandLineProgram(Main.java:166)
+	at org.broadinstitute.hellbender.Main.mainEntry(Main.java:209)
+	at org.broadinstitute.hellbender.Main.main(Main.java:306)
+Stage 7: VariantRecalibrator INDELs
+Using GATK jar /export/approved/gatk-4.5.0.0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4 -jar /export/approved/gatk-4.5.0.0/gatk-package-4.5.0.0-local.jar ApplyVQSR -R /export/home/andrew/genome/hg38_v0_20231023/Homo_sapiens_assembly38.fasta -V genotype.raw.vcf.gz -O APH_subsampled.recalibrated_snps_raw_indels.vcf.gz --truth-sensitivity-filter-level 99.7 --tranches-file recalibrate_SNP.tranches --recal-file recalibrate_SNP.recal --create-output-variant-index true -mode SNP
+05:56:31.429 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/export/approved/gatk-4.5.0.0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+05:56:36.373 INFO  ApplyVQSR - ------------------------------------------------------------
+05:56:36.377 INFO  ApplyVQSR - The Genome Analysis Toolkit (GATK) v4.5.0.0
+05:56:36.377 INFO  ApplyVQSR - For support and documentation go to https://software.broadinstitute.org/gatk/
+05:56:36.378 INFO  ApplyVQSR - Executing as andrew@compute-0-4 on Linux v5.15.0-102-generic amd64
+05:56:36.378 INFO  ApplyVQSR - Java runtime: OpenJDK 64-Bit Server VM v19.0.2+7-Ubuntu-0ubuntu322.04
+05:56:36.379 INFO  ApplyVQSR - Start Date/Time: May 2, 2024 at 5:56:31 AM UTC
+05:56:36.379 INFO  ApplyVQSR - ------------------------------------------------------------
+05:56:36.379 INFO  ApplyVQSR - ------------------------------------------------------------
+05:56:36.380 INFO  ApplyVQSR - HTSJDK Version: 4.1.0
+05:56:36.380 INFO  ApplyVQSR - Picard Version: 3.1.1
+05:56:36.380 INFO  ApplyVQSR - Built for Spark Version: 3.5.0
+05:56:36.380 INFO  ApplyVQSR - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+05:56:36.380 INFO  ApplyVQSR - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+05:56:36.381 INFO  ApplyVQSR - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+05:56:36.381 INFO  ApplyVQSR - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+05:56:36.381 INFO  ApplyVQSR - Deflater: IntelDeflater
+05:56:36.381 INFO  ApplyVQSR - Inflater: IntelInflater
+05:56:36.381 INFO  ApplyVQSR - GCS max retries/reopens: 20
+05:56:36.382 INFO  ApplyVQSR - Requester pays: disabled
+05:56:36.382 INFO  ApplyVQSR - Initializing engine
+05:56:37.662 INFO  FeatureManager - Using codec VCFCodec to read file file:///data3/andrew/genomes/analysis/APH_subsampled/recalibrate_SNP.recal
+05:56:46.430 INFO  FeatureManager - Using codec VCFCodec to read file file:///data3/andrew/genomes/analysis/APH_subsampled/genotype.raw.vcf.gz
+05:56:46.938 INFO  ApplyVQSR - Done initializing engine
+05:56:54.579 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=90.00 minVQSLod=6.3985 known=(1519752 @ 2.1047) novel=(12115 @ 1.7563) truthSites(1033004 accessible, 929703 called), name=VQSRTrancheSNP0.00to90.00]
+05:56:54.580 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=90.00 minVQSLod=6.3985 known=(1519752 @ 2.1047) novel=(12115 @ 1.7563) truthSites(1033004 accessible, 929703 called), name=VQSRTrancheSNP90.00to90.00]
+05:56:54.580 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=97.00 minVQSLod=5.3785 known=(1821727 @ 2.0956) novel=(19453 @ 1.7629) truthSites(1033004 accessible, 1002013 called), name=VQSRTrancheSNP90.00to97.00]
+05:56:54.581 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=98.00 minVQSLod=4.6669 known=(1856004 @ 2.0941) novel=(31316 @ 1.9229) truthSites(1033004 accessible, 1012343 called), name=VQSRTrancheSNP97.00to98.00]
+05:56:54.581 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=99.00 minVQSLod=3.4143 known=(1880463 @ 2.0932) novel=(34523 @ 1.9068) truthSites(1033004 accessible, 1022673 called), name=VQSRTrancheSNP98.00to99.00]
+05:56:54.582 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=99.00 minVQSLod=3.4143 known=(1880463 @ 2.0932) novel=(34523 @ 1.9068) truthSites(1033004 accessible, 1022673 called), name=VQSRTrancheSNP99.00to99.00]
+05:56:54.582 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=99.30 minVQSLod=2.3935 known=(1891122 @ 2.0931) novel=(35342 @ 1.9096) truthSites(1033004 accessible, 1025772 called), name=VQSRTrancheSNP99.00to99.30]
+05:56:54.583 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=99.40 minVQSLod=2.0474 known=(1894826 @ 2.0930) novel=(35694 @ 1.9176) truthSites(1033004 accessible, 1026805 called), name=VQSRTrancheSNP99.30to99.40]
+05:56:54.583 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=99.50 minVQSLod=1.7513 known=(1899633 @ 2.0932) novel=(35929 @ 1.9233) truthSites(1033004 accessible, 1027838 called), name=VQSRTrancheSNP99.40to99.50]
+05:56:54.584 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=99.60 minVQSLod=1.3279 known=(1909109 @ 2.0927) novel=(36218 @ 1.9254) truthSites(1033004 accessible, 1028871 called), name=VQSRTrancheSNP99.50to99.60]
+05:56:54.584 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=99.80 minVQSLod=-0.7799 known=(1951727 @ 2.0881) novel=(41151 @ 1.8479) truthSites(1033004 accessible, 1030937 called), name=VQSRTrancheSNP99.60to99.80]
+05:56:54.585 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=99.90 minVQSLod=-2.7313 known=(1975583 @ 2.0846) novel=(49169 @ 1.7285) truthSites(1033004 accessible, 1031970 called), name=VQSRTrancheSNP99.80to99.90]
+05:56:54.585 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=99.90 minVQSLod=-2.7313 known=(1975583 @ 2.0846) novel=(49169 @ 1.7285) truthSites(1033004 accessible, 1031970 called), name=VQSRTrancheSNP99.90to99.90]
+05:56:54.586 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=99.95 minVQSLod=-3.3657 known=(1982092 @ 2.0839) novel=(52210 @ 1.6960) truthSites(1033004 accessible, 1032487 called), name=VQSRTrancheSNP99.90to99.95]
+05:56:54.586 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=100.00 minVQSLod=-1024926.4653 known=(2023163 @ 2.0748) novel=(99016 @ 1.4392) truthSites(1033004 accessible, 1033004 called), name=VQSRTrancheSNP99.95to100.00]
+05:56:54.587 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=100.00 minVQSLod=-1024926.4653 known=(2023163 @ 2.0748) novel=(99016 @ 1.4392) truthSites(1033004 accessible, 1033004 called), name=VQSRTrancheSNP100.00to100.00]
+05:56:54.662 INFO  ApplyVQSR - Keeping all variants in tranche TruthSensitivityTranche targetTruthSensitivity=99.80 minVQSLod=-0.7799 known=(1951727 @ 2.0881) novel=(41151 @ 1.8479) truthSites(1033004 accessible, 1030937 called), name=VQSRTrancheSNP99.60to99.80]
+05:56:58.013 INFO  ProgressMeter - Starting traversal
+05:57:07.110 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+05:58:44.921 INFO  ProgressMeter -       chr1:215902825              1.6                161000          98765.9
+05:58:56.358 INFO  ProgressMeter -       chr1:220443617              1.8                165000          90619.5
+05:59:14.647 INFO  ProgressMeter -       chr1:225041387              2.1                169000          79506.3
+05:59:29.786 INFO  ProgressMeter -         chr2:5039951              2.4                197000          82845.0
+05:59:41.266 INFO  ProgressMeter -        chr2:52704591              2.6                241000          93801.1
+05:59:51.281 INFO  ProgressMeter -        chr4:29969807              2.7                594000         217090.7
+06:01:39.767 INFO  ProgressMeter -       chr4:183171802              4.5                734000         161521.6
+06:02:17.900 INFO  ProgressMeter -       chr5:155387380              5.2                873000         168538.8
+06:02:46.885 INFO  ProgressMeter -        chr6:54764791              5.7                952000         168111.3
+06:03:38.460 INFO  ProgressMeter -        chr7:54496771              6.5               1100000         168647.0
+06:04:30.515 INFO  ProgressMeter -        chr8:41374186              7.4               1237000         167386.9
+06:04:40.524 INFO  ProgressMeter -       chr11:58847091              7.6               1610000         213050.3
+06:04:50.542 INFO  ProgressMeter -       chr12:77870290              7.7               1748000         226311.5
+06:08:39.516 INFO  ProgressMeter -       chr14:51947350             11.5               1924000         166723.0
+06:08:51.779 INFO  ProgressMeter -       chr14:56305917             11.7               1928000         164162.4
+06:09:01.792 INFO  ProgressMeter -       chr19:43994438             11.9               2297000         192841.3
+06:09:09.770 INFO  ProgressMeter -       chr22:50149702             12.0               2460691         204302.8
+06:09:09.770 INFO  ProgressMeter - Traversal complete. Processed 2460691 total variants in 12.0 minutes.
+06:11:16.889 INFO  ApplyVQSR - Shutting down engine
+[May 2, 2024 at 6:11:16 AM UTC] org.broadinstitute.hellbender.tools.walkers.vqsr.ApplyVQSR done. Elapsed time: 14.76 minutes.
+Runtime.totalMemory()=2390753280
+Stage 7: ApplyVQSR SNPs
+Using GATK jar /export/approved/gatk-4.5.0.0/gatk-package-4.5.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4 -jar /export/approved/gatk-4.5.0.0/gatk-package-4.5.0.0-local.jar ApplyVQSR -R /export/home/andrew/genome/hg38_v0_20231023/Homo_sapiens_assembly38.fasta -V APH_subsampled.recalibrated_snps_raw_indels.vcf.gz -O APH_subsampled.recalibrated_snps_recalibrated_indels.vcf.gz --truth-sensitivity-filter-level 99.7 --tranches-file recalibrate_INDEL.tranches --recal-file recalibrate_INDEL.recal -mode INDEL
+06:11:33.667 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/export/approved/gatk-4.5.0.0/gatk-package-4.5.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+06:11:34.335 INFO  ApplyVQSR - ------------------------------------------------------------
+06:11:41.573 INFO  ApplyVQSR - The Genome Analysis Toolkit (GATK) v4.5.0.0
+06:11:41.573 INFO  ApplyVQSR - For support and documentation go to https://software.broadinstitute.org/gatk/
+06:11:41.575 INFO  ApplyVQSR - Executing as andrew@compute-0-4 on Linux v5.15.0-102-generic amd64
+06:11:41.575 INFO  ApplyVQSR - Java runtime: OpenJDK 64-Bit Server VM v19.0.2+7-Ubuntu-0ubuntu322.04
+06:11:41.575 INFO  ApplyVQSR - Start Date/Time: May 2, 2024 at 6:11:33 AM UTC
+06:11:41.576 INFO  ApplyVQSR - ------------------------------------------------------------
+06:11:41.576 INFO  ApplyVQSR - ------------------------------------------------------------
+06:11:41.577 INFO  ApplyVQSR - HTSJDK Version: 4.1.0
+06:11:41.577 INFO  ApplyVQSR - Picard Version: 3.1.1
+06:11:41.577 INFO  ApplyVQSR - Built for Spark Version: 3.5.0
+06:11:41.578 INFO  ApplyVQSR - HTSJDK Defaults.COMPRESSION_LEVEL : 2
+06:11:41.578 INFO  ApplyVQSR - HTSJDK Defaults.USE_ASYNC_IO_READ_FOR_SAMTOOLS : false
+06:11:41.578 INFO  ApplyVQSR - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_SAMTOOLS : true
+06:11:41.579 INFO  ApplyVQSR - HTSJDK Defaults.USE_ASYNC_IO_WRITE_FOR_TRIBBLE : false
+06:11:41.579 INFO  ApplyVQSR - Deflater: IntelDeflater
+06:11:41.579 INFO  ApplyVQSR - Inflater: IntelInflater
+06:11:41.579 INFO  ApplyVQSR - GCS max retries/reopens: 20
+06:11:41.580 INFO  ApplyVQSR - Requester pays: disabled
+06:11:41.580 INFO  ApplyVQSR - Initializing engine
+06:11:43.041 INFO  FeatureManager - Using codec VCFCodec to read file file:///data3/andrew/genomes/analysis/APH_subsampled/recalibrate_INDEL.recal
+06:11:45.448 INFO  FeatureManager - Using codec VCFCodec to read file file:///data3/andrew/genomes/analysis/APH_subsampled/APH_subsampled.recalibrated_snps_raw_indels.vcf.gz
+06:11:57.936 INFO  ApplyVQSR - Done initializing engine
+06:11:57.941 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=90.00 minVQSLod=3.3954 known=(264612 @ 0.0000) novel=(15957 @ 0.0000) truthSites(201167 accessible, 181050 called), name=VQSRTrancheINDEL0.00to90.00]
+06:11:57.941 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=99.00 minVQSLod=-3.0016 known=(306363 @ 0.0000) novel=(22802 @ 0.0000) truthSites(201167 accessible, 199155 called), name=VQSRTrancheINDEL90.00to99.00]
+06:11:57.942 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=99.90 minVQSLod=-8.5058 known=(312172 @ 0.0000) novel=(24176 @ 0.0000) truthSites(201167 accessible, 200965 called), name=VQSRTrancheINDEL99.00to99.90]
+06:11:57.942 INFO  ApplyVQSR - Read tranche TruthSensitivityTranche targetTruthSensitivity=100.00 minVQSLod=-474157.8657 known=(312871 @ 0.0000) novel=(25641 @ 0.0000) truthSites(201167 accessible, 201167 called), name=VQSRTrancheINDEL99.90to100.00]
+06:11:57.998 INFO  ApplyVQSR - Keeping all variants in tranche TruthSensitivityTranche targetTruthSensitivity=99.90 minVQSLod=-8.5058 known=(312172 @ 0.0000) novel=(24176 @ 0.0000) truthSites(201167 accessible, 200965 called), name=VQSRTrancheINDEL99.00to99.90]
+06:11:59.237 INFO  ProgressMeter - Starting traversal
+06:11:59.238 INFO  ProgressMeter -        Current Locus  Elapsed Minutes    Variants Processed  Variants/Minute
+06:12:09.652 INFO  ProgressMeter -         chr1:7963528              0.2                  7000          40345.8
+06:12:29.385 INFO  ProgressMeter -        chr1:30325589              0.5                 26000          51746.4
+06:12:49.100 INFO  ProgressMeter -        chr1:95276431              0.8                 78000          93860.9
+06:12:59.102 INFO  ProgressMeter -        chr3:79287953              1.0                465000         466056.4
+06:17:27.786 INFO  ProgressMeter -        chr5:37393315              5.5                784000         143175.4
+06:17:37.804 INFO  ProgressMeter -        chr5:50023160              5.6                793000         140533.9
+06:17:56.548 INFO  ProgressMeter -        chr5:85986580              6.0                821000         137863.5
+06:18:27.747 INFO  ProgressMeter -        chr6:20182438              6.5                915000         141309.5
+06:18:58.766 INFO  ProgressMeter -       chr6:122571047              7.0               1009000         144305.0
+06:19:30.655 INFO  ProgressMeter -        chr7:36017730              7.5               1083000         143946.7
+06:19:44.520 INFO  ProgressMeter -        chr7:72298876              7.8               1116000         143912.7
+06:20:22.621 INFO  ProgressMeter -        chr8:21007652              8.4               1220000         145416.4
+06:20:33.267 INFO  ProgressMeter -        chr8:47771804              8.6               1240000         144738.9
+06:20:46.033 INFO  ProgressMeter -        chr8:53430912              8.8               1245000         141800.9
+06:21:18.786 INFO  ProgressMeter -        chr9:18000368              9.3               1335000         143151.5
+06:21:35.488 INFO  ProgressMeter -        chr9:88699792              9.6               1381000         143791.8
+06:21:45.497 INFO  ProgressMeter -        chr12:3782433              9.8               1681000         172040.0
+06:21:55.583 INFO  ProgressMeter -       chr15:54447133              9.9               2002000         201427.0
+06:24:07.290 INFO  ProgressMeter -       chr18:50907740             12.1               2228000         183613.3
+06:24:13.781 INFO  ProgressMeter -       chr22:50149702             12.2               2460691         200998.0
+06:24:15.805 INFO  ProgressMeter - Traversal complete. Processed 2460691 total variants in 12.2 minutes.
+06:25:50.380 INFO  ApplyVQSR - Shutting down engine
+[May 2, 2024 at 6:25:50 AM UTC] org.broadinstitute.hellbender.tools.walkers.vqsr.ApplyVQSR done. Elapsed time: 14.28 minutes.
+Runtime.totalMemory()=1162346496
+Stage 7: Finished recalibrating
