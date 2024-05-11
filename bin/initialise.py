@@ -17,9 +17,7 @@ from libmanager import libmanager, VERSION, logger
 log = logger.logger()
 
 script_path = os.path.dirname(os.path.realpath(__file__))
-home_path = os.path.expanduser('~/GC/') # Production
-if 'demo' in VERSION:
-    home_path = os.path.join(script_path, '../', 'GC_demo') # Demo data
+home_path = os.path.expanduser('~/GCMData/') # Production
 
 log.info(f'GCManager {VERSION} initialise')
 log.info('Copyright 2024 Helixiome, all rights reserved')
