@@ -1,0 +1,350 @@
+Ability to concentrate
+Abortion, spontaneous
+Acquired immunodeficiency syndrome
+Acquired long qt syndrome (alqts)
+Acute coronary syndrome
+Adenocarcinoma
+Adrenocortical carcinoma
+Adverse events
+Agitation
+Agranulocytosis
+Alcohol-related disorders
+Alcoholism
+Alopecia
+Alzheimer disease
+Amyotrophic lateral sclerosis
+Anaphylactoid reaction
+Anemia
+Anemia, hemolytic
+Anemia, sickle cell
+Angina pectoris
+Angioedema
+Anxiety disorders
+Apnea
+Arrhythmias, cardiac
+Arteriosclerosis
+Arthralgia
+Arthritis
+Arthritis, juvenile rheumatoid
+Arthritis, psoriatic
+Arthritis, rheumatoid
+Aspirin-induced asthma
+Asthenia
+Asthma
+Atrial fibrillation
+Attention deficit disorder with hyperactivity
+Autism spectrum disorder
+Autistic disorder
+Beta-thalassemia
+Bipolar disorder
+Bone density
+Bone diseases
+Bradycardia
+Brain neoplasms
+Breast neoplasms
+Burkitt lymphoma
+Carcinoma, basal cell
+Carcinoma, hepatocellular
+Carcinoma, non-small-cell lung
+Carcinoma, renal cell
+Carcinoma, squamous cell
+Cardiomyopathies
+Cardiomyopathy, dilated
+Cardiotoxicity
+Cardiovascular diseases
+Central nervous system infections
+Cessation
+Choroidal neovascularization
+Chronic lung allograft dysfunction
+Cluster headache
+Cocaine-related disorders
+Cognitive dysfunction
+Colitis, ulcerative
+Colonic neoplasms
+Colorectal neoplasms
+Confusion
+Congenital abnormalities
+Constipation
+Constriction, pathologic
+Coronary artery disease
+Coronary disease
+Cough
+Craniofacial abnormalities
+Crohn disease
+Cystic fibrosis
+Cystitis
+Deafness
+Death
+Delirium
+Dementia
+Depression
+Depressive disorder
+Depressive disorder, major
+Dermatitis
+Diabetes mellitus
+Diabetes mellitus, type 2
+Diarrhea
+Discontinuation
+Dizziness
+Dose reduction
+Drug hypersensitivity
+Drug interaction with drug
+Drug reaction with eosinophilia and systemic symptoms
+Drug resistance
+Drug toxicity
+Drug-induced liver injury
+Dry mouth
+Dyspepsia
+Dysphoria
+Dystonia
+Edema
+Eosinophilic esophagitis
+Epidermal necrolysis, toxic
+Epilepsy
+Erectile dysfunction
+Erythema
+Erythema exudativum multiforme
+Esophageal neoplasms
+Esophagitis
+Essential hypertension
+Exanthema
+Familial hypercholesterolemia
+Fatigue
+Febrile neutropenia
+Fractures, bone
+Gastroesophageal reflux
+Gastrointestinal neoplasms
+Gastrointestinal stromal tumors
+Gastrointestinal toxicity
+Glaucoma, open-angle
+Glioma
+Glomerular disease
+Glomerulonephritis, iga
+Gout
+Graft vs host disease
+Graves disease
+Hallucinations
+Hand-foot syndrome
+Head and neck neoplasms
+Headache
+Headache disorders
+Heart arrest
+Heart diseases
+Heart failure
+Heart transplantation
+Heart valve replacement
+Helicobacter infections
+Hematologic diseases
+Hematologic neoplasms
+Hematopoietic stem cell transplantation
+Hematotoxicity
+Hemolysis
+Hemopoietic stem cell transplant
+Hemorrhage
+Heparin-induced thrombocytopenia
+Hepatic veno-occlusive disease
+Hepatitis b, chronic
+Hepatitis c
+Hepatitis c, chronic
+Hepatitis, toxic
+Heroin dependence
+Hiv infections
+Hyperalgesia
+Hyperbilirubinemia
+Hypercholesterolemia
+Hyperglycemia
+Hyperlipidemias
+Hyperlipoproteinemia type ii
+Hypernatremia
+Hyperprolactinemia
+Hypersensitivity
+Hypertension
+Hypertensive nephrosclerosis
+Hypertriglyceridemia
+Hypertrophy, left ventricular
+Hypoglycemia
+Hypotension
+Infection
+Infertility, female
+Inflammation
+Inflammatory bowel diseases
+Insomnia
+Irritable bowel syndrome
+Ischemic attack, transient
+Kidney diseases
+Kidney failure
+Kidney neoplasms
+Kidney transplantation
+Laparoscopic sleeve gastrectomy
+Lead poisoning, nervous system, childhood
+Leprosy
+Leukemia
+Leukemia, b-cell, acute
+Leukemia, lymphocytic, chronic, b-cell
+Leukemia, myelogenous, chronic, bcr-abl positive
+Leukemia, myeloid
+Leukemia, myeloid, acute
+Leukopenia
+Lewy body disease
+Liver cirrhosis
+Liver failure, acute
+Liver neoplasms
+Liver transplantation
+Long qt syndrome
+Low back pain
+Lung neoplasms
+Lung transplantation
+Lupus erythematosus
+Lupus erythematosus, systemic
+Lupus nephritis
+Lymphoma
+Lymphoma, b-cell
+Lymphoma, large b-cell, diffuse
+Lymphoma, non-hodgkin
+Lymphoma, t-cell
+Lymphopenia
+Macular degeneration
+Maculopapular exanthema
+Major adverse cardiac events (mace)
+Malaria
+Malignant hyperthermia
+Medulloblastoma
+Memory disorders
+Menopause
+Mental disorders
+Mesothelioma
+Metabolic syndrome
+Methamphetamine dependence
+Methemoglobinemia
+Migraine nos
+Migraine with aura
+Migraine without aura
+Mood disorders
+Mucositis
+Multiple myeloma
+Multiple sclerosis
+Muscle rigidity
+Muscular diseases
+Myalgia unspecified
+Myasthenia gravis
+Mycoses
+Myeloproliferative disorders
+Myelosuppression
+Myocardial infarction
+Myocardial ischemia
+Myotonia
+Narcolepsy
+Nasopharyngeal neoplasms
+Nausea
+Neonatal abstinence syndrome
+Neoplasm metastasis
+Neoplasm, residual
+Neoplasms
+Nephrolithiasis
+Nephrosclerosis
+Nephrotic syndrome
+Nephrotoxicity
+Neuroendocrine tumors
+Neuromyelitis optica
+Neuropathic pain
+Neurotoxicity syndromes
+Neutropenia
+Obesity
+Obsessive-compulsive disorder
+Opioid-related disorders
+Organ transplantation
+Osteitis deformans
+Osteonecrosis
+Osteonecrosis of jaw caused by drug
+Osteoporosis
+Osteoporosis, postmenopausal
+Osteosarcoma
+Ototoxicity
+Ovarian hyperstimulation syndrome
+Ovarian neoplasms
+Over-anticoagulation
+Overall survival
+Overdose
+Pain
+Pain, postoperative
+Pancreatic neoplasms
+Pancreatitis
+Pancytopenia
+Panic disorder
+Parkinson disease
+Paroxysmal nocturnal hemoglobinuria
+Peptic ulcer
+Peripheral nervous system diseases
+Pneumonitis
+Polycystic ovary syndrome
+Postanesthesia apnea
+Postoperative nausea and vomiting
+Precursor cell lymphoblastic leukemia-lymphoma
+Pregnancy
+Premature birth
+Primary central nervous system lymphoma
+Progression-free survival
+Prostatic neoplasms
+Protein deficiency
+Proteinuria
+Pruritus
+Psoriasis
+Psychomotor agitation
+Psychotic disorders
+Pulmonary disease, chronic obstructive
+Pulmonary fibrosis
+Rectal neoplasms
+Recurrence
+Respiratory insufficiency
+Retinal diseases
+Rhabdomyolysis
+Sarcoma
+Schizoaffective disorder
+Schizophrenia
+Sedation
+Seizures
+Severe cutaneous adverse reactions
+Sexual dysfunctions, psychological
+Shortened qt interval
+Sleep apnea syndromes
+Sleep disorders
+Somnolence
+Spondylitis, ankylosing
+Statin-related myopathy
+Stevens-johnson syndrome
+Stomach neoplasms
+Stroke
+Substance withdrawal syndrome
+Substance-related disorders
+Suicidal ideation
+Suicide
+Sustained virological response (svr)
+Tachycardia
+Tardive dyskinesia
+Testicular neoplasms
+Thalassemia
+Thrombocytopenia
+Thromboembolism
+Thrombosis
+Time above therapeutic range
+Time in therapeutic range
+Time to therapeutic inr
+Tobacco use disorder
+Tonsillectomy
+Toxic liver disease
+Transplant rejection
+Transplantation
+Tremor
+Tuberculosis
+Turner syndrome
+Ulcer
+Urinary bladder neoplasms
+Urinary retention
+Urticaria
+Uterine cervical neoplasms
+Vascular diseases
+Vasculitis
+Venous thromboembolism
+Venous thrombosis
+Vomiting
+Weight gain

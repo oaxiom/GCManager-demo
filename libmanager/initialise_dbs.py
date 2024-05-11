@@ -23,15 +23,17 @@ def init_dbs(home_path, script_path, log):
     disease_db = sqlite3.connect(os.path.join(home_path, "dbs/", "disease_codes.db"))
     disease_dbc = disease_db.cursor()
     disease_dbc.execute('CREATE TABLE diseasecodes (dis_code TEXT, desc_en TEXT, desc_cn TEXT)')
+
     # Load from spreadsheet
-    oh = open(os.path.join(script_path, 'disDB', 'disease_targets.csv'), 'rt')
-    for line in oh:
-        if line.startswith('\ufeffcode'): # Excel stupidity;
-            continue
-        # TODO: Fix potential bug for comma's in names
-        line = line.strip().split(',') # comma's in names...
-        disease_dbc.execute('INSERT INTO diseasecodes VALUES (?, ?, ?)', line)
-    oh.close()
+    ohEN = open(os.path.join(script_path, 'disDB', 'selectable_conditions_EN.txt'), 'rt')
+    ohCN = open(os.path.join(script_path, 'disDB', 'selectable_conditions_CN.txt'), 'rt')
+    for did, (lineEN, lineCN) in enumerate(zip(ohEN, ohCN)):
+        if not (lineEN and lineCN): continue
+
+        disease_dbc.execute('INSERT INTO diseasecodes VALUES (?, ?, ?)', (f'D{did+1}', lineEN.strip(), lineCN.strip()))
+    ohEN.close()
+    ohCN.close()
+
     disease_db.commit()
     disease_db.close()
 
