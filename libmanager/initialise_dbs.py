@@ -54,6 +54,8 @@ def build_demo_data(man, home_path, log):
 
     [shutil.copy(f, os.path.join(home_path, 'data', 'PID.NA12878/')) for f in glob.glob(os.path.expanduser('~/demo_data/data/PID.NA12878/*.out'))]
     shutil.copy(os.path.expanduser('~/demo_data/PID.NA12878/NA12878.recalibrated_snps_recalibrated_indels.vcf.gz'), os.path.join(home_path, 'data', 'PID.NA12878/'))
+    shutil.copy(os.path.expanduser('~/demo_data/PID.NA12878/NA12878.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.NA12878/'))
+    shutil.copy(os.path.expanduser('~/demo_data/PID.NA12878/NA12878.pharmagkb.final.txt'), os.path.join(home_path, 'data', 'PID.NA12878/'))
 
     # Add fake details of the analysis to the database;
 
