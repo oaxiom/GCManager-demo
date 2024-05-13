@@ -24,6 +24,7 @@ if 'demo' in VERSION:
 log.info(f'GCManager {VERSION} initialise')
 log.info('Copyright 2024 Helixiome, all rights reserved')
 log.info("###### Initialising a clean GC")
+if 'demo' in VERSION: log.info('Initialising DEMO version')
 log.info(f'Home PATH={home_path}')
 
 if 'demo' not in VERSION:

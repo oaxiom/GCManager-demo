@@ -37,7 +37,7 @@ def init_dbs(home_path, script_path, log):
     disease_db.close()
 
 def build_demo_data(man, home_path, log):
-    log.info('Setting up DEMO data')
+    log.info('Moving DEMO data')
 
     # Setup two patients, and copy the data
     man.add_patient('72210953309787', 'SEQ72210953309787') # Complete
@@ -46,13 +46,13 @@ def build_demo_data(man, home_path, log):
     # TODO: Add partially complete one;
 
     # Copy all the progress and logs;
-    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.72210953309787/')) for f in glob.glob(os.path.expanduser('~/demo_data/data/PID.72210953309787/*.out')]
+    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.72210953309787/')) for f in glob.glob(os.path.expanduser('~/demo_data/data/PID.72210953309787/*.out'))]
     shutil.copy(os.path.expanduser('~/demo_data/PID.72210953309787/72210953309787.recalibrated_snps_recalibrated_indels.vcf.gz'), os.path.join(home_path, 'data', 'PID.72210953309787/'))
     shutil.copy(os.path.expanduser('~/demo_data/PID.72210953309787/72210953309787.sorted.dedupe.recal.cram'), os.path.join(home_path, 'data', 'PID.72210953309787/'))
     #[shutil.copy(f, '../GC_demo/data/PID.72210953309787/') for f in glob.glob(os.path.expanduser('~/demo_data/data/PID.72210953309787/*.cram')]
 
-    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.NA12878/')) for f in glob.glob(os.path.expanduser('~/demo_data/data/PID.NA12878/*.out')]
-    shutil.copy(os.path.expanduser('~/demo_data/data/PID.NA12878/NA12878.recalibrated_snps_recalibrated_indels.vcf.gz'), os.path.join(home_path, 'data', 'PID.NA12878/'))
+    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.NA12878/')) for f in glob.glob(os.path.expanduser('~/demo_data/data/PID.NA12878/*.out'))]
+    shutil.copy(os.path.expanduser('~/demo_data/PID.NA12878/NA12878.recalibrated_snps_recalibrated_indels.vcf.gz'), os.path.join(home_path, 'data', 'PID.NA12878/'))
 
     # Add fake details of the analysis to the database;
 
