@@ -9,7 +9,7 @@ tinyglbase
 
 """
 
-import sys, os, csv, copy, pickle, gzip, functools
+import sys, os, csv, copy, pickle, gzip, functools, re
 from operator import itemgetter
 from .progress import progressbar
 from . import logger
@@ -187,6 +187,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         format:dict =None,
         force_tsv:bool = False,
         **kargs):
+
         assert format, 'You must provide a format'
 
         self.log = logger.logger()
@@ -901,15 +902,13 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         (Override)
         give a sensible print out.
         """
-        if len(self.linearData) > config.NUM_ITEMS_TO_PRINT:
+        if len(self.linearData) > 3:
             out = []
             # welcome to perl
-            for index in range(config.NUM_ITEMS_TO_PRINT):
+            for index in range(3):
                 out.append("%s: %s" % (index, ", ".join(["%s: %s" % (key, self.linearData[index][key]) for key in self.linearData[index]])))
-            out = "%s\n... truncated, showing %s/%s" % ("\n".join(out), config.NUM_ITEMS_TO_PRINT, len(self.linearData))
-
-            if config.PRINT_LAST_ITEM:
-                out = "%s\n%s" % (out, "%s: %s" % (len(self.linearData), ", ".join(["%s: %s" % (key, self.linearData[-1][key]) for key in self.linearData[-1]])))
+            out = "%s\n... truncated, showing %s/%s" % ("\n".join(out), 3, len(self.linearData))
+            out = "%s\n%s" % (out, "%s: %s" % (len(self.linearData), ", ".join(["%s: %s" % (key, self.linearData[-1][key]) for key in self.linearData[-1]])))
 
         elif len(self.linearData) == 0:
             out = "This list is empty"
@@ -921,6 +920,34 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             out = "%s\nShowing %s/%s" % ("\n".join(out), len(self.linearData), len(self.linearData))
 
         return out
+
+    def __getitem__(self, index):
+        """
+        (Override)
+        confers a = geneList[0] behaviour
+
+        This is a very slow way to access the data, and may be a little inconsistent in the things
+        it returns.
+
+        NOTE:
+        a = genelist[0] # returns a single dict
+        a = genelist[0:10] # returns a new 10 item normal python list.
+        a = genelist["name"] returns a python list containing a vertical slice of all of the "name" keys
+
+        """
+        newl = False
+        if isinstance(index, int):
+            # this should return a single dictionary.
+            return(self.linearData[index])
+        elif isinstance(index, str):
+            # returns all labels with that item.
+            return(self._findAllLabelsByKey(index))
+        elif isinstance(index, slice):
+            # returns a new genelist corresponding to the slice.
+            newl = self.shallowcopy()
+            newl.linearData = utils.qdeepcopy(self.linearData[index]) # separate the data so it can be modified.
+            newl._optimiseData()
+        return newl # deep copy the slice.
 
     def __len__(self):
         """

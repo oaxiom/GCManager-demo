@@ -13,7 +13,7 @@ import logging
 
 def logger():
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.INFO,
         format='%(levelname)-8s: %(message)s',
         datefmt='%m-%d %H:%M')
     return logging.getLogger(f'GCmanager initialise')
