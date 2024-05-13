@@ -17,116 +17,22 @@ from . import logger
 def qdeepcopy(anobject):
     return pickle.loads(pickle.dumps(anobject, -1))
 
-class UnRecognisedCSVFormatError(Exception):
-    """
-    Error
-        The csv is not recognised, and produces an error somewhere inside
-        _loadCSV(). Print a selection of output based on what glbase
-        expects the CSV to look like, hopefully this explains what may be
-        going wrong with the CSV.
-    """
-    def __init__(self, message, file_handle, format):
-        """
-        Format and ouput a series of messages so that I can see why the csv is not loading.
-        """
-        oh = open(file_handle, "rU")
-
-        self.log = logger.logger()
-        self.log.error("csv/tsv file did not pass the csv parser")
-        self.log.error("Message: %s" % message)
-        print("-----------------------")
-        print("CSV Diagnostic:")
-        if "skiplines" in format: # skip the lines.
-            if format["skiplines"] != -1:
-                for n in range(format["skiplines"]):
-                    oh.readline().rstrip("\r\n")
-
-        print("0:", oh.readline().rstrip("\r\n"))
-        print("1:", oh.readline().rstrip("\r\n"))
-        print("2:", oh.readline().rstrip("\r\n"))
-        print("3:", oh.readline().rstrip("\r\n"))
-        print("-----------------------")
-        print("Format Specifier: %s" % (" ".join(["%s:%s\t" % (key, format[key]) for key in format])))
-        print("Expected Format, based on the format specifier:")
-        oh.close()
-
-        # This is a safe-ish version of loadCSV() that intelligently fails.
-
-        if "sniffer" not in format:
-            oh = open(file_handle, "rU")
-            if "dialect" in format:
-                reader = csv.reader(oh, dialect=format["dialect"])
-            else:
-                reader = csv.reader(oh)
-
-            try:
-                if "skiplines" in format:
-                    skiplines = format["skiplines"]
-                else:
-                    skiplines = 0 # skip any header row by default.
-            except:
-                print("Error: End of File") # premature end of file, skip out.
-                print("-----------------------")
-                print("Error: %s" % (message))
-                return
-
-            for index, column in enumerate(reader): # This is cryptically called column, when it is actually row.
-                if index > skiplines:
-                    if column: # list is empty, so omit.
-                        if (not (column[0] in typical_headers)):
-                            d = {}
-                            for key in format:
-                                if not (key in ignorekeys): # ignore these tags
-                                    try:
-                                        if not key in d:
-                                            d[key] = {}
-                                        if isinstance(format[key], dict) and "code" in format[key]:
-                                            # a code block insertion goes here - any valid lib and one line python code fragment
-                                            # store it as a dict with the key "code"
-                                            d[key] = eval(format[key]["code"]) # this always fails for some reason...
-                                        else:
-                                            d[key] = str(column[format[key]])
-                                    except:
-                                        d[key] = "mangled"
-                            print("%s" % (" ".join(["%s:%s" % (key, d[key]) for key in d])))
-                            if index > 3:
-                                break
-        else:
-            print("  No specified format (glbase will guess)")
-
-        print("-----------------------")
-        self.log.error("End of error output")
-
-class UnrecognisedFileFormatError(Exception):
-    """
-    Error
-        File is not recognised, but not in loadCSV.
-        Just print some diagnostic stuff, but not so fancy as
-        UnRecognisedCSVFormatError
-    """
-    def __init__(self, message, file_handle, format):
-        """
-        Format and ouput a series of messages so that I can see why the csv is not loading.
-        """
-        oh = open(file_handle, "rU")
-        self.log.critical("Unrecognised file format")
-        print("-----------------------")
-        print("Diagnostic:")
-        print("0:", oh.readline().rstrip("\r\n"))
-        print("1:", oh.readline().rstrip("\r\n"))
-        print("2:", oh.readline().rstrip("\r\n"))
-        print("3:", oh.readline().rstrip("\r\n"))
-        if "sniffer" in format:
-            print("Format Specifier: Sniffer (guess the file format)")
-        else:
-            print(
-                "Format Specifier: %s"
-                % " ".join("%s:%s" % (key, format[key]) for key in format)
-            )
-
-        print("-----------------------")
-        self.log.critical("%s" % (message,))
-        print()
+ignorekeys = frozenset( # these are functional tags - so I should ignore them.
+    ["dialect",
+    "duplicates_key",
+    "skiplines",
+    "debug",
+    "special",
+    "skiptill",
+    "force_tsv",
+    "gtf_decorators",
+    "endwith",
+    "__description__",
+    "commentlines",
+    "keepifxin",
+    '__column_must_be_used',
+    '__ignore_empty_columns'
+    ])
 
 def glload(
     filename:str,
@@ -157,13 +63,7 @@ def glload(
     except pickle.UnpicklingError:
         raise BadBinaryFileFormatError(filename)
     except FileNotFoundError:
-        raise AsseritionError(f'File "{filename}" changed whilst trying to read it')
-
-    try:
-        cons = len(newl._conditions) # expression-like object
-        self.log.info("Loaded '%s' binary file with %s items, %s conditions" % (filename, len(newl), cons))
-    except AttributeError:
-        self.log.info("Loaded '%s' binary file with %s items" % (filename, len(newl)))
+        raise AssertionError(f'File "{filename}" changed whilst trying to read it')
 
     if name:
         newl.name = name
@@ -408,10 +308,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             try:
                 self._loadCSV(filename=self.fullfilename, format=format, **kargs)
             except Exception:
-                # oh dear. Die.
-                if self.__deathline:
-                    self.log.error(f"Died on line: '{self.__deathline}'")
-                raise UnRecognisedCSVFormatError("'%s' appears mangled, the file does not fit the format specifier" % self.fullfilename, self.fullfilename, format)
+                raise AssertionError("'%s' appears mangled, the file does not fit the format specifier" % self.fullfilename, self.fullfilename)
 
     def _loadCSV(self, **kargs):
         """
@@ -454,16 +351,6 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         else:
             skiptill = "Done" # This is done as truth testing fails as format["skiptill"] != None
 
-        if "sniffer" in format:
-            # I need to construct my own format
-            format = {}
-            for top_line in reader:
-                for index, key in enumerate(top_line): # get all the potential keys.
-                    format[key] = index
-                skiplines = -1 # if the sniffer is used then when it gets to the below
-                # index will = 0 = skiplines causing the first line to be missed.
-                break
-
         debug_line = 0
 
         # sanitise format[key] data for security.
@@ -478,10 +365,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         format = newf
 
         for index, column in enumerate(reader):
-            # This is cryptically called column, when it is actually row.\
-            # there is a reason for that, it is so that in the formats it appears:
-            # "refseq": column[1] # see :)
-            #print(index, column) # debug for when all else fails!
+            # This is cryptically called column, when it is actually row.
             self.__deathline = column # For debugging purposes
             self.__deathindx = index
 
@@ -501,19 +385,12 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
                 if True in [format["endwith"] in item for item in column]:
                     break
 
-            if "debug" in format and format["debug"]:
-                debug_line += 1
-                print(f"{index}:'{column}'")
-                if isinstance(format["debug"], int) and debug_line > format["debug"]:
-                    break # If an integer, collect that many items.
+            if "commentlines" in format and format["commentlines"]:
+                if column[0][0] == format["commentlines"]:
+                    continue
 
-            if column[0] not in typical_headers:
-                if "commentlines" in format and format["commentlines"]:
-                    if column[0][0] == format["commentlines"]:
-                        continue
-
-                # passed all the tests
-                temp_data.append(self._processKey(format, column))
+            # passed all the tests
+            temp_data.append(self._processKey(format, column))
 
             #print(temp_data[-1]) # tells you what got loaded onto the list.
         oh.close()
@@ -522,6 +399,87 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
 
         self._optimiseData()
         return True
+
+    def _processKey(self, format, column):
+        """
+        (Internal)
+        the inner part of _loadCSV() to determine what to do with the key.
+        Better in here too for security.
+        """
+
+        d = {}
+        for key in format:
+            if key not in ignorekeys: # ignore these tags
+                #if not key in d:
+                #    d[key] = {}
+                if '__ignore_empty_columns' in format and format['__ignore_empty_columns']:
+                    # check the column exists, if not, pad in an empty value
+                    try:
+                        column[format[key]]
+                    except IndexError:
+                        d[key] = '' # Better than None for downstream compatability
+                        continue
+
+                if isinstance(format[key], dict) and "code" in format[key]:
+                    # a code block insertion goes here - any valid lib and one line python code fragment
+                    # store it as a dict with the key "code"
+                    d[key] = eval(format[key]["code"])
+                elif isinstance(format[key], str) and "location" in format[key]:
+                    # locations are very common, add support for them out of the box:
+                    d[key] = eval(format[key])
+                else:
+                    d[key] = self._guessDataType(column[format[key]])
+
+        return d
+
+    def __iter__(self):
+        """
+        (Override)
+        make the genelist behave like a normal iterator (list)
+        """
+        return self.linearData.__iter__()
+
+    def _guessDataType(self, value):
+        """
+        (Internal)
+
+        Take a guess at the most reasonable datatype to store value as.
+        returns the resulting data type based on a list of logical cooercions
+        (explain as I fail each cooercion).
+        Used internally in _loadCSV()
+        I expect this will get larger and larger with new datatypes, so it's here as
+        as a separate function.
+
+        Datatype coercion preference:
+        float > list > int > location > string
+        """
+
+        try: # see if the element is a float()
+            if "." in value: # if no decimal point, prefer to save as a int.
+                return float(value)
+            elif 'e' in value: # See if we can coocere from scientific notation
+                return float(value)
+            else:
+                raise ValueError
+        except ValueError:
+            try:
+                # Potential error here if it is a list of strings?
+                if '[' in value and ']' in value and ',' in value and '.' in value: # Probably a Python list of floats
+                    return [float(i) for i in value.strip(']').strip('[').split(',')]
+                elif '[' in value and ']' in value and ',' in value: # Probably a Python list of ints
+                    return [int(i) for i in value.strip(']').strip('[').split(',')]
+                else:
+                    raise ValueError
+            except ValueError:
+                try: # see if it's actually an int?
+                    return int(value)
+                except ValueError:
+                    # this is not working, just store it as a string
+                    return str(value).strip()
+
+        return "" # return an empty datatype.
+        # I think it is possible to get here. If the exception at int() or float() returns something other than a
+        # ValueError (Unlikely, Impossible?)
 
     def _optimiseData(self):
         """
