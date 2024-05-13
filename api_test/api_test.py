@@ -64,3 +64,5 @@ cmd_process("man.api.populate_report_generator()")
 
 cmd_process("man.api.get_logs('72210953309787')")
 # Expected Result
+
+cmd_process("man.generate_report('72210953309787', 'Stroke')")

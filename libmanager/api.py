@@ -58,15 +58,20 @@ class api:
 
         return self.manager.get_cram_path(patient_id)
 
-    def export_report(self, patient_id: str, selected_report:str):
+    def export_report(self, patient_id: str, selected_report:str) -> str:
         # Backend: Report Generator
         # Doctorend: Report Generator
 
-        return None
+        return self.manager.generate_report(patient_id, selected_report)
 
     def print_report(self, patient_id: str, selected_report_id: str):
         # Backend: Report Generator
         # Doctorend: Report Generator
+
+        """
+        Not required? Just use the web browser HTML -> PDF function?
+
+        """
 
         return None
 

@@ -16,6 +16,7 @@ from . import initialise_dbs
 from . import api
 from . import stagedata
 from . import logger
+from . import reporter
 
 class libmanager:
     def __init__(self, log, home_path):
@@ -46,12 +47,16 @@ class libmanager:
         **Purpose**
             Perform sanity and purity check on the system.
 
+            Must be fast, and callable from most functions.
+
+            TODO: Maybe have a FAST and SLOW security check? or an async one?
+
         '''
         # TODO: Make sure the username is 'gcmanager'
 
         # TODO: Confirm GC, and the dbs structure.
 
-        # TODO: Add md5sum check on diseaseDB
+        # TODO: Add md5sum check on self.db_disease_codes
 
         return True
 
@@ -343,14 +348,24 @@ class libmanager:
 
         return r[0]
 
-    def generate_report(self, patient_id:str, disease_code:str):
+    def generate_report(self, patient_id:str, disease_code:str, lang='CN'):
         '''
         **Purpose**
-            Generate a PDF report for patient_id and disease_code
+            Generate a HTML report for patient_id and disease_code
 
             Save the file into the ~/analysis/patient_id/patient_id.disease_code.pdf
 
         **Returns**
-            Location of the saved PDF file
+            Location of the saved HTML file
         '''
-        return f'~/data/{patient_id}.{disease_code}.pdf'
+        # TODO: check disease code is valid;
+        # TODO: Pull language out of system settings DB
+        rep = reporter.reporter(self.data_path, patient_id, disease_code, lang)
+
+        # TODO: send to different types of report see support.valid_genome_dbs
+
+        # ClinVar
+        # html_file = reporter.generate(lang=lang)
+        # PharmaGKB:
+        html_file = rep.generate('PharmaGKB')
+        return html_file

@@ -300,7 +300,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         if force_tsv: format["force_tsv"] = True
 
         if filename:
-            if "format" in kargs:
+            if format:
                 self.load(filename=filename, format=format, gzip=gzip)
             else:
                 raise AssertionError('Due to excessive ambiguity the sniffing function of genelists has been removed and you now MUST provide a format argument, you can reenable this feature by specifying the sniffer: format=format.sniffer')
