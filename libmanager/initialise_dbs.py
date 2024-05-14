@@ -9,7 +9,7 @@ def init_dbs(home_path, script_path, log):
     # TODO: Setup the date properly.
     PID = sqlite3.connect(os.path.join(home_path, 'dbs/', "PID.db"))
     PIDcursor = PID.cursor()
-    PIDcursor.execute('CREATE TABLE patients (PID TEXT, SID TEXT, analysis_done TEXT, date_added TEXT, date_analysis TEXT, data_dir TEXT)')
+    PIDcursor.execute('CREATE TABLE patients (PID TEXT, SID TEXT, name TEXT, age INT, sex TEXT, analysis_done TEXT, date_added TEXT, date_analysis TEXT, data_dir TEXT)')
     PID.commit()
 
     PIDcursor.execute('CREATE TABLE patient_data (PID TEXT, space_used INT, data_packed TEXT, cram_avaialable TEXT, vcf_available TEXT)')
@@ -23,15 +23,21 @@ def init_dbs(home_path, script_path, log):
     # Setup the disease code database, by packing the raw data
     disease_db = sqlite3.connect(os.path.join(home_path, "dbs/", "disease_codes.db"))
     disease_dbc = disease_db.cursor()
-    disease_dbc.execute('CREATE TABLE diseasecodes (dis_code TEXT, desc_en TEXT, desc_cn TEXT)')
-    # Load from spreadsheet
+
+    disease_dbc.execute('CREATE TABLE diseasecodes_pharma (dis_code TEXT, desc_en TEXT, desc_cn TEXT)')
+    # Load pharma from spreadsheet
     ohEN = open(os.path.join(script_path, 'disDB', 'selectable_conditions_EN.txt'), 'rt')
     ohCN = open(os.path.join(script_path, 'disDB', 'selectable_conditions_CN.txt'), 'rt')
     for did, (lineEN, lineCN) in enumerate(zip(ohEN, ohCN)):
         if not (lineEN and lineCN): continue
-        disease_dbc.execute('INSERT INTO diseasecodes VALUES (?, ?, ?)', (f'D{did+1}', lineEN.strip(), lineCN.strip()))
+        disease_dbc.execute('INSERT INTO diseasecodes_pharma VALUES (?, ?, ?)', (f'P{did+1}', lineEN.strip(), lineCN.strip()))
     ohEN.close()
     ohCN.close()
+    # Load ClinVar
+
+    # Load Risk factors
+    disease_dbc.execute('CREATE TABLE diseasecodes_risk (dis_code TEXT, desc_en TEXT, desc_cn TEXT)')
+    # Load from risk factor spreadsheet
 
     disease_db.commit()
     disease_db.close()
@@ -44,9 +50,9 @@ def build_demo_data(man, home_path, log):
     log.info('Moving DEMO data')
 
     # Setup two patients, and copy the data
-    man.add_patient('72210953309787', 'SEQ72210953309787') # Complete
-    man.add_patient('NA12878', 'SEQNA12878') # Complete
-    man.add_patient('PATIENTNOTSTARTED', 'SEQNOTSTARTED') # Not started
+    man.add_patient('72210953309787', 'SEQ72210953309787', '何XX', '男', 43) # Complete
+    man.add_patient('NA12878', 'SEQNA12878', '王XX', '男', 22) # Complete
+    man.add_patient('PATIENTNOTSTARTED', 'SEQNOTSTARTED', '李XX', '女', 24) # Not started
     # TODO: Add partially complete one;
 
     # Copy all the progress and logs;
@@ -68,9 +74,6 @@ def build_demo_data(man, home_path, log):
     newpid_row = {
             'patient_id': '72210953309787',
             'seq_id': 'SEQ72210953309787',
-            'name': '何XX',
-            'sex': '男',
-            'age': 43,
             'analysis_done': 1,
             'date_added': datetime.datetime.now().isoformat(' '),
             'date_analysis': datetime.datetime.now().isoformat(' '),
@@ -88,9 +91,6 @@ def build_demo_data(man, home_path, log):
     newpid_row = {
             'patient_id': 'NA12878',
             'seq_id': 'SEQNA12878',
-            'name': '王XX',
-            'sex': '男',
-            'age': 22,
             'analysis_done': 1,
             'date_added': datetime.datetime.now().isoformat(' '),
             'date_analysis': datetime.datetime.now().isoformat(' '),

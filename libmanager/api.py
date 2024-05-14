@@ -39,11 +39,18 @@ class api:
         # Returns a list of tuples,
         return table
 
-    def populate_report_generator(self) -> list:
+    def populate_report_generator(self, mode) -> list:
         # Backend: Report Generator
         # Doctorend: Report Generator
 
-        return self.manager.get_disbd_table()
+        assert mode in ('pharma', 'clinvar', 'risk'), f'{mode} not found'
+
+        if mode == 'pharma':
+            return self.manager.get_pharma_table()
+        elif mode == 'clinvar':
+            return [] # An empty list is a valid return
+        elif mode == 'risk':
+            return self.manager.get_risk_table()
 
     def export_vcf(self, patient_id: str) -> str:
         # Backend: Report Generator

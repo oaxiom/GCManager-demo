@@ -125,17 +125,28 @@ class libmanager:
 
         return clean_results
 
-    def get_disbd_table(self, lang='CN') -> list:
+    def get_pharma_table(self, lang='CN') -> list:
         '''
         **Purpose**
             Return all of the pateinet_data table;
         '''
         if lang == 'CN':
-            self.db_disease_codes_cursor.execute('SELECT * FROM diseasecodes')
+            self.db_disease_codes_cursor.execute('SELECT * FROM diseasecodes_pharma')
         else:
-            self.db_disease_codes_cursor.execute('SELECT * FROM diseasecodes')
+            self.db_disease_codes_cursor.execute('SELECT * FROM diseasecodes_pharma')
         results = self.db_disease_codes_cursor.fetchall()
+        return results
 
+    def get_pharma_table(self, lang='CN') -> list:
+        '''
+        **Purpose**
+            Return all of the pateinet_data table;
+        '''
+        if lang == 'CN':
+            self.db_disease_codes_cursor.execute('SELECT * FROM diseasecodes_risk')
+        else:
+            self.db_disease_codes_cursor.execute('SELECT * FROM diseasecodes_risk')
+        results = self.db_disease_codes_cursor.fetchall()
         return results
 
     def _check_analysis_is_complete(self, patient_id: str) -> bool:
@@ -196,12 +207,12 @@ class libmanager:
         '''
         results = []
 
-        results.append(f'#############')
+        results.append('#############')
         results.append(f'#### Stage {stage}: {stagedata.stages[stage]}')
-        results.append(f'#############')
+        results.append('#############')
         stage1_outs = glob.glob(out_glob_filenames)
         if not stage1_outs:
-            results.append('Stage {stage} is incomplete')
+            results.append(f'Stage {stage} is incomplete')
             return True, results
 
         for f in sorted(list(stage1_outs)):
@@ -217,11 +228,11 @@ class libmanager:
         '''
         results = []
 
-        results.append(f'#############')
+        results.append('#############')
         results.append(f'#### Stage {stage}: {stagedata.stages[stage]}')
-        results.append(f'#############')
+        results.append('#############')
         if not os.path.exists(out_filename):
-            results.append('Stage {stage} is incomplete')
+            results.append(f'Stage {stage} is incomplete')
             return True, results
 
         with open(out_filename, 'rt') as oh:
@@ -303,7 +314,13 @@ class libmanager:
 
         return r[0]
 
-    def add_patient(self, patient_id: str, seq_id: str):
+    def add_patient(self,
+        patient_id: str,
+        seq_id: str,
+        name: str,
+        sex: str,
+        age: int,
+        ):
         '''
         **Purpose**
             Setup new patient id, with a seq id, and validate all initial QC.
@@ -322,12 +339,18 @@ class libmanager:
         newpid_row = {
             'patient_id': patient_id,
             'seq_id': seq_id,
+            'name': name,
+            'age': age,
+            'sex': sex,
             'analysis_done': 0,
             'date_added': datetime.datetime.now().isoformat(' '),
             'date_analysis': 'null',
             'data_dir': data_dir,
             }
-        self.db_PID_cursor.execute('INSERT INTO patients VALUES (:patient_id, :seq_id, :analysis_done, :date_added, :date_analysis, :data_dir)', newpid_row)
+
+        new_patient = '''INSERT INTO patients VALUES (:patient_id, :seq_id, :name, :age, :sex, :analysis_done, :date_added, :date_analysis, :data_dir)'''
+
+        self.db_PID_cursor.execute(new_patient, newpid_row)
         self.db_PID_cursor.execute('INSERT INTO summary_statistics VALUES (:patient_id, :seq_id, 0)', newpid_row)
         self.db_PID_cursor.execute('INSERT INTO patient_data VALUES (:patient_id, "0Gb", 0, 0, 0)', newpid_row)
         self.db_PID.commit()
@@ -336,6 +359,8 @@ class libmanager:
             raise Exception(f'Trying to add {patient_id} but the data directory {data_dir} already exists')
         os.mkdir(data_dir)
 
+        self.log.info(f'Added patient {patient_id}')
+
         return True
 
     def summary_statistics(self, patient_id:str, ):
@@ -343,7 +368,7 @@ class libmanager:
         **Purpose**
             Return the summary statistics for the patient_id
         '''
-        r = self.db_PID_cursor.execute('SELECT * from summary_statistics WHERE pid=?', (patient_id, ))
+        r = self.db_PID_cursor.execute('SELECT * FROM summary_statistics WHERE pid=?', (patient_id, ))
         r = r.fetchall()
 
         if not r: return False
@@ -351,19 +376,33 @@ class libmanager:
 
         return r[0]
 
-    def generate_report(self, patient_id:str, disease_code:str, lang='CN'):
+    def generate_report(self, patient_id:str, search_term:str, lang='CN'):
         '''
         **Purpose**
-            Generate a HTML report for patient_id and disease_code
+            Generate a HTML report for patient_id and search_term
 
             Save the file into the ~/analysis/patient_id/patient_id.disease_code.pdf
 
         **Returns**
             Location of the saved HTML file
         '''
-        # TODO: check disease code is valid;
+        # TODO: Fuzzy search
+        self.db_disease_codes_cursor.execute('SELECT dis_code, desc_en, desc_cn FROM diseasecodes_pharma WHERE desc_en=? OR desc_cn=?', (search_term, search_term))
+        res = self.db_disease_codes_cursor.fetchone()
+        if not res:
+            raise AssertionError(f'{search_term} was not found in diseasecodes_pharma database')
+
+        disease_code = res[0]
+        descEN = res[1]
+        descCN = res[2]
+
         # TODO: Pull language out of system settings DB
-        rep = reporter.reporter(self.data_path, patient_id, disease_code, lang)
+        self.db_PID_cursor.execute('SELECT name, age, sex FROM patients WHERE pid=?', (patient_id, ))
+        patient_data = self.db_PID_cursor.fetchone()
+        # TODO: Check return
+        patient_data = {'name': patient_data[0], 'age': patient_data[1], 'sex': patient_data[2]}
+
+        rep = reporter.reporter(self.data_path, patient_id, patient_data, disease_code, descEN, descCN, lang)
 
         # TODO: send to different types of report see support.valid_genome_dbs
 

@@ -23,6 +23,7 @@ class settings:
 
         # add the settings;
         settings_doctor_cur.execute('INSERT INTO settings VALUES (?,?)', ('lang', 'CN'))
+        settings_doctor_cur.execute('INSERT INTO settings VALUES (?,?)', ('hospital_name', 'N/A'))
 
         settings_doctor.commit()
         settings_doctor.close()
@@ -32,6 +33,7 @@ class settings:
         settings_backend_cur.execute('CREATE TABLE settings (setting_name TEXT, value TEXT)')
 
         settings_backend_cur.execute('INSERT INTO settings VALUES (?,?)', ('lang', 'CN'))
+        settings_backend_cur.execute('INSERT INTO settings VALUES (?,?)', ('hospital_name', 'N/A'))
 
         settings_backend.commit()
         settings_backend.close()
