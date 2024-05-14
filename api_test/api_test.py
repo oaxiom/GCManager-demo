@@ -66,3 +66,14 @@ cmd_process("man.api.get_logs('72210953309787')")
 # Expected Result
 
 cmd_process("man.generate_report('72210953309787', 'Stroke')")
+# Expected Result:
+# /Users/andrew/GCMDataDEMO/data/PID.72210953309787/result.72210953309787.Stroke.html
+
+cmd_process("man.settings.get_doctor_setting('lang')")
+# Expected Results:
+# 'CN'
+
+cmd_process("man.settings.set_doctor_setting('lang', 'EN')")
+cmd_process("man.settings.get_doctor_setting('lang')")
+# Expected Result
+# 'EN'

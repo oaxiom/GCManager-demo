@@ -1,5 +1,6 @@
 
 import sys, os, sqlite3, shutil, glob, datetime
+from . import settings
 
 def init_dbs(home_path, script_path, log):
     log.info('Setting up tables')
@@ -35,7 +36,9 @@ def init_dbs(home_path, script_path, log):
     disease_db.commit()
     disease_db.close()
 
-    #TODO: Add System preferences DB
+    # System preferences DB
+    settings.settings(home_path).initialize_dbs()
+
 
 def build_demo_data(man, home_path, log):
     log.info('Moving DEMO data')
@@ -65,6 +68,9 @@ def build_demo_data(man, home_path, log):
     newpid_row = {
             'patient_id': '72210953309787',
             'seq_id': 'SEQ72210953309787',
+            'name': '何XX',
+            'sex': '男',
+            'age': 43,
             'analysis_done': 1,
             'date_added': datetime.datetime.now().isoformat(' '),
             'date_analysis': datetime.datetime.now().isoformat(' '),
@@ -82,6 +88,9 @@ def build_demo_data(man, home_path, log):
     newpid_row = {
             'patient_id': 'NA12878',
             'seq_id': 'SEQNA12878',
+            'name': '王XX',
+            'sex': '男',
+            'age': 22,
             'analysis_done': 1,
             'date_added': datetime.datetime.now().isoformat(' '),
             'date_analysis': datetime.datetime.now().isoformat(' '),

@@ -17,6 +17,8 @@ class reporter:
         # Enable when you finished testing:
         #if not os.path.exists(os.path.join(data_path, f'PID.{patient_id}', 'simple.css')):
         shutil.copy(os.path.expanduser('~/static_data/html/simple.css'), os.path.join(data_path, f'PID.{patient_id}', 'simple.css'))
+        shutil.copy(os.path.expanduser('~/static_data/html/print.css'), os.path.join(data_path, f'PID.{patient_id}', 'simple.css'))
+
 
     def generate(self, mode:str) -> str:
         """
@@ -119,7 +121,8 @@ class reporter:
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="simple.css">
+<link rel="stylesheet" media="screen" href="simple.css">
+<link rel="stylesheet" media="print" href="print.css">
 </head>
 <body>
 
@@ -139,11 +142,11 @@ provides potential guidance for treatment. The data here constitutes the best ad
 care should be taken in interpreting these results.
 and best clinical practice should be followed.</p>
 
+<h2>Drug guidance summary</h2>
+
 <p>Note the evidence level, which indicates the evidence supporting the genetic-drug
 association. Levels 1A, 1B are well supported, 2A, 2B are likely, level 3 has some supporting
 evidence of an association.</p>
-
-<h2>Drug guidance table summary</h2>
 
 <table>
     <tr>
@@ -188,13 +191,13 @@ evidence of an association.</p>
 {search_term}。该表列出了药物、患者的特定SNP和基因型，以及
 为治疗提供了潜在的指导。此处的数据构成了最佳建议和
 在解释这些结果时应小心谨慎。
-并应遵循最佳临床实践。
+并应遵循最佳临床实践。</p>
 
-注意证据水平，表明支持遗传药物的证据
+<h2>Drug guidance summary</h2>
+
+<p>注意证据水平，表明支持遗传药物的证据
 协会1A、1B级得到很好的支持，2A、2B级可能得到支持，3级有一些支持
 关联的证据。</p>
-
-<h2>Drug guidance table summary</h2>
 
 <table>
     <tr>
@@ -212,8 +215,3 @@ evidence of an association.</p>
 </body>
         '''
         return html
-
-#annotated = annotate_pharmagkb_snps('APH_full.pharmaGKB.tsv')
-#report_generator_pharmGKB('APH_full', annotated, 'Diabetes mellitus, type 2', None)
-#report_generator_pharmGKB('APH_full', annotated, 'Hypertension', None)
-#report_generator_pharmGKB('APH_full', annotated, 'Stroke', None)

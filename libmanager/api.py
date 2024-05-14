@@ -123,4 +123,16 @@ class api:
     def convert_bam_to_cram(self):
         # Backend: Patient Data Manager
 
+        # Does nothing in DEMO
+        # TODO:
         return None
+
+    def set_system_doctor_setting(self, key, value):
+        # Doctorend: System Settings
+
+        return self.manager.settings.set_doctor_setting(key, value)
+
+    def get_system_doctor_setting(self, key) -> str:
+        # Doctorend: System Settings
+
+        return self.manager.settings.get_doctor_setting(key)

@@ -17,6 +17,7 @@ from . import api
 from . import stagedata
 from . import logger
 from . import reporter
+from . import settings
 
 class libmanager:
     def __init__(self, log, home_path):
@@ -41,6 +42,8 @@ class libmanager:
         # disease code databse:
         self.db_disease_codes = sqlite3.connect(os.path.join(self.home_path, 'dbs/', "disease_codes.db"))
         self.db_disease_codes_cursor = self.db_disease_codes.cursor()
+
+        self.settings = settings.settings(self.home_path)
 
     def _security_check(self):
         '''
