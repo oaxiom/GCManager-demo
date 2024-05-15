@@ -17,7 +17,8 @@ from libmanager import libmanager, VERSION, logger
 log = logger.logger()
 
 script_path = os.path.dirname(os.path.realpath(__file__))
-home_path = os.path.expanduser('~/GCMData/') # Production
+user_home_dir = os.path.expanduser('~')
+home_path = os.path.join(user_home_dir, 'GCMData') # Production
 if 'demo' in VERSION:
     home_path = os.path.expanduser('~/GCMDataDEMO/') # Demo data
 

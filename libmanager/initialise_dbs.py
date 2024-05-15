@@ -1,3 +1,14 @@
+#!/usr/bin/env python3
+#
+# Initialise the databases, pack, etc, designed to be run once to setup a clean installation.
+#
+# (c) 2024 Helixiome, all rights reserved.
+# (c) 2024
+#
+# Author(s):
+# Andrew P. Hutchins,
+# Huang Zongkang
+#
 
 import sys, os, sqlite3, shutil, glob, datetime
 from . import settings
@@ -55,16 +66,19 @@ def build_demo_data(man, home_path, log):
     man.add_patient('PATIENTNOTSTARTED', 'SEQNOTSTARTED', '李XX', '女', 24) # Not started
     # TODO: Add partially complete one;
 
-    # Copy all the progress and logs;
-    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.72210953309787/')) for f in glob.glob(os.path.expanduser('~/demo_data/data/PID.72210953309787/*.out'))]
-    shutil.copy(os.path.expanduser('~/demo_data/PID.72210953309787/72210953309787.recalibrated_snps_recalibrated_indels.vcf.gz'), os.path.join(home_path, 'data', 'PID.72210953309787/'))
-    shutil.copy(os.path.expanduser('~/demo_data/PID.72210953309787/72210953309787.pharmagkb.final.txt'), os.path.join(home_path, 'data', 'PID.72210953309787/'))
-    shutil.copy(os.path.expanduser('~/demo_data/PID.72210953309787/72210953309787.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.72210953309787/'))
+    user_home_path = os.path.expanduser('~')
 
-    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.NA12878/')) for f in glob.glob(os.path.expanduser('~/demo_data/data/PID.NA12878/*.out'))]
-    shutil.copy(os.path.expanduser('~/demo_data/PID.NA12878/NA12878.recalibrated_snps_recalibrated_indels.vcf.gz'), os.path.join(home_path, 'data', 'PID.NA12878/'))
-    shutil.copy(os.path.expanduser('~/demo_data/PID.NA12878/NA12878.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.NA12878/'))
-    shutil.copy(os.path.expanduser('~/demo_data/PID.NA12878/NA12878.pharmagkb.final.txt'), os.path.join(home_path, 'data', 'PID.NA12878/'))
+    # Copy all the progress and logs;
+    user_home_path = os.path.expanduser('~')
+    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.72210953309787')) for f in glob.glob(os.path.join(user_home_path, 'demo_data', 'data', 'PID.72210953309787', '*.out'))]
+    shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.72210953309787', '72210953309787.recalibrated_snps_recalibrated_indels.vcf.gz'), os.path.join(home_path, 'data', 'PID.72210953309787'))
+    shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.72210953309787', '72210953309787.pharmagkb.final.txt'), os.path.join(home_path, 'data', 'PID.72210953309787'))
+    shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.72210953309787', '72210953309787.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.72210953309787'))
+
+    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.NA12878/')) for f in glob.glob(os.path.join(user_home_path, 'demo_data', 'data', 'PID.NA12878', '*.out'))]
+    shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.NA12878', 'NA12878.recalibrated_snps_recalibrated_indels.vcf.gz'), os.path.join(home_path, 'data', 'PID.NA12878'))
+    shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.NA12878', 'NA12878.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.NA12878'))
+    shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.NA12878', 'NA12878.pharmagkb.final.txt'), os.path.join(home_path, 'data', 'PID.NA12878'))
 
     # Add fake details of the analysis to the database;
 
