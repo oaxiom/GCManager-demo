@@ -40,8 +40,8 @@ class reporter:
 
         if mode == 'PharmaGKB':
             # TODO: Check the correct annotation file exists.
-            annotated_data = self.__annotate_pharmagkb_snps(os.path.join(self.data_path, f'{self.patient_id}.pharmagkb.txt'))
-            html_filename = self.__report_generator_pharmaGKB(annotated_data)
+            annotated_data, pharmagkb = self.__annotate_pharmagkb_snps(os.path.join(self.data_path, f'{self.patient_id}.pharmagkb.txt'))
+            html_filename = self.__report_generator_pharmaGKB(annotated_data, pharmagkb)
 
         return html_filename
 
@@ -54,7 +54,10 @@ class reporter:
 
             TODO: A potential bug here, as it will only consider a SNP if it's already
             annotated with vcfanno, this will only rebuild new SNPs that are correctly annotated.
-            I expect it would be a tiny minority, but needs to be fixed in future versions.
+            For example if a new SNP is added, it will not show up until vcfanno updates
+            the annotation.
+            I expect it would be a tiny minority, and very rare but needs to be fixed
+            in future versions.
         '''
         # output.write(f'{chrom}\t{rsid}\t{genotype}\n')
         pharmagkb_snps = tinyglbase.genelist(filename, format={'force_tsv': True, 'SNP': 1, 'patient_genotype': 2})
@@ -71,15 +74,28 @@ class reporter:
 
         over.load_list(results)
 
-        return over
+        # TODO: Work out the no reccomendations;
 
-    def __report_generator_pharmaGKB(self, annotated_data):
+        return over, pharmagkb
+
+    def __report_generator_pharmaGKB(self, annotated_data, pharmagkb):
         # TODO: Check annotated_data has phenotype and drug keys
         # TODO: remove the hacky language selecting system;
 
         search_results = annotated_data.getRowsByKey(key='phenotype', values=self.search_term, case_sensitive=False)
         if not search_results:
-            search_results = annotated_data.getRowsByKey(key='phenotype', values=self.search_term, case_sensitive=False)
+            search_results = annotated_data.getRowsByKey(key='drug', values=self.search_term, case_sensitive=False)
+
+        # Get the ones with no recommendation
+        # First, get all phenotype from the pharmagkb database:
+        # Second, if it's in the search_results, remove it;
+        pharmagkb_all_this_phenotype = pharmagkb.getRowsByKey(key='phenotype', values=self.search_term, case_sensitive=False)
+        if not search_results:
+            pharmagkb_all_this_phenotype = pharmagkb.getRowsByKey(key='drug', values=self.search_term, case_sensitive=False)
+
+        no_reccomendation = search_results.map(genelist=pharmagkb_all_this_phenotype, key='drug', logic='notright')
+        if no_reccomendation:
+            no_reccomendation = sorted(list(set(no_reccomendation['drug'])))
 
         # get the search_term
 
@@ -89,6 +105,7 @@ class reporter:
         search_results.sort('drug')
 
         rest_of_table = []
+        no_reccomendation_table = []
 
         if not search_results:
             # TODO: Check this works: Deal with no advice situations;
@@ -106,11 +123,22 @@ class reporter:
                 rest_of_table.append(tab_row)
             rest_of_table = '\n'.join(rest_of_table)
 
+            if no_reccomendation:
+                for drug in no_reccomendation:
+                    tab_row_no_rec = f'''
+                        <tr>
+                        <td>{drug}</td>
+                        <td>常规用药</td>
+                        </tr>
+                    '''
+                    no_reccomendation_table.append(tab_row_no_rec)
+                no_reccomendation_table = '\n'.join(no_reccomendation_table)
+
         # TODO: Fix hacky language support
         if self.lang == 'EN':
-            html = html_pharma.html('EN', self.patient_id, self.disease_name, self.patient_data, rest_of_table)
+            html = html_pharma.html('EN', self.patient_id, self.disease_name, self.patient_data, rest_of_table, no_reccomendation_table)
         elif self.lang == 'CN':
-            html = html_pharma.html('CN', self.patient_id, self.disease_name, self.patient_data, rest_of_table)
+            html = html_pharma.html('CN', self.patient_id, self.disease_name, self.patient_data, rest_of_table, no_reccomendation_table)
 
         html_filename = os.path.join(self.data_path, f"result.{self.patient_id}.{self.lang}.{self.disease_code}.html")
 
