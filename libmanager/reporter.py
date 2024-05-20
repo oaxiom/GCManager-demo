@@ -27,7 +27,7 @@ class reporter:
         self.patient_data = patient_data
 
         # make sure the css is copied over
-        # Enable the if statment when you finished testing:
+        # TODO: Enable the if statment when you finished testing:
         #if not os.path.exists(os.path.join(data_path, f'PID.{patient_id}', 'simple.css')):
         shutil.copy(os.path.join(os.path.expanduser('~'), 'static_data', 'html', 'simple.css' ),os.path.join(data_path, f'PID.{patient_id}', 'simple.css'))
         shutil.copy(os.path.join(os.path.expanduser('~'), 'static_data', 'html', 'print.css' ),os.path.join(data_path, f'PID.{patient_id}', 'print.css'))
@@ -39,7 +39,7 @@ class reporter:
         """
         assert mode in support.valid_genome_dbs, f'{mode} not found'
 
-        if mode == 'PharmaGKB':
+        if mode == 'Pharma':
             # TODO: Check the correct annotation file exists.
             annotated_data, pharmagkb = self.__annotate_pharmagkb_snps(os.path.join(self.data_path, f'{self.patient_id}.pharmagkb.txt'))
             html_filename = self.__report_generator_pharmaGKB(annotated_data, pharmagkb)
@@ -72,10 +72,7 @@ class reporter:
             if set(SNP['genotype']) == set(SNP['patient_genotype']):
                 results.append(SNP)
         over = tinyglbase.genelist(format=True)
-
         over.load_list(results)
-
-        # TODO: Work out the no reccomendations;
 
         return over, pharmagkb
 

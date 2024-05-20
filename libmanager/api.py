@@ -15,6 +15,7 @@ Questions:
 
 import os, sqlite3, datetime, logging
 from . import analysis_progress
+from . import support
 
 class api:
     """
@@ -43,14 +44,17 @@ class api:
         # Backend: Report Generator
         # Doctorend: Report Generator
 
-        assert mode in ('pharma', 'clinvar', 'risk'), f'{mode} not found'
+        assert mode in support.valid_genome_dbs, f'{mode} not found'
 
-        if mode == 'pharma':
+        if mode == 'Pharma': # 疾病与用药指导
             return self.manager.get_pharma_table()
-        elif mode == 'clinvar':
+
+        elif mode == 'ClinVAR': # 临床表型相关变异
             return [] # An empty list is a valid return
-        elif mode == 'risk':
+
+        elif mode == 'Risk': # 疾病风险提示
             return self.manager.get_risk_table()
+
 
     def export_vcf(self, patient_id: str) -> str:
         # Backend: Report Generator

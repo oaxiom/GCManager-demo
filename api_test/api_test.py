@@ -58,7 +58,13 @@ cmd_process("man.api.clean_free_space()")
 # Expected Result:
 # True
 
-cmd_process("man.api.populate_report_generator('pharma')")
+cmd_process("man.api.populate_report_generator('Pharma')")
+# Expected Result:
+# [Long table of results]
+cmd_process("man.api.populate_report_generator('ClinVAR')")
+# Expected Result:
+# [Long table of results]
+cmd_process("man.api.populate_report_generator('Risk')")
 # Expected Result:
 # [Long table of results]
 

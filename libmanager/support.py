@@ -7,7 +7,9 @@ valid_laguages = {
     }
 
 valid_genome_dbs = {
-    'PharmaGKB': 'Drug-genome associations',
+    'Pharma': '疾病与用药指导', # 'Drug-genome associations',
+    'ClinVAR': '临床表型相关变异',
+    'Risk': '疾病风险提示',
     }
 
 def prepare_logging():
