@@ -35,6 +35,7 @@ def init_dbs(home_path, script_path, log):
     disease_dbc = disease_db.cursor()
 
     # PharmaGKB table:
+    # TODO: add the selectable drugs
     disease_dbc.execute('CREATE TABLE diseasecodes_pharma (dis_code TEXT, desc_en TEXT, desc_cn TEXT)')
     # Load pharma from spreadsheet
     with open(os.path.join(script_path, 'disDB', 'Pharma', 'EN_selectable_conditions.txt'), 'rt', encoding="utf-8") as ohEN, \
