@@ -71,12 +71,13 @@ def build_demo_data(man, home_path, log):
 
     # Copy all the progress and logs;
     user_home_path = os.path.expanduser('~')
-    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.72210953309787')) for f in glob.glob(os.path.join(user_home_path, 'demo_data', 'data', 'PID.72210953309787', '*.out'))]
+    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.72210953309787')) for f in glob.glob(os.path.join(user_home_path, 'demo_data', 'PID.72210953309787', '*.out'))]
     shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.72210953309787', '72210953309787.recalibrated_snps_recalibrated_indels.vcf.gz'), os.path.join(home_path, 'data', 'PID.72210953309787'))
     shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.72210953309787', '72210953309787.pharmagkb.final.txt'), os.path.join(home_path, 'data', 'PID.72210953309787'))
     shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.72210953309787', '72210953309787.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.72210953309787'))
+    shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.72210953309787', '72210953309787.sorted.dedupe.recal.cram'), os.path.join(home_path, 'data', 'PID.72210953309787'))
 
-    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.NA12878')) for f in glob.glob(os.path.join(user_home_path, 'demo_data', 'data', 'PID.NA12878', '*.out'))]
+    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.NA12878')) for f in glob.glob(os.path.join(user_home_path, 'demo_data', 'PID.NA12878', '*.out'))]
     shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.NA12878', 'NA12878.recalibrated_snps_recalibrated_indels.vcf.gz'), os.path.join(home_path, 'data', 'PID.NA12878'))
     shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.NA12878', 'NA12878.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.NA12878'))
     shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.NA12878', 'NA12878.pharmagkb.final.txt'), os.path.join(home_path, 'data', 'PID.NA12878'))

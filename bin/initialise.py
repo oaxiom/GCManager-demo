@@ -43,7 +43,7 @@ os.mkdir(home_path)
 os.mkdir(os.path.join(home_path, 'data'))
 os.mkdir(os.path.join(home_path, 'dbs'))
 
-man = libmanager.libmanager(log=log, home_path=home_path)
+man = libmanager.libmanager('Backend', log=log, home_path=home_path)
 
 man._security_check()
 

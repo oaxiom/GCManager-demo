@@ -51,10 +51,10 @@ cmd_process("man.api.export_cram('72210953309787')")
 # Expected Result: (This returns the absolute PATH)
 # False
 cmd_process("man.api.export_cram('NA12878')")
-# Expected Result: (This returns the absolute PATH)
+# WARNING : Asked for NA12878 CRAM file, but CRAM file is not avaialble
 # False
 cmd_process("man.api.export_cram('PATIENTNOTSTARTED')")
-# Expected Result: (This returns the absolute PATH)
+# WARNING : Asked for PATIENTNOTSTARTED CRAM file, but CRAM file is not avaialble
 # False
 
 cmd_process("man.api.populate_patient_data_list()")
@@ -78,9 +78,10 @@ cmd_process("man.api.populate_report_generator('Risk')")
 cmd_process("man.api.get_logs('72210953309787')")
 # Expected Result
 
+# TODO: Through API!
 cmd_process("man.generate_report('72210953309787', 'Stroke')")
 # Expected Result:
-# /Users/andrew/GCMDataDEMO/data/PID.72210953309787/result.72210953309787.Stroke.html
+# /Users/andrew/GCMDataDEMO/data/PID.72210953309787/result.72210953309787.CN.P316.html
 
 cmd_process("man.settings.get_doctor_setting('lang')")
 # Expected Results:
