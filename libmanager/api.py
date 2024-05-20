@@ -56,6 +56,17 @@ class api:
         return table
 
     def populate_report_generator(self, mode) -> list:
+        """
+
+        Returns the list of diseases or conditions for three modes:
+
+        疾病与用药指导
+        临床表型相关变异
+        疾病风险提示
+
+        返回三种模式的疾病或状况列表：
+
+        """
         # Backend: Report Generator
         # Doctorend: Report Generator
 
@@ -70,11 +81,13 @@ class api:
         elif mode == 'Risk': # 疾病风险提示
             return self.manager.get_risk_table()
 
-
     def export_vcf(self, patient_id: str) -> str:
         """
         Returns the PATH to the CRAM file for this patient, of None
         if the CRAM is not avaialable.
+
+        The 保存所选VCF button.
+        The 保存所选CRAM button.
 
         """
         ###### Used in:
@@ -117,7 +130,6 @@ class api:
     def print_report(self, patient_id: str, selected_report_id: str):
         # Backend: Report Generator
         # Doctorend: Report Generator
-
         """
         Not required? Just use the web browser HTML -> PDF function?
 
@@ -173,18 +185,19 @@ class api:
 
         return (100, 100, 100, 100, 100, 100, 100, 100)
 
-    def delete_patient(self, patient_id:str):
+    def delete_patient(self, patient_id:str) -> bool:
         """
         Delete patient.
         删除患者
 
-        """
+        NOTE: Does nothing in DEMO
+        不删除演示版本中的患者
 
+        """
         # Backend: Analysis State
         # Backend: Patient Data Manager
 
-        # NOTE: Does nothing in DEMO
-        return None
+        return True
 
     def export_QC_statistics(self, patient_id: str) -> str:
         """
@@ -195,10 +208,8 @@ class api:
         用于分析摘要页面。 "分析总结".
 
         """
-
         # Backend: Analysis summary
 
-        # NOTE: Does nothing in DEMO
         return "QC data summary will go here."
 
     def get_logs(self, patient_id:str) -> str:
@@ -237,9 +248,16 @@ class api:
         return table
 
     def clean_free_space(self) -> bool:
+        """
+
+        The button: 清除缓存 on the 患者数据管理 page.
+
+        NOTE: Does nothing in DEMO
+        不删除演示版本中的患者
+
+        """
         # Backend: Patient Data Manager
 
-        # Does nothing in the DEMO version.
         # TODO: Clean up miscellaneous non-patient data files
         return True
 
@@ -250,19 +268,35 @@ class api:
         # TODO: Clean up patient data files
         return None
 
-    def convert_bam_to_cram(self):
+    def convert_bam_to_cram(self) -> bool:
+        """
+        Convert a BAM file to CRAM
+        转换所选BAM 成 CRAM
+
+        NOTE: Does nothing in DEMO
+        不删除演示版本中的患者
+        """
         # Backend: Patient Data Manager
 
-        # Does nothing in DEMO
-        # TODO:
-        return None
+        return True
 
-    def set_system_doctor_setting(self, key, value):
+    def set_system_doctor_setting(self, key:str, value:str) -> bool:
+        """
+
+        Set a system setting on: 系统设置 page
+
+        """
+
         # Doctorend: System Settings
 
         return self.manager.settings.set_doctor_setting(key, value)
 
-    def get_system_doctor_setting(self, key) -> str:
+    def get_system_doctor_setting(self, key:str) -> str:
+        """
+
+        Set a system setting on: 系统设置 page
+
+        """
         # Doctorend: System Settings
 
         return self.manager.settings.get_doctor_setting(key)
