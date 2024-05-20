@@ -22,7 +22,7 @@ def init_dbs(home_path, script_path, log):
     PIDcursor.execute('CREATE TABLE patients (PID TEXT, SID TEXT, name TEXT, age INT, sex TEXT, analysis_done TEXT, date_added TEXT, date_analysis TEXT, data_dir TEXT)')
     PID.commit()
 
-    PIDcursor.execute('CREATE TABLE patient_data (PID TEXT, space_used INT, data_packed TEXT, cram_avaialable TEXT, vcf_available TEXT)')
+    PIDcursor.execute('CREATE TABLE patient_data (PID TEXT, space_used INT, data_packed TEXT, cram_available TEXT, vcf_available TEXT)')
     PID.commit()
 
     # summary statistics DB:
@@ -58,7 +58,7 @@ def init_dbs(home_path, script_path, log):
     settings.settings(home_path).initialize_dbs()
 
 
-def build_demo_data(man, home_path, log):
+def build_demo_data(man, home_path, script_path, log):
     log.info('Moving DEMO data')
 
     # Setup two patients, and copy the data
@@ -71,16 +71,16 @@ def build_demo_data(man, home_path, log):
 
     # Copy all the progress and logs;
     user_home_path = os.path.expanduser('~')
-    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.72210953309787')) for f in glob.glob(os.path.join(user_home_path, 'demo_data', 'PID.72210953309787', '*.out'))]
-    shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.72210953309787', '72210953309787.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.72210953309787'))
-    shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.72210953309787', '72210953309787.sorted.dedupe.recal.cram'), os.path.join(home_path, 'data', 'PID.72210953309787'))
-    shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.72210953309787', '72210953309787.gatk.dbsnp.vcf.gz'), os.path.join(home_path, 'data', 'PID.72210953309787'))
+    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.72210953309787')) for f in glob.glob(os.path.join(script_path, 'demo_data', 'PID.72210953309787', '*.out'))]
+    shutil.copy(os.path.join(script_path, 'demo_data', 'PID.72210953309787', '72210953309787.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.72210953309787'))
+    shutil.copy(os.path.join(script_path, 'demo_data', 'PID.72210953309787', '72210953309787.sorted.dedupe.recal.cram'), os.path.join(home_path, 'data', 'PID.72210953309787'))
+    shutil.copy(os.path.join(script_path, 'demo_data', 'PID.72210953309787', '72210953309787.gatk.dbsnp.vcf.gz'), os.path.join(home_path, 'data', 'PID.72210953309787'))
 
 
-    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.NA12878')) for f in glob.glob(os.path.join(user_home_path, 'demo_data', 'PID.NA12878', '*.out'))]
-    shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.NA12878', 'NA12878.gatk.dbsnp.vcf.gz'), os.path.join(home_path, 'data', 'PID.NA12878'))
-    shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.NA12878', 'NA12878.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.NA12878'))
-    shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.NA12878', 'NA12878.pharmagkb.final.txt'), os.path.join(home_path, 'data', 'PID.NA12878'))
+    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.NA12878')) for f in glob.glob(os.path.join(script_path, 'demo_data', 'PID.NA12878', '*.out'))]
+    shutil.copy(os.path.join(script_path, 'demo_data', 'PID.NA12878', 'NA12878.gatk.dbsnp.vcf.gz'), os.path.join(home_path, 'data', 'PID.NA12878'))
+    shutil.copy(os.path.join(script_path, 'demo_data', 'PID.NA12878', 'NA12878.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.NA12878'))
+    #shutil.copy(os.path.join(script_path, 'demo_data', 'PID.NA12878', 'NA12878.pharmagkb.final.txt'), os.path.join(home_path, 'data', 'PID.NA12878'))
 
     # Add fake details of the analysis to the database;
 
@@ -97,12 +97,12 @@ def build_demo_data(man, home_path, log):
             'aligned_reads': 1000000,
             'space_used': '7.1Gb',
             'data_packed': datetime.datetime.now().isoformat(' '),
-            'cram_avaialable': 1,
+            'cram_available': 1,
             'vcf_available': 1,
         }
     db_PID_cursor.execute('UPDATE patients SET analysis_done = :analysis_done, date_added= :date_added, date_analysis = :date_analysis, data_dir = :data_dir WHERE PID = :patient_id', newpid_row)
     db_PID_cursor.execute('UPDATE summary_statistics SET aligned_reads = :aligned_reads WHERE PID = :patient_id', newpid_row)
-    db_PID_cursor.execute('UPDATE patient_data SET space_used = :space_used, data_packed = :data_packed, cram_avaialable = :cram_avaialable, vcf_available =:vcf_available WHERE PID = :patient_id', newpid_row)
+    db_PID_cursor.execute('UPDATE patient_data SET space_used = :space_used, data_packed = :data_packed, cram_available = :cram_available, vcf_available =:vcf_available WHERE PID = :patient_id', newpid_row)
 
     newpid_row = {
             'patient_id': 'NA12878',
@@ -114,12 +114,12 @@ def build_demo_data(man, home_path, log):
             'aligned_reads': 2000000,
             'space_used': '12.0Gb',
             'data_packed': 0,
-            'cram_avaialable': 0,
+            'cram_available': 0,
             'vcf_available': 1,
         }
     db_PID_cursor.execute('UPDATE patients SET analysis_done = :analysis_done, date_added= :date_added, date_analysis = :date_analysis, data_dir = :data_dir WHERE PID = :patient_id', newpid_row)
     db_PID_cursor.execute('UPDATE summary_statistics SET aligned_reads = :aligned_reads WHERE PID = :patient_id', newpid_row)
-    db_PID_cursor.execute('UPDATE patient_data SET space_used = :space_used, data_packed = :data_packed, cram_avaialable = :cram_avaialable, vcf_available =:vcf_available WHERE PID = :patient_id', newpid_row)
+    db_PID_cursor.execute('UPDATE patient_data SET space_used = :space_used, data_packed = :data_packed, cram_available = :cram_available, vcf_available =:vcf_available WHERE PID = :patient_id', newpid_row)
 
     db_PID.commit()
     db_PID.close()

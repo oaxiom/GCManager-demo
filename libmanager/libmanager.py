@@ -27,6 +27,7 @@ class libmanager:
         self.log = logger.logger()
         self.end_type = end_type
         self.home_path = home_path
+        self.script_path = os.path.join(os.path.split(sys.argv[0])[0], '..')
         self.db_path = os.path.join(self.home_path, 'dbs')
         self.data_path = os.path.join(self.home_path, 'data')
 
@@ -74,10 +75,10 @@ class libmanager:
 
 
         '''
-        initialise_dbs.init_dbs(self.home_path, os.path.join(os.path.split(sys.argv[0])[0], '..'), self.log)
+        initialise_dbs.init_dbs(self.home_path, self.script_path, self.log)
 
         if demo:
-            initialise_dbs.build_demo_data(self, self.home_path, self.log)
+            initialise_dbs.build_demo_data(self, self.home_path, self.script_path, self.log)
 
         return True
 
