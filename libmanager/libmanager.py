@@ -172,35 +172,12 @@ class libmanager:
         if to_check == 'vcf':
             self.db_PID_cursor.execute('SELECT vcf_available FROM patient_data WHERE PID= :patient_id', {'patient_id': patient_id})
         elif to_check == 'cram':
-            self.db_PID_cursor.execute('SELECT cram_avaialable FROM patient_data WHERE PID= :patient_id', {'patient_id': patient_id})
+            self.db_PID_cursor.execute('SELECT cram_available FROM patient_data WHERE PID= :patient_id', {'patient_id': patient_id})
 
         analysis_done = self.db_PID_cursor.fetchone()
         if int(analysis_done[0]):
             return True
         return False
-
-    def get_vcf_path(self, patient_id: str) -> str:
-        '''
-        **Purpose**
-            Return the VCF filename;
-        '''
-        self.patient_exists(patient_id)
-
-        if not self._check_analysis_is_complete(patient_id):
-            self.log.error(f'Asked for {patient_id} VCF file, but VCF file is not avaialble, analysis is incomplete')
-            raise LookupError(f'Asked for {patient_id} VCF file, but VCF file is not avaialble, analysis is incomplete')
-
-        if not self._check_cram_vcf_status(patient_id, 'vcf'):
-            self.log.warning(f'Asked for {patient_id} VCF file, but VCF file is not avaialble')
-            return False
-
-        vcf_path = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.recalibrated_snps_recalibrated_indels.vcf.gz')
-
-        if not os.path.exists(vcf_path):
-            self.log.error(f'Asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
-            raise LookupError(f'Asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
-
-        return vcf_path
 
     def _get_log_fileA(self, stage:int, out_glob_filenames) -> list:
         '''
@@ -274,6 +251,29 @@ class libmanager:
 
         return '\n'.join(results)
 
+    def get_vcf_path(self, patient_id: str) -> str:
+        '''
+        **Purpose**
+            Return the VCF filename;
+        '''
+        self.patient_exists(patient_id)
+
+        if not self._check_analysis_is_complete(patient_id):
+            self.log.error(f'Asked for {patient_id} VCF file, but VCF file is not available, analysis is incomplete')
+            raise LookupError(f'Asked for {patient_id} VCF file, but VCF file is not available, analysis is incomplete')
+
+        if not self._check_cram_vcf_status(patient_id, 'vcf'):
+            self.log.warning(f'Asked for {patient_id} VCF file, but VCF file is not avaialble')
+            return False
+
+        vcf_path = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.gatk.dbsnp.vcf.gz')
+
+        if not os.path.exists(vcf_path):
+            self.log.error(f'Asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
+            raise LookupError(f'Asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
+
+        return vcf_path
+
     def get_cram_path(self, patient_id: str) -> str:
         '''
         **Purpose**
@@ -282,11 +282,11 @@ class libmanager:
         self.patient_exists(patient_id)
 
         if not self._check_analysis_is_complete(patient_id):
-            self.log.error(f'Asked for {patient_id} CRAM file, but CRAM file is not avaialble, analysis is incomplete')
-            raise LookupError(f'Asked for {patient_id} CRAM file, but CRAM file is not avaialble, analysis is incomplete')
+            self.log.error(f'Asked for {patient_id} CRAM file, but CRAM file is not available, analysis is incomplete')
+            raise LookupError(f'Asked for {patient_id} CRAM file, but CRAM file is not available, analysis is incomplete')
 
         if not self._check_cram_vcf_status(patient_id, 'cram'):
-            self.log.warning(f'Asked for {patient_id} CRAM file, but CRAM file is not avaialble')
+            self.log.warning(f'Asked for {patient_id} CRAM file, but CRAM file is not available')
             return False
 
         cram_path = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.sorted.dedupe.recal.cram')

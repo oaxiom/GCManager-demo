@@ -57,6 +57,12 @@ class api:
 
 
     def export_vcf(self, patient_id: str) -> str:
+        """
+        Returns the PATH to the CRAM file for this patient, of None
+        if the CRAM is not avaialable.
+
+        """
+        ###### Used in:
         # Backend: Report Generator
         # Backend: Patient Data Manager
         # Doctorend: Report Generator
@@ -64,16 +70,34 @@ class api:
         return self.manager.get_vcf_path(patient_id)
 
     def export_cram(self, patient_id: str) -> str:
+        """
+        Returns the PATH to the CRAM file for this patient, of None
+        if the CRAM is not avaialable.
+
+        """
+        ###### Used in:
         # Backend: Report Generator
         # Backend: Patient Data Manager
 
         return self.manager.get_cram_path(patient_id)
 
-    def export_report(self, patient_id: str, selected_report:str) -> str:
+    def generate_report(self, mode: str, patient_id: str, selected_report:str) -> str:
+        '''
+        Generates the reports and returns the PATH to the HTML file.
+
+        mode can be one of :
+        if mode == 'Pharma': # 疾病与用药指导
+        elif mode == 'ClinVAR': # 临床表型相关变异
+        elif mode == 'Risk': # 疾病风险提示
+
+        '''
+        ###### Used in:
         # Backend: Report Generator
         # Doctorend: Report Generator
 
-        return self.manager.generate_report(patient_id, selected_report)
+        assert mode in support.valid_genome_dbs, f'{mode} was not in {support.valid_genome_dbs.keys()}'
+
+        return self.manager.generate_report(mode, patient_id, selected_report)
 
     def print_report(self, patient_id: str, selected_report_id: str):
         # Backend: Report Generator
@@ -83,7 +107,6 @@ class api:
         Not required? Just use the web browser HTML -> PDF function?
 
         """
-
         return None
 
     def add_new_patient(self, patient_id: str,
@@ -109,14 +132,12 @@ class api:
         # Backend: Patient Data Manager
 
         # NOTE: Does nothing in DEMO
-
         return None
 
     def export_QC_statistics(self, patient_id: str):
         # Backend: Analysis summary
 
         # NOTE: Does nothing in DEMO
-
         return None
 
     def get_logs(self, patient_id:str) -> str:
