@@ -133,19 +133,19 @@ def html_cn(
 
 <table style="width:50%">
     <tr>
-        <td>Patient ID</td>
+        <td>患者 ID</td>
         <td>{patient_id}</td>
     </tr>
     <tr>
-        <td>Name</td>
+        <td>姓名</td>
         <td>{patient_data['name']}</td>
     </tr>
     <tr>
-        <td>Age</td>
+        <td>年龄</td>
         <td>{patient_data['age']}</td>
     </tr>
     <tr>
-        <td>Sex</td>
+        <td>性别</td>
         <td>{patient_data['sex']}</td>
     </tr>
     <tr>
@@ -166,11 +166,11 @@ def html_cn(
 <h3>精准用药汇总</h3>
 <table>
     <tr>
-        <td>Drug</td>
-        <td>SNP Genotype</td>
-        <td>Impact</td>
-        <td>Guidance</td>
-        <td>Evidence Level</td>
+        <td>药物</td>
+        <td>单核苷酸多态性 (SNP) 基因型</td>
+        <td>效应</td>
+        <td>指南建议</td>
+        <td>证据等级</td>
     </tr>
     {main_table}
 </table>

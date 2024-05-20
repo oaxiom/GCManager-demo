@@ -130,7 +130,7 @@ class reporter_pharma:
             <tr>
                 <td>{drug['drug_CN']}<br>({drug['drug_EN']})</td>
                 <td>{drug['SNP']}-{drug['patient_genotype']}</td>
-                <td>{drug['SNP_impact']}</td>
+                <td>{drug['SNP_impact_CN']}</td>
                 <td>{drug['description_CN']}</td>
                 <td>{drug['evidence_level']}</td>
             </tr>
