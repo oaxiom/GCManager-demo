@@ -11,7 +11,7 @@ from . import tinyglbase
 from . import support
 from . import reporter_pharma
 
-class reporter:
+class reporter_pharma:
     def __init__(self,
         data_path:str,
         patient_id:str,
@@ -34,11 +34,10 @@ class reporter:
         else:
             self.disease_name = diseaseEN
 
-        #self.search_term = diseaseEN # It's always EN, for now
         self.data_path = os.path.join(data_path, f'PID.{patient_id}')
         self.patient_data = patient_data
 
-        self.search_term =
+        self.search_term = diseaseCN # Hardcoded to CN, for now
 
         # TODO: Enable the if statment when you finished testing:
         #if not os.path.exists(os.path.join(data_path, f'PID.{patient_id}', 'simple.css')):
@@ -46,24 +45,13 @@ class reporter:
         shutil.copy(os.path.join(os.path.expanduser('~'), 'static_data', 'html', 'simple.css' ),os.path.join(data_path, f'PID.{patient_id}', 'simple.css'))
         shutil.copy(os.path.join(os.path.expanduser('~'), 'static_data', 'html', 'print.css' ),os.path.join(data_path, f'PID.{patient_id}', 'print.css'))
 
-    def generate(self, mode:str) -> str:
+    def generate(self) -> str:
         """
         **Purpose**
             Generate a report, return the HTML filename
         """
-        assert mode in support.valid_genome_dbs, f'{mode} not found'
-
-        if mode == 'Pharma':
-            # TODO: Check the correct annotation file exists.
-            html_filename = reporter_pharma.generate(os.path.join(self.data_path, f'{self.patient_id}.pharmagkb.txt'), self.search_term, self)
-
-        elif mode == 'ClinVAR':
-            # TODO: Anything;
-            html_filename = None
-
-        elif mode == 'Risk':
-            # TODO:
-            pass
+        annotated_data, pharmagkb = self.__annotate_pharmagkb_snps(os.path.join(self.data_path, f'{self.patient_id}.pharmagkb.txt'))
+        html_filename = self.__report_generator_pharmaGKB(annotated_data, pharmagkb)
 
         return html_filename
 

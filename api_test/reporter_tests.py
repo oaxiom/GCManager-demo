@@ -32,7 +32,7 @@ def cmd_process(cmd):
 
 ########
 # Testing;
-cmd_process("man.generate_report('72210953309787', 'Stroke')")
-cmd_process("man.generate_report('72210953309787', 'Diabetes mellitus, type 2')")
-cmd_process("man.generate_report('72210953309787', 'Hypertension')")
-cmd_process("man.generate_report('72210953309787', '精神分裂症')")
+cmd_process("man.generate_report('Pharma', '72210953309787', 'Stroke')")
+cmd_process("man.generate_report('Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
+cmd_process("man.generate_report('Pharma', '72210953309787', 'Hypertension')")
+cmd_process("man.generate_report('Pharma', '72210953309787', '精神分裂症')")

@@ -16,8 +16,9 @@ from . import initialise_dbs
 from . import api
 from . import stagedata
 from . import logger
-from . import reporter
+from . import reporter_pharma
 from . import settings
+from . import support
 
 class libmanager:
     def __init__(self, end_type, log, home_path):
@@ -376,7 +377,7 @@ class libmanager:
 
         return r[0]
 
-    def generate_report(self, patient_id:str, search_term:str, lang='CN'):
+    def generate_report(self, mode:str, patient_id:str, search_term:str, lang='CN'):
         '''
         **Purpose**
             Generate a HTML report for patient_id and search_term
@@ -386,28 +387,37 @@ class libmanager:
         **Returns**
             Location of the saved HTML file
         '''
-        # TODO: Fuzzy search
-        self.db_disease_codes_cursor.execute('SELECT dis_code, desc_en, desc_cn FROM diseasecodes_pharma WHERE desc_en=? OR desc_cn=?', (search_term, search_term))
-        res = self.db_disease_codes_cursor.fetchone()
-        if not res:
-            raise AssertionError(f'{search_term} was not found in diseasecodes_pharma database')
-
-        disease_code = res[0]
-        descEN = res[1]
-        descCN = res[2]
+        assert mode in support.valid_genome_dbs, f'{mode} was not in {support.valid_genome_dbs.keys()}'
 
         # TODO: Pull language out of system settings DB
+
+        # Get patient data;
         self.db_PID_cursor.execute('SELECT name, age, sex FROM patients WHERE pid=?', (patient_id, ))
         patient_data = self.db_PID_cursor.fetchone()
         # TODO: Check return
         patient_data = {'name': patient_data[0], 'age': patient_data[1], 'sex': patient_data[2]}
 
-        rep = reporter.reporter(self.data_path, patient_id, patient_data, disease_code, descEN, descCN, lang)
+        # Select the proper report generator:
+        if mode == 'Pharma':
+            # TODO: Fuzzy search
+            self.db_disease_codes_cursor.execute('SELECT dis_code, desc_en, desc_cn FROM diseasecodes_pharma WHERE desc_en=? OR desc_cn=?', (search_term, search_term))
+            res = self.db_disease_codes_cursor.fetchone()
+            if not res:
+                raise AssertionError(f'{search_term} was not found in diseasecodes_pharma database')
 
-        # TODO: send to different types of report see support.valid_genome_dbs
+            disease_code = res[0]
+            descEN = res[1]
+            descCN = res[2]
 
-        # ClinVar
-        # html_file = reporter.generate(lang=lang)
-        # PharmaGKB:
-        html_file = rep.generate('Pharma')
+            self.log.info(f'Search found: {disease_code}, {descEN}, {descCN}')
+
+            rep = reporter_pharma.reporter_pharma(self.data_path, patient_id, patient_data, disease_code, descEN, descCN, self.log, lang)
+            html_file = rep.generate()
+
+        elif mode == 'ClinVAR':
+            html_file = ''
+
+        elif mode == 'Risk':
+            html_file = ''
+
         return html_file
