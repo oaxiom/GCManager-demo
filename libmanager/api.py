@@ -109,7 +109,8 @@ class api:
         """
         return None
 
-    def add_new_patient(self, patient_id: str,
+    def add_new_patient(self,
+        patient_id: str,
         sequence_data_id: str,
         name: str,
         age: int,
@@ -119,6 +120,16 @@ class api:
 
         # Sanitise input;
         age = int(age)
+
+        self.manager.add_patient(
+            patient_id=patient_id,
+            seq_id=sequence_data_id,
+            name=name,
+            sex=sex,
+            age=age)
+
+        # TODO: copy sequence_data_files.
+        # In the DEMO this does nothing.
 
         return None
 
