@@ -20,7 +20,10 @@ from . import reporter
 from . import settings
 
 class libmanager:
-    def __init__(self, log, home_path):
+    def __init__(self, end_type, log, home_path):
+        assert end_type in ('doctor', 'Backend'), f'{end_type} must be one of Doctorend or Backend'
+
+        self.end_type = end_type
         self.log = logger.logger()
         self.home_path = home_path
         self.db_path = os.path.join(self.home_path, 'dbs/')

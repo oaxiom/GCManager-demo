@@ -168,8 +168,9 @@ def html_cn(
     <tr>
         <td>Drug</td>
         <td>SNP Genotype</td>
-        <td>Evidence Level</td>
+        <td>Impact</td>
         <td>Guidance</td>
+        <td>Evidence Level</td>
     </tr>
     {main_table}
 </table>

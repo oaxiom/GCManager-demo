@@ -81,17 +81,16 @@ class reporter:
     def __report_generator_pharmaGKB(self, annotated_data, pharmagkb):
         # TODO: Check annotated_data has phenotype and drug keys
         # TODO: remove the hacky language selecting system;
+        # TODO: Do it the other way around, search for drug, get phenotypes.
 
         search_results = annotated_data.getRowsByKey(key='phenotype', values=self.search_term, case_sensitive=False)
-        if not search_results:
-            search_results = annotated_data.getRowsByKey(key='drug', values=self.search_term, case_sensitive=False)
+        #if not search_results:
+        #    search_results = annotated_data.getRowsByKey(key='drug', values=self.search_term, case_sensitive=False)
 
         # Get the ones with no recommendation
         # First, get all phenotype from the pharmagkb database:
         # Second, if it's in the search_results, remove it;
         pharmagkb_all_this_phenotype = pharmagkb.getRowsByKey(key='phenotype', values=self.search_term, case_sensitive=False)
-        if not search_results:
-            pharmagkb_all_this_phenotype = pharmagkb.getRowsByKey(key='drug', values=self.search_term, case_sensitive=False)
 
         no_reccomendation = search_results.map(genelist=pharmagkb_all_this_phenotype, key='drug', logic='notright')
         if no_reccomendation:
@@ -116,8 +115,9 @@ class reporter:
             <tr>
                 <td>{drug['drug']}</td>
                 <td>{drug['SNP']}-{drug['patient_genotype']}</td>
-                <td>{drug['evidence_level']}</td>
+                <td>{drug['SNP_impact']}</td>
                 <td>{drug['description']}</td>
+                <td>{drug['evidence_level']}</td>
             </tr>
                     '''
                 rest_of_table.append(tab_row)

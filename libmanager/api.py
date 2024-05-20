@@ -85,6 +85,8 @@ class api:
     def add_new_patient(self, patient_id: str, sequence_data_id: str, sequence_data_files: str):
         # Backend: Add New Patient
 
+
+
         return None
 
     def report_current_anaylsis_stage(self, patient_id:str):
@@ -96,10 +98,14 @@ class api:
         # Backend: Analysis State
         # Backend: Patient Data Manager
 
+        # NOTE: Does nothing in DEMO
+
         return None
 
     def export_QC_statistics(self, patient_id: str):
         # Backend: Analysis summary
+
+        # NOTE: Does nothing in DEMO
 
         return None
 
