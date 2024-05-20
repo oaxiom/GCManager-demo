@@ -1,0 +1,38 @@
+Acute coronary syndrome
+Alzheimer disease
+Amyotrophic lateral sclerosis
+Arteriosclerosis
+Arthritis
+Atrial fibrillation
+Cardiovascular diseases
+Colitis, ulcerative
+Coronary artery disease
+Coronary disease
+Crohn disease
+Cystic fibrosis
+Diabetes mellitus
+Diabetes mellitus, type 2
+Edema
+Hypercholesterolemia
+Hypertension
+Hypotension
+Inflammatory bowel diseases
+Irritable bowel syndrome
+Liver cirrhosis
+Multiple sclerosis
+Myocardial infarction
+Nephrosclerosis
+Nephrotic syndrome
+Osteoporosis
+Parkinson disease
+Peptic ulcer
+Pulmonary disease, chronic obstructive
+Pulmonary fibrosis
+Retinal diseases
+Shortened qt interval
+Spondylitis, ankylosing
+Stroke
+Tachycardia
+Thromboembolism
+Thrombosis
+Urticaria

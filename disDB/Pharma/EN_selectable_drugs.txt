@@ -1,0 +1,130 @@
+Ace inhibitors, plain
+Acenocoumarol
+Acetylcysteine
+Adalimumab
+Alendronate
+Amantadine
+Amiloride
+Amlodipine
+Anticholinergics
+Antihypertensives
+Antihypertensives and diuretics in combination
+Antiinflammatory agents, non-steroids
+Apixaban
+Aspirin
+Ataluren
+Atenolol
+Atorvastatin
+Azathioprine
+Benazepril
+Beta blocking agents
+Beta blocking agents, selective
+Bisoprolol
+Bisphosphonates
+Calcium channel blockers
+Candesartan
+Captopril
+Catecholamines
+Cavosonstat
+Chlorothiazide
+Chlorthalidone
+Clonidine
+Clopidogrel
+Clozapine
+Corticosteroids
+Creatine
+Cyclosporine
+Cysteamine
+Dabigatran
+Dalcetrapib
+Desloratadine
+Dicloxacillin
+Digoxin
+Diltiazem
+Dipeptidyl peptidase 4 (dpp-4) inhibitors
+Diuretics
+Donepezil
+Dopamine agonists
+Drugs used in diabetes
+Enalapril
+Entacapone
+Enzymes
+Etanercept
+Farglitazar
+Fenofibrate
+Fentanyl
+Fluindione
+Fluvastatin
+Furosemide
+Galantamine
+Gliclazide
+Glimepiride
+Glipizide
+Glyburide
+Hmg coa reductase inhibitors
+Hmg coa reductase inhibitors, other combinations
+Hormonal contraceptives for systemic use
+Hydralazine
+Hydrochlorothiazide
+Imidapril
+Infliximab
+Interferon beta-1a
+Interferon beta-1b
+Irbesartan
+Ivacaftor
+Ivacaftor / lumacaftor
+Ivacaftor / tezacaftor
+Levodopa
+Lisinopril
+Losartan
+Lovastatin
+Lumacaftor
+Mercaptopurine
+Metformin
+Metoprolol
+Mizolastine
+Muraglitazar
+Nifedipine
+Nitrendipine
+Nortriptyline
+Olanzapine
+Omeprazole
+Perindopril
+Pioglitazone
+Pramipexole
+Prasugrel
+Pravastatin
+Propafenone
+Propofol
+Propranolol
+Quinapril
+Rabeprazole
+Raloxifene
+Ramipril
+Rasagiline
+Remifentanil
+Repaglinide
+Rivastigmine
+Rosiglitazone
+Rosuvastatin
+Salvianolic acid b
+Selegiline
+Sevoflurane
+Simvastatin
+Sitagliptin
+Sorafenib
+Spironolactone
+Sulfonamides, urea derivatives
+Tacrolimus
+Tezacaftor
+Thiazides, plain
+Thiazolidinediones
+Thioguanine
+Trandolapril
+Triamcinolone
+Troglitazone
+Tumor necrosis factor alpha (tnf-alpha) inhibitors
+Venlafaxine
+Verapamil
+Vildagliptin
+Warfarin

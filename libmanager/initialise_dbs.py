@@ -37,8 +37,8 @@ def init_dbs(home_path, script_path, log):
     # PharmaGKB table:
     disease_dbc.execute('CREATE TABLE diseasecodes_pharma (dis_code TEXT, desc_en TEXT, desc_cn TEXT)')
     # Load pharma from spreadsheet
-    with open(os.path.join(script_path, 'disDB', 'selectable_conditions_EN.txt'), 'rt', encoding="utf-8") as ohEN, \
-        open(os.path.join(script_path, 'disDB', 'selectable_conditions_CN.txt'), 'rt', encoding="utf-8") as ohCN:
+    with open(os.path.join(script_path, 'disDB', 'Pharma', 'EN_selectable_conditions.txt'), 'rt', encoding="utf-8") as ohEN, \
+        open(os.path.join(script_path, 'disDB', 'Pharma', 'CN_selectable_conditions.txt'), 'rt', encoding="utf-8") as ohCN:
         for did, (lineEN, lineCN) in enumerate(zip(ohEN, ohCN)):
             if not (lineEN and lineCN): continue
             disease_dbc.execute('INSERT INTO diseasecodes_pharma VALUES (?, ?, ?)', (f'P{did+1}', lineEN.strip(), lineCN.strip()))
