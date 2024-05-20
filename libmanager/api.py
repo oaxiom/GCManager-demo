@@ -113,15 +113,15 @@ class api:
         patient_id: str,
         sequence_data_id: str,
         name: str,
-        age: int,
         sex: str,
-        sequence_data_files: str):
+        age: int,
+        sequence_data_files: str) -> bool:
         # Backend: Add New Patient
 
         # Sanitise input;
         age = int(age)
 
-        self.manager.add_patient(
+        ret = self.manager.add_patient(
             patient_id=patient_id,
             seq_id=sequence_data_id,
             name=name,
@@ -131,7 +131,7 @@ class api:
         # TODO: copy sequence_data_files.
         # In the DEMO this does nothing.
 
-        return None
+        return ret
 
     def report_current_anaylsis_stage(self, patient_id:str):
         # Backend: Analysis State
