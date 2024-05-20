@@ -49,7 +49,10 @@ cmd_process('man.api.populate_patient_list()')
 
 # This will only work once. If run a second time it will produce a 'patient already exists' error:
 # 这只会起作用一次。如果再次运行，将产生“患者已存在”错误：
-#cmd_process('man.api.add_new_patient("ANEWPATIENT", "SEQIDNEW", "张XX", "女", 50, "PATH/TO/SEQ")')
+try:
+    cmd_process('man.api.add_new_patient("ANEWPATIENT", "SEQIDNEW", "张XX", "女", 50, "PATH/TO/SEQ")')
+except Exception:
+    print('Can only add this patient once per initialize.py')
 cmd_process('man.api.populate_patient_list()')
 # Expected result:
 # [('72210953309787', '何XX', 43, '男', '1'),
