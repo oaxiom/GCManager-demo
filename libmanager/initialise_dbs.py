@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 #
 # Initialise the databases, pack, etc, designed to be run once to setup a clean installation.
 #
@@ -18,7 +17,7 @@ def init_dbs(home_path, script_path, log):
 
     # Setup the PID database;
     # TODO: Setup the date properly.
-    PID = sqlite3.connect(os.path.join(home_path, 'dbs/', "PID.db"))
+    PID = sqlite3.connect(os.path.join(home_path, 'dbs', "PID.db"))
     PIDcursor = PID.cursor()
     PIDcursor.execute('CREATE TABLE patients (PID TEXT, SID TEXT, name TEXT, age INT, sex TEXT, analysis_done TEXT, date_added TEXT, date_analysis TEXT, data_dir TEXT)')
     PID.commit()
@@ -32,19 +31,21 @@ def init_dbs(home_path, script_path, log):
     PID.close()
 
     # Setup the disease code database, by packing the raw data
-    disease_db = sqlite3.connect(os.path.join(home_path, "dbs/", "disease_codes.db"))
+    disease_db = sqlite3.connect(os.path.join(home_path, "dbs", "disease_codes.db"))
     disease_dbc = disease_db.cursor()
 
+    # PharmaGKB table:
     disease_dbc.execute('CREATE TABLE diseasecodes_pharma (dis_code TEXT, desc_en TEXT, desc_cn TEXT)')
     # Load pharma from spreadsheet
-    ohEN = open(os.path.join(script_path, 'disDB', 'selectable_conditions_EN.txt'), 'rt')
-    ohCN = open(os.path.join(script_path, 'disDB', 'selectable_conditions_CN.txt'), 'rt')
-    for did, (lineEN, lineCN) in enumerate(zip(ohEN, ohCN)):
-        if not (lineEN and lineCN): continue
-        disease_dbc.execute('INSERT INTO diseasecodes_pharma VALUES (?, ?, ?)', (f'P{did+1}', lineEN.strip(), lineCN.strip()))
-    ohEN.close()
-    ohCN.close()
+    with open(os.path.join(script_path, 'disDB', 'selectable_conditions_EN.txt'), 'rt', encoding="utf-8") as ohEN, \
+        open(os.path.join(script_path, 'disDB', 'selectable_conditions_CN.txt'), 'rt', encoding="utf-8") as ohCN:
+        for did, (lineEN, lineCN) in enumerate(zip(ohEN, ohCN)):
+            if not (lineEN and lineCN): continue
+            disease_dbc.execute('INSERT INTO diseasecodes_pharma VALUES (?, ?, ?)', (f'P{did+1}', lineEN.strip(), lineCN.strip()))
+
     # Load ClinVar
+    # Isn't this per patient?
+    disease_dbc.execute('CREATE TABLE diseasecodes_clinvar (dis_code TEXT, desc_en TEXT, desc_cn TEXT)')
 
     # Load Risk factors
     disease_dbc.execute('CREATE TABLE diseasecodes_risk (dis_code TEXT, desc_en TEXT, desc_cn TEXT)')
@@ -75,14 +76,14 @@ def build_demo_data(man, home_path, log):
     shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.72210953309787', '72210953309787.pharmagkb.final.txt'), os.path.join(home_path, 'data', 'PID.72210953309787'))
     shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.72210953309787', '72210953309787.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.72210953309787'))
 
-    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.NA12878/')) for f in glob.glob(os.path.join(user_home_path, 'demo_data', 'data', 'PID.NA12878', '*.out'))]
+    [shutil.copy(f, os.path.join(home_path, 'data', 'PID.NA12878')) for f in glob.glob(os.path.join(user_home_path, 'demo_data', 'data', 'PID.NA12878', '*.out'))]
     shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.NA12878', 'NA12878.recalibrated_snps_recalibrated_indels.vcf.gz'), os.path.join(home_path, 'data', 'PID.NA12878'))
     shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.NA12878', 'NA12878.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.NA12878'))
     shutil.copy(os.path.join(user_home_path, 'demo_data', 'PID.NA12878', 'NA12878.pharmagkb.final.txt'), os.path.join(home_path, 'data', 'PID.NA12878'))
 
     # Add fake details of the analysis to the database;
 
-    db_PID = sqlite3.connect(os.path.join(home_path, 'dbs/', "PID.db"))
+    db_PID = sqlite3.connect(os.path.join(home_path, 'dbs', "PID.db"))
     db_PID_cursor = db_PID.cursor()
 
     newpid_row = {
@@ -91,7 +92,7 @@ def build_demo_data(man, home_path, log):
             'analysis_done': 1,
             'date_added': datetime.datetime.now().isoformat(' '),
             'date_analysis': datetime.datetime.now().isoformat(' '),
-            'data_dir': os.path.join(home_path, 'data', 'PID.72210953309787/'),
+            'data_dir': os.path.join(home_path, 'data', 'PID.72210953309787'),
             'aligned_reads': 1000000,
             'space_used': '7.1Gb',
             'data_packed': datetime.datetime.now().isoformat(' '),
@@ -108,7 +109,7 @@ def build_demo_data(man, home_path, log):
             'analysis_done': 1,
             'date_added': datetime.datetime.now().isoformat(' '),
             'date_analysis': datetime.datetime.now().isoformat(' '),
-            'data_dir': os.path.join(home_path, 'data', 'PID.NA12878/'),
+            'data_dir': os.path.join(home_path, 'data', 'PID.NA12878'),
             'aligned_reads': 2000000,
             'space_used': '12.0Gb',
             'data_packed': 0,

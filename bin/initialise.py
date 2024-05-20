@@ -20,7 +20,7 @@ script_path = os.path.dirname(os.path.realpath(__file__))
 user_home_dir = os.path.expanduser('~')
 home_path = os.path.join(user_home_dir, 'GCMData') # Production
 if 'demo' in VERSION:
-    home_path = os.path.expanduser('~/GCMDataDEMO/') # Demo data
+    home_path = os.path.join(user_home_dir, 'GCMDataDEMO') # Demo data
 
 log.info(f'GCManager {VERSION} initialise')
 log.info('Copyright 2024 Helixiome, all rights reserved')

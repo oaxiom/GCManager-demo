@@ -21,13 +21,13 @@ from . import settings
 
 class libmanager:
     def __init__(self, end_type, log, home_path):
-        assert end_type in ('doctor', 'Backend'), f'{end_type} must be one of Doctorend or Backend'
+        assert end_type in ('Doctorend', 'Backend'), f'{end_type} must be one of Doctorend or Backend'
 
         self.end_type = end_type
         self.log = logger.logger()
         self.home_path = home_path
-        self.db_path = os.path.join(self.home_path, 'dbs/')
-        self.data_path = os.path.join(self.home_path, 'data/')
+        self.db_path = os.path.join(self.home_path, 'dbs')
+        self.data_path = os.path.join(self.home_path, 'data')
 
         self.api = api.api(self, log, home_path)
 
@@ -39,11 +39,11 @@ class libmanager:
         self.analysis_progress = analysis_progress.analysis_progress(log=log, home_path=home_path)
 
         # Open PID database
-        self.db_PID = sqlite3.connect(os.path.join(self.home_path, 'dbs/', "PID.db"))
+        self.db_PID = sqlite3.connect(os.path.join(self.home_path, 'dbs', "PID.db"))
         self.db_PID_cursor = self.db_PID.cursor()
 
         # disease code databse:
-        self.db_disease_codes = sqlite3.connect(os.path.join(self.home_path, 'dbs/', "disease_codes.db"))
+        self.db_disease_codes = sqlite3.connect(os.path.join(self.home_path, 'dbs', "disease_codes.db"))
         self.db_disease_codes_cursor = self.db_disease_codes.cursor()
 
         self.settings = settings.settings(self.home_path)
@@ -58,7 +58,7 @@ class libmanager:
             TODO: Maybe have a FAST and SLOW security check? or an async one?
 
         '''
-        # TODO: Make sure the username is 'gcmanager'
+        # TODO: Make sure the username is 'gcm'
 
         # TODO: Confirm GC, and the dbs structure.
 
@@ -73,7 +73,7 @@ class libmanager:
 
 
         '''
-        initialise_dbs.init_dbs(self.home_path, os.path.join(os.path.split(sys.argv[0])[0], '../'), self.log)
+        initialise_dbs.init_dbs(self.home_path, os.path.join(os.path.split(sys.argv[0])[0], '..'), self.log)
 
         if demo:
             initialise_dbs.build_demo_data(self, self.home_path, self.log)
@@ -137,18 +137,7 @@ class libmanager:
             self.db_disease_codes_cursor.execute('SELECT * FROM diseasecodes_pharma')
         else:
             self.db_disease_codes_cursor.execute('SELECT * FROM diseasecodes_pharma')
-        results = self.db_disease_codes_cursor.fetchall()
-        return results
 
-    def get_pharma_table(self, lang='CN') -> list:
-        '''
-        **Purpose**
-            Return all of the pateinet_data table;
-        '''
-        if lang == 'CN':
-            self.db_disease_codes_cursor.execute('SELECT * FROM diseasecodes_risk')
-        else:
-            self.db_disease_codes_cursor.execute('SELECT * FROM diseasecodes_risk')
         results = self.db_disease_codes_cursor.fetchall()
         return results
 

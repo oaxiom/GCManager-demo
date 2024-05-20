@@ -1,5 +1,6 @@
 
-# TODO: Replace with miniglbase
+
+
 import os, sys, shutil
 from . import tinyglbase
 from . import support
@@ -28,8 +29,8 @@ class reporter:
         # make sure the css is copied over
         # Enable the if statment when you finished testing:
         #if not os.path.exists(os.path.join(data_path, f'PID.{patient_id}', 'simple.css')):
-        shutil.copy(os.path.expanduser('~/static_data/html/simple.css'), os.path.join(data_path, f'PID.{patient_id}', 'simple.css'))
-        shutil.copy(os.path.expanduser('~/static_data/html/print.css'), os.path.join(data_path, f'PID.{patient_id}', 'simple.css'))
+        shutil.copy(os.path.join(os.path.expanduser('~'), 'static_data', 'html', 'simple.css' ),os.path.join(data_path, f'PID.{patient_id}', 'simple.css'))
+        shutil.copy(os.path.join(os.path.expanduser('~'), 'static_data', 'html', 'print.css' ),os.path.join(data_path, f'PID.{patient_id}', 'print.css'))
 
     def generate(self, mode:str) -> str:
         """
@@ -62,7 +63,7 @@ class reporter:
         # output.write(f'{chrom}\t{rsid}\t{genotype}\n')
         pharmagkb_snps = tinyglbase.genelist(filename, format={'force_tsv': True, 'SNP': 1, 'patient_genotype': 2})
 
-        pharmagkb = tinyglbase.glload(os.path.expanduser('~/static_data/PharmaGKB/merged_table.glb'))
+        pharmagkb = tinyglbase.glload(os.path.join(os.path.expanduser('~'), 'static_data', 'PharmaGKB', 'merged_table.glb' ))
         over = pharmagkb.map(genelist=pharmagkb_snps, key='SNP')
 
         # I need to match the genotypes, but seems the genotype and patient_genotype can be in any order when heterozygote
