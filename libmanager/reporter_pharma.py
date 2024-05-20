@@ -10,6 +10,7 @@ import os, sys, shutil
 from . import tinyglbase
 from . import support
 from . import reporter_pharma
+from . import html_pharma
 
 class reporter_pharma:
     def __init__(self,
@@ -37,7 +38,7 @@ class reporter_pharma:
         self.data_path = os.path.join(data_path, f'PID.{patient_id}')
         self.patient_data = patient_data
 
-        self.search_term = diseaseCN # Hardcoded to CN, for now
+        self.search_term = diseaseEN # Hardcoded to EN, for now, should use the disease_code
 
         # TODO: Enable the if statment when you finished testing:
         #if not os.path.exists(os.path.join(data_path, f'PID.{patient_id}', 'simple.css')):
@@ -147,7 +148,7 @@ class reporter_pharma:
         elif self.lang == 'CN':
             html = html_pharma.html('CN', self.patient_id, self.disease_name, self.patient_data, rest_of_table, no_reccomendation_table)
 
-        html_filename = os.path.join(self.data_path, f"result.{self.patient_id}.{self.lang}.{self.disease_code}.html")
+        html_filename = os.path.join(self.data_path, f"result.{self.patient_id}.{self.lang}.Pharma.{self.disease_code}.html")
 
         with open(html_filename, "w", encoding="utf-8", errors="xmlcharrefreplace") as output_file:
             output_file.write(html)
