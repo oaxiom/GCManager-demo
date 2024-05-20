@@ -1,0 +1,33 @@
+May 02, 2024 3:43:00 AM com.intel.gkl.NativeLibraryLoader load
+INFO: Loading libgkl_compression.so from jar:file:/export/unstable/picard-3.1.0/picard.jar!/com/intel/gkl/native/libgkl_compression.so
+[Thu May 02 03:43:01 UTC 2024] GatherVcfs --INPUT genotype.chr1.vcf.gz --INPUT genotype.chr2.vcf.gz --INPUT genotype.chr3.vcf.gz --INPUT genotype.chr4.vcf.gz --INPUT genotype.chr5.vcf.gz --INPUT genotype.chr6.vcf.gz --INPUT genotype.chr7.vcf.gz --INPUT genotype.chr8.vcf.gz --INPUT genotype.chr9.vcf.gz --INPUT genotype.chr10.vcf.gz --INPUT genotype.chr11.vcf.gz --INPUT genotype.chr12.vcf.gz --INPUT genotype.chr13.vcf.gz --INPUT genotype.chr14.vcf.gz --INPUT genotype.chr15.vcf.gz --INPUT genotype.chr16.vcf.gz --INPUT genotype.chr17.vcf.gz --INPUT genotype.chr18.vcf.gz --INPUT genotype.chr19.vcf.gz --INPUT genotype.chr20.vcf.gz --INPUT genotype.chr21.vcf.gz --INPUT genotype.chr22.vcf.gz --OUTPUT genotype.raw.vcf.gz --REORDER_INPUT_BY_FIRST_VARIANT false --VERBOSITY INFO --QUIET false --VALIDATION_STRINGENCY STRICT --COMPRESSION_LEVEL 5 --MAX_RECORDS_IN_RAM 500000 --CREATE_INDEX true --CREATE_MD5_FILE false --help false --version false --showHidden false --USE_JDK_DEFLATER false --USE_JDK_INFLATER false
+[Thu May 02 03:43:08 UTC 2024] Executing as andrew@compute-0-2 on Linux 5.15.0-102-generic amd64; OpenJDK 64-Bit Server VM 19.0.2+7-Ubuntu-0ubuntu322.04; Deflater: Intel; Inflater: Intel; Provider GCS is available; Picard version: Version:3.1.0
+INFO	2024-05-02 03:43:08	GatherVcfs	Checking inputs.
+INFO	2024-05-02 03:43:09	GatherVcfs	Checking file headers and first records to ensure compatibility.
+INFO	2024-05-02 03:43:22	GatherVcfs	Gathering by copying gzip blocks. Will not be able to validate position non-overlap of files.
+WARNING	2024-05-02 03:43:22	GatherVcfs	Index creation not currently supported when gathering block compressed VCFs.
+INFO	2024-05-02 03:43:23	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr1.vcf.gz
+INFO	2024-05-02 03:43:23	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr2.vcf.gz
+INFO	2024-05-02 03:43:25	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr3.vcf.gz
+INFO	2024-05-02 03:43:26	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr4.vcf.gz
+INFO	2024-05-02 03:43:30	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr5.vcf.gz
+INFO	2024-05-02 03:43:34	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr6.vcf.gz
+INFO	2024-05-02 03:43:36	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr7.vcf.gz
+INFO	2024-05-02 03:43:37	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr8.vcf.gz
+INFO	2024-05-02 03:43:40	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr9.vcf.gz
+INFO	2024-05-02 03:43:42	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr10.vcf.gz
+INFO	2024-05-02 03:43:48	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr11.vcf.gz
+INFO	2024-05-02 03:43:52	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr12.vcf.gz
+INFO	2024-05-02 03:43:55	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr13.vcf.gz
+INFO	2024-05-02 03:43:55	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr14.vcf.gz
+INFO	2024-05-02 03:43:56	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr15.vcf.gz
+INFO	2024-05-02 03:44:04	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr16.vcf.gz
+INFO	2024-05-02 03:44:08	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr17.vcf.gz
+INFO	2024-05-02 03:44:09	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr18.vcf.gz
+INFO	2024-05-02 03:44:11	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr19.vcf.gz
+INFO	2024-05-02 03:44:13	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr20.vcf.gz
+INFO	2024-05-02 03:44:22	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr21.vcf.gz
+INFO	2024-05-02 03:44:24	GatherVcfs	Gathering /data3/andrew/genomes/analysis/APH_subsampled/genotype.chr22.vcf.gz
+[Thu May 02 03:44:32 UTC 2024] picard.vcf.GatherVcfs done. Elapsed time: 1.53 minutes.
+Runtime.totalMemory()=1073741824
+Stage 6: Collected VCFs
