@@ -82,10 +82,16 @@ class api:
 
         return None
 
-    def add_new_patient(self, patient_id: str, sequence_data_id: str, sequence_data_files: str):
+    def add_new_patient(self, patient_id: str,
+        sequence_data_id: str,
+        name: str,
+        age: int,
+        sex: str,
+        sequence_data_files: str):
         # Backend: Add New Patient
 
-
+        # Sanitise input;
+        age = int(age)
 
         return None
 

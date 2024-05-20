@@ -103,7 +103,7 @@ class libmanager:
         '''
         # TODO: Enable fuzzy searching
 
-        self.db_PID_cursor.execute('SELECT PID, analysis_done FROM patients')
+        self.db_PID_cursor.execute('SELECT PID, name, age, sex, analysis_done FROM patients')
         results = self.db_PID_cursor.fetchall()
 
         return results

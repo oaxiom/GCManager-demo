@@ -28,7 +28,7 @@ def cmd_process(cmd):
 
 cmd_process('man.api.populate_patient_list()')
 # Expected result:
-# [('72210953309787', '1'), ('NA12878', '1'), ('PATIENTNOTSTARTED', '0')]
+# [('72210953309787', '何XX', 43, '男', '1'), ('NA12878', '王XX', 22, '男', '1'), ('PATIENTNOTSTARTED', '李XX', 24, '女', '0')]
 
 cmd_process("man.api.export_vcf('72210953309787')")
 # Expected Result: (This returns the absolute PATH)
