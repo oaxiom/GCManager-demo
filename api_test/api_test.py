@@ -47,7 +47,9 @@ cmd_process('man.api.populate_patient_list()')
 #  ('NA12878', '王XX', 22, '男', '1'),
 #  ('PATIENTNOTSTARTED', '李XX', 24, '女', '0')]
 
-cmd_process('man.api.add_new_patient("ANEWPATIENT", "SEQIDNEW", "张XX", "女", 50, "PATH/TO/SEQ")')
+# This will only work once. If run a second time it will produce a 'patient already exists' error:
+# 这只会起作用一次。如果再次运行，将产生“患者已存在”错误：
+#cmd_process('man.api.add_new_patient("ANEWPATIENT", "SEQIDNEW", "张XX", "女", 50, "PATH/TO/SEQ")')
 cmd_process('man.api.populate_patient_list()')
 # Expected result:
 # [('72210953309787', '何XX', 43, '男', '1'),

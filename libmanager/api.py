@@ -30,11 +30,26 @@ class api:
         self.manager = manager
 
     def populate_patient_list(self) -> list:
+        """
+
+        Returns the table of patients, in the form:
+        [
+        (patient_id, name, age, sex, analysis_complete?),
+        ...
+        ]
+
+        返回患者表，格式为：
+        [
+        (患者 ID, 姓名, 年龄, 性别, 是否已完成分析?),
+        ...
+        ]
+        搜索患者
+
+        """
         # Backend: Front Page
         # Doctorend: Front Page
 
-        #TODO: Enable fuzzy searching
-
+        #TODO: Enable fuzzy searching?
         table = self.manager.get_patients_table()
 
         # Returns a list of tuples,
@@ -116,6 +131,14 @@ class api:
         sex: str,
         age: int,
         sequence_data_files: str) -> bool:
+        """
+        Add new patient data.
+        Used on the screen to register a new patient
+        添加新的患者数据。
+        用于在屏幕上注册新患者:
+        添加新患者数据
+
+        """
         # Backend: Add New Patient
 
         # Sanitise input;
@@ -134,29 +157,81 @@ class api:
         return ret
 
     def report_current_anaylsis_stage(self, patient_id:str):
+        """
+        Returns the current analysis stage for the indicated data,
+        in the form:
+        (100, 100, 100, 100, 25, 0, 0, 0)
+        Used on the Analysis state page
+
+        返回指示数据的当前分析阶段，
+        形式为：
+        (100, 100, 100, 100, 25, 0, 0, 0)
+        任务分析状态
+
+        """
         # Backend: Analysis State
 
-        return None
+        return (100, 100, 100, 100, 100, 100, 100, 100)
 
     def delete_patient(self, patient_id:str):
+        """
+        Delete patient.
+        删除患者
+
+        """
+
         # Backend: Analysis State
         # Backend: Patient Data Manager
 
         # NOTE: Does nothing in DEMO
         return None
 
-    def export_QC_statistics(self, patient_id: str):
+    def export_QC_statistics(self, patient_id: str) -> str:
+        """
+        Returns the analysis summary as a string.
+        Used on the Analysis summary page.
+
+        以字符串形式返回分析摘要。
+        用于分析摘要页面。 "分析总结".
+
+        """
+
         # Backend: Analysis summary
 
         # NOTE: Does nothing in DEMO
-        return None
+        return "QC data summary will go here."
 
     def get_logs(self, patient_id:str) -> str:
+        """
+        Return all the log data.
+        Launched by the button 查看分析日志
+        and found on the page: 查看日志
+
+        返回所有日志数据。
+        通过按钮启动查看分析日志
+        在页面上找到：查看日志
+
+        """
         # Backend: Patient Data Manager
 
         return self.manager.get_logs(patient_id)
 
     def populate_patient_data_list(self) -> str:
+        """
+
+        Return the patient data table which includes the space used,
+        wether the data is already packed, CRAM is available? VCF available.
+        Used on the page: 患者数据管理
+
+        Data is in the form:
+        [
+        [患者 ID, Space Used, Data packed?, CRAM?, VCF?],
+        ...]
+        返回包括所用空间的患者数据表，
+        数据是否已经打包，CRAM是否可用？VCF可用。
+        在页面上使用：患者数据管理
+        """
+
         # Backend: Patient Data Manager
         table = self.manager.get_patients_data_table()
         return table
