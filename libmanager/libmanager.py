@@ -287,7 +287,7 @@ class libmanager:
             self.log.warning(f'Asked for {patient_id} CRAM file, but CRAM file is not avaialble')
             return False
 
-        cram_path = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.recalibrated_snps_recalibrated_indels.vcf.gz')
+        cram_path = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.sorted.dedupe.recal.cram')
 
         if not os.path.exists(cram_path):
             self.log.error(f'Asked for {patient_id} CRAM file, but CRAM file does not exist (although it was reported to exist)')
