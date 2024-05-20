@@ -784,7 +784,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         if 'gzip' in kargs and kargs['gzip']:
             oh = gzip.open(filename, "wt")
         else:
-            oh = open(filename, "w")
+            oh = open(filename, "wt")
 
         if not self.linearData: # data is empty, fail graciously.
             self.log.error(f"csv file '{filename}' is empty, no file written")

@@ -73,7 +73,7 @@ class reporter_pharma:
         # output.write(f'{chrom}\t{rsid}\t{genotype}\n')
         pharmagkb_snps = tinyglbase.genelist(filename, format={'force_tsv': True, 'SNP': 1, 'patient_genotype': 2})
 
-        pharmagkb = tinyglbase.glload(os.path.join(os.path.expanduser('~'), 'static_data', 'PharmaGKB', 'merged_table.glb' ))
+        pharmagkb = tinyglbase.glload(os.path.join(os.path.expanduser('~'), 'static_data', 'PharmaGKB', 'pharma_table.glb' ))
         over = pharmagkb.map(genelist=pharmagkb_snps, key='SNP')
 
         # I need to match the genotypes, but seems the genotype and patient_genotype can be in any order when heterozygote
@@ -91,25 +91,27 @@ class reporter_pharma:
         # TODO: remove the hacky language selecting system;
         # TODO: Do it the other way around, search for drug, get phenotypes.
 
-        search_results = annotated_data.getRowsByKey(key='phenotype', values=self.search_term, case_sensitive=False)
+        # Currently searches by EN
+        search_results = annotated_data.getRowsByKey(key='phenotype_EN', values=self.search_term, case_sensitive=False)
         #if not search_results:
         #    search_results = annotated_data.getRowsByKey(key='drug', values=self.search_term, case_sensitive=False)
 
         # Get the ones with no recommendation
         # First, get all phenotype from the pharmagkb database:
         # Second, if it's in the search_results, remove it;
-        pharmagkb_all_this_phenotype = pharmagkb.getRowsByKey(key='phenotype', values=self.search_term, case_sensitive=False)
+        pharmagkb_all_this_phenotype = pharmagkb.getRowsByKey(key='phenotype_EN', values=self.search_term, case_sensitive=False)
 
-        no_reccomendation = search_results.map(genelist=pharmagkb_all_this_phenotype, key='drug', logic='notright')
+        no_reccomendation = search_results.map(genelist=pharmagkb_all_this_phenotype, key='drug_CN', logic='notright')
         if no_reccomendation:
-            no_reccomendation = sorted(list(set(no_reccomendation['drug'])))
+            no_reccomendation = no_reccomendation.removeDuplicates('drug_CN')
+            no_reccomendation.sort('drug_CN')
 
         # get the search_term
 
         if not search_results:
             raise AssertionError(f'No associations matching {self.search_term} were found')
 
-        search_results.sort('drug')
+        search_results.sort('drug_CN')
 
         rest_of_table = []
         no_reccomendation_table = []
@@ -121,10 +123,10 @@ class reporter_pharma:
             for drug in search_results:
                 tab_row = f'''
             <tr>
-                <td>{drug['drug']}</td>
+                <td>{drug['drug_CN']}<br>({drug['drug_EN']})</td>
                 <td>{drug['SNP']}-{drug['patient_genotype']}</td>
                 <td>{drug['SNP_impact']}</td>
-                <td>{drug['description']}</td>
+                <td>{drug['description_EN']}</td>
                 <td>{drug['evidence_level']}</td>
             </tr>
                     '''
@@ -135,7 +137,7 @@ class reporter_pharma:
                 for drug in no_reccomendation:
                     tab_row_no_rec = f'''
                         <tr>
-                        <td>{drug}</td>
+                        <td>{drug['drug_CN']} ({drug['drug_EN']})</td>
                         <td>常规用药</td>
                         </tr>
                     '''
