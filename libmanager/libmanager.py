@@ -131,7 +131,7 @@ class libmanager:
     def get_pharma_table(self, lang='CN') -> list:
         '''
         **Purpose**
-            Return all of the pateinet_data table;
+            Return the Pharma DB table;
         '''
         if lang == 'CN':
             self.db_disease_codes_cursor.execute('SELECT * FROM diseasecodes_pharma')
@@ -140,6 +140,14 @@ class libmanager:
 
         results = self.db_disease_codes_cursor.fetchall()
         return results
+
+    def get_pharma_table(self, lang='CN') -> list:
+        '''
+        **Purpose**
+            Return all of the pateinet_data table;
+        '''
+
+        return []
 
     def _check_analysis_is_complete(self, patient_id: str) -> bool:
         """

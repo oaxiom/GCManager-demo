@@ -1,7 +1,10 @@
 #
-# stagedata
+# (c) 2024 Helixiome, all rights reserved.
+# (c) 2024
 #
-# Contains information about the stages;
+# Author(s):
+# Andrew P. Hutchins,
+#
 
 stages = {
         1: 'Align reads to genome',

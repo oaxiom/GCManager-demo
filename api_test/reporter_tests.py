@@ -1,3 +1,10 @@
+#
+# (c) 2024 Helixiome, all rights reserved.
+# (c) 2024
+#
+# Author(s):
+# Andrew P. Hutchins,
+#
 
 import sys, os
 sys.path.append('../')
