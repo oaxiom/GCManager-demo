@@ -141,10 +141,10 @@ class libmanager:
         results = self.db_disease_codes_cursor.fetchall()
         return results
 
-    def get_pharma_table(self, lang='CN') -> list:
+    def get_risk_table(self, lang='CN') -> list:
         '''
         **Purpose**
-            Return all of the pateinet_data table;
+            Return all of the Risk DB table;
         '''
 
         return []
@@ -409,5 +409,5 @@ class libmanager:
         # ClinVar
         # html_file = reporter.generate(lang=lang)
         # PharmaGKB:
-        html_file = rep.generate('PharmaGKB')
+        html_file = rep.generate('Pharma')
         return html_file
