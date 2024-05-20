@@ -27,7 +27,7 @@ class libmanager:
         self.log = logger.logger()
         self.end_type = end_type
         self.home_path = home_path
-        self.script_path = os.path.join(os.path.split(sys.argv[0])[0], '..')
+        self.script_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], '..')
         self.db_path = os.path.join(self.home_path, 'dbs')
         self.data_path = os.path.join(self.home_path, 'data')
 
@@ -412,7 +412,7 @@ class libmanager:
 
             self.log.info(f'Search found: {disease_code}, {descEN}, {descCN}')
 
-            rep = reporter_pharma.reporter_pharma(self.data_path, patient_id, patient_data, disease_code, descEN, descCN, self.log, lang)
+            rep = reporter_pharma.reporter_pharma(self.data_path, self.script_path, patient_id, patient_data, disease_code, descEN, descCN, self.log, lang)
             html_file = rep.generate()
 
         elif mode == 'ClinVAR':

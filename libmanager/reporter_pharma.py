@@ -15,6 +15,7 @@ from . import html_pharma
 class reporter_pharma:
     def __init__(self,
         data_path:str,
+        script_path:str,
         patient_id:str,
         patient_data:dict,
         disease_code: str,
@@ -36,6 +37,10 @@ class reporter_pharma:
             self.disease_name = diseaseEN
 
         self.data_path = os.path.join(data_path, f'PID.{patient_id}')
+        self.script_path = script_path # root for GCManager install;
+
+        print(self.data_path, self.script_path)
+
         self.patient_data = patient_data
 
         self.search_term = diseaseEN # Hardcoded to EN, for now, should use the disease_code
@@ -43,8 +48,8 @@ class reporter_pharma:
         # TODO: Enable the if statment when you finished testing:
         #if not os.path.exists(os.path.join(data_path, f'PID.{patient_id}', 'simple.css')):
         # make sure the css is copied over
-        shutil.copy(os.path.join(os.path.expanduser('~'), 'static_data', 'html', 'simple.css' ),os.path.join(data_path, f'PID.{patient_id}', 'simple.css'))
-        shutil.copy(os.path.join(os.path.expanduser('~'), 'static_data', 'html', 'print.css' ),os.path.join(data_path, f'PID.{patient_id}', 'print.css'))
+        shutil.copy(os.path.join(self.script_path, 'static_data', 'html', 'simple.css' ),os.path.join(data_path, f'PID.{patient_id}', 'simple.css'))
+        shutil.copy(os.path.join(self.script_path, 'static_data', 'html', 'print.css' ),os.path.join(data_path, f'PID.{patient_id}', 'print.css'))
 
     def generate(self) -> str:
         """
@@ -73,7 +78,7 @@ class reporter_pharma:
         # output.write(f'{chrom}\t{rsid}\t{genotype}\n')
         pharmagkb_snps = tinyglbase.genelist(filename, format={'force_tsv': True, 'SNP': 1, 'patient_genotype': 2})
 
-        pharmagkb = tinyglbase.glload(os.path.join(os.path.expanduser('~'), 'static_data', 'PharmaGKB', 'pharma_table.glb' ))
+        pharmagkb = tinyglbase.glload(os.path.join(self.script_path, 'static_data', 'PharmaGKB', 'pharma_table.glb' ))
         over = pharmagkb.map(genelist=pharmagkb_snps, key='SNP')
 
         # I need to match the genotypes, but seems the genotype and patient_genotype can be in any order when heterozygote

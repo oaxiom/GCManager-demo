@@ -10,7 +10,6 @@ import sys, os
 sys.path.append('../')
 from libmanager import libmanager, support, VERSION
 
-script_path = os.path.dirname(os.path.realpath(__file__))
 log = support.prepare_logging()
 
 if 'demo' in VERSION:
