@@ -57,9 +57,9 @@ class reporter_pharma:
             Generate a report, return the HTML filename
         """
         annotated_data, pharmagkb = self.__annotate_pharmagkb_snps(os.path.join(self.data_path, f'{self.patient_id}.pharmagkb.txt'))
-        html_filename = self.__report_generator_pharmaGKB(annotated_data, pharmagkb)
+        html_filename, html = self.__report_generator_pharmaGKB(annotated_data, pharmagkb)
 
-        return html_filename
+        return html_filename, html
 
     def __annotate_pharmagkb_snps(self, filename):
         '''
@@ -160,4 +160,4 @@ class reporter_pharma:
         with open(html_filename, "w", encoding="utf-8", errors="xmlcharrefreplace") as output_file:
             output_file.write(html)
 
-        return html_filename
+        return html_filename, html

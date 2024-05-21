@@ -313,7 +313,7 @@ class libmanager:
 
         if not self._check_cram_vcf_status(patient_id, 'vcf'):
             self.log.warning(f'Asked for {patient_id} VCF file, but VCF file is not avaialble')
-            return False
+            raise LookupError(f'Asked for {patient_id} VCF file, but VCF file is not available, analysis is incomplete')
 
         vcf_path = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.gatk.dbsnp.vcf.gz')
 
@@ -475,7 +475,8 @@ class libmanager:
             self.log.info(f'Search found: {disease_code}, {descEN}, {descCN}')
 
             rep = reporter_pharma.reporter_pharma(self.data_path, self.script_path, patient_id, patient_data, disease_code, descEN, descCN, self.log, lang)
-            html_file = rep.generate()
+            #html_file = rep.generate_html_file()
+            html_file, html = rep.generate()
 
         elif mode == 'ClinVAR':
             html_file = ''
@@ -485,4 +486,4 @@ class libmanager:
 
         self.db_disease_codes.close()
 
-        return html_file
+        return html_file, html

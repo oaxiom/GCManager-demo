@@ -11,14 +11,24 @@ class settings:
         self.settings_backend = sqlite3.connect(os.path.join(self.home_path, "dbs/", "settings_backend.db"))
         self.settings_backend_cur = self.settings_backend.cursor()
 
+    def __get_cursor(self, end):
+        if end == 'Doctorend':
+            db = sqlite3.connect(os.path.join(self.home_path, "dbs/", "settings_doctor.db"))
+            db_cur = settings_doctor.cursor()
+
+        elif end == 'backend':
+            db = sqlite3.connect(os.path.join(self.home_path, "dbs/", "settings_backend.db"))
+            db_cur = settings_backend.cursor()
+
+        return db, db_cur
+
     def initialize_dbs(self):
         '''
         **Purpose**
             Build the settings databases
         '''
 
-        settings_doctor = sqlite3.connect(os.path.join(self.home_path, "dbs/", "settings_doctor.db"))
-        settings_doctor_cur = settings_doctor.cursor()
+        settings_doctor, settings_doctor_cur = self.__get_cursor('Doctorend')
         settings_doctor_cur.execute('CREATE TABLE settings (setting_name TEXT, value TEXT)')
 
         # add the settings;
@@ -28,8 +38,7 @@ class settings:
         settings_doctor.commit()
         settings_doctor.close()
 
-        settings_backend = sqlite3.connect(os.path.join(self.home_path, "dbs/", "settings_backend.db"))
-        settings_backend_cur = settings_backend.cursor()
+        settings_backend, settings_backend_cur = self.__get_cursor('Backend')
         settings_backend_cur.execute('CREATE TABLE settings (setting_name TEXT, value TEXT)')
 
         settings_backend_cur.execute('INSERT INTO settings VALUES (?,?)', ('lang', 'CN'))
@@ -44,9 +53,12 @@ class settings:
 
         '''
         # TODO: valid key checking
-        self.settings_doctor_cur.execute('SELECT value FROM settings WHERE setting_name=?', (key, ))
+        settings_doctor, settings_doctor_cur = self.__get_cursor('Doctorend')
+        settings_doctor_cur.execute('SELECT value FROM settings WHERE setting_name=?', (key, ))
         # TODO: return sanity check
-        return self.settings_doctor_cur.fetchone()[0]
+        ret = self.settings_doctor_cur.fetchone()[0]
+        settings_doctor.close()
+        return ret
 
     def set_doctor_setting(self, key, value):
         '''
@@ -54,7 +66,8 @@ class settings:
 
         '''
         # TODO: valid key checking
-        self.settings_doctor_cur.execute('UPDATE settings SET value=? WHERE setting_name=?', (value, key))
+        settings_doctor, settings_doctor_cur = self.__get_cursor('Doctorend')
+        settings_doctor_cur.execute('UPDATE settings SET value=? WHERE setting_name=?', (value, key))
 
     def get_backend_setting(self, key):
         '''
@@ -62,9 +75,13 @@ class settings:
 
         '''
         # TODO: valid key checking
-        self.settings_backend_cur.execute('SELECT value FROM settings WHERE setting_name=?', (key, ))
+        settings_backend, settings_backend_cur = self.__get_cursor('Backend')
+        settings_backend_cur.execute('SELECT value FROM settings WHERE setting_name=?', (key, ))
         # TODO: return sanity check
-        return self.settings_backend_cur.fetchone()[0]
+        ret = self.settings_backend_cur.fetchone()[0]
+        settings_doctor.close()
+
+        return ret
 
     def set_backend_setting(self, key, value):
         '''
@@ -72,4 +89,6 @@ class settings:
 
         '''
         # TODO: valid key checking
-        self.settings_backend_cur.execute('UPDATE settings SET value=? WHERE setting_name=?', (value, key))
+        settings_backend, settings_backend_cur = self.__get_cursor('Backend')
+        settings_backend_cur.execute('UPDATE settings SET value=? WHERE setting_name=?', (value, key))
+        settings_backend.close()

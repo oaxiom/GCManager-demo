@@ -261,14 +261,14 @@ class api:
         # TODO: Clean up miscellaneous non-patient data files
         return True
 
-    def clean_up_analysis(self, patient_id: str) -> bool:
+    def clean_up_analysis(self, patient_id: str) -> str:
         # Backend: Patient Data Manager
 
         # Does nothing in the DEMO version.
         # TODO: Clean up patient data files
-        return None
+        return 'Clean up is complete'
 
-    def convert_bam_to_cram(self) -> bool:
+    def convert_bam_to_cram(self, patient_id: str) -> bool:
         """
         Convert a BAM file to CRAM
         转换所选BAM 成 CRAM
@@ -282,9 +282,7 @@ class api:
 
     def set_system_doctor_setting(self, key:str, value:str) -> bool:
         """
-
         Set a system setting on: 系统设置 page
-
         """
 
         # Doctorend: System Settings
@@ -293,9 +291,7 @@ class api:
 
     def get_system_doctor_setting(self, key:str) -> str:
         """
-
-        Set a system setting on: 系统设置 page
-
+        Get a system setting on: 系统设置 page
         """
         # Doctorend: System Settings
 
@@ -312,7 +308,7 @@ class api:
 
     def get_system_backend_setting(self, key:str) -> str:
         """
-        Set a system setting on: 系统设置 page
+        Get a system setting on: 系统设置 page
         """
         # Doctorend: System Settings
 
