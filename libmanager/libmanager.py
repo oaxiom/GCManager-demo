@@ -171,12 +171,16 @@ class libmanager:
         self.db_disease_codes_cursor = self.db_disease_codes.cursor()
 
         if lang == 'CN':
-            self.db_disease_codes_cursor.execute('SELECT * FROM diseasecodes_pharma')
+            self.db_disease_codes_cursor.execute('SELECT desc_cn FROM diseasecodes_pharma')
         else:
-            self.db_disease_codes_cursor.execute('SELECT * FROM diseasecodes_pharma')
+            self.db_disease_codes_cursor.execute('SELECT desc_en FROM diseasecodes_pharma')
 
         results = self.db_disease_codes_cursor.fetchall()
         self.db_disease_codes.close()
+
+        if results:
+            results = [i[0] for i in results]
+
         return results
 
     def get_risk_table(self, lang='CN') -> list:

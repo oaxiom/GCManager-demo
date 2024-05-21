@@ -55,7 +55,7 @@ class api:
         # Returns a list of tuples,
         return table
 
-    def populate_report_generator(self, mode) -> list:
+    def populate_report_generator(self, mode:str, lang:str) -> list:
         """
 
         Returns the list of diseases or conditions for three modes:
@@ -73,13 +73,13 @@ class api:
         assert mode in support.valid_genome_dbs, f'{mode} not found'
 
         if mode == 'Pharma': # 疾病与用药指导
-            return self.manager.get_pharma_table()
+            return self.manager.get_pharma_table(lang)
 
         elif mode == 'ClinVAR': # 临床表型相关变异
             return [] # An empty list is a valid return
 
         elif mode == 'Risk': # 疾病风险提示
-            return self.manager.get_risk_table()
+            return self.manager.get_risk_table(lang)
 
     def export_vcf(self, patient_id: str) -> str:
         """
@@ -300,3 +300,20 @@ class api:
         # Doctorend: System Settings
 
         return self.manager.settings.get_doctor_setting(key)
+
+    def set_system_backend_setting(self, key:str, value:str) -> bool:
+        """
+        Set a system setting on: 系统设置 page
+        """
+
+        # Doctorend: System Settings
+
+        return self.manager.settings.set_backend_setting(key, value)
+
+    def get_system_backend_setting(self, key:str) -> str:
+        """
+        Set a system setting on: 系统设置 page
+        """
+        # Doctorend: System Settings
+
+        return self.manager.settings.get_backend_setting(key)
