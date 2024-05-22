@@ -21,7 +21,7 @@ if not os.path.exists(home_path):
     sys.exit(-1)
 man = libmanager.libmanager('Backend', log=log, home_path=home_path)
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -98,7 +98,7 @@ def generate_report(mode: str, patient_id: str, selected_report:str) -> dict:
     return {'code': 200, 'data': {'html_filename': html_filename, 'html': html}, 'msg': None}
 
 @app.get("/patient/{patient_id}/")
-def is_patient_id_valid(mode: str, patient_id: str, selected_report:str) -> dict:
+def is_patient_id_valid(patient_id: str) -> dict:
     '''
 
     Test if a patient_id is valid
@@ -108,7 +108,9 @@ def is_patient_id_valid(mode: str, patient_id: str, selected_report:str) -> dict
     '88888888' (returns False)
 
     '''
-    return {'code': 200, 'data': man.patient_exists(patient_id), 'msg': None}
+    ret = man.patient_exists(patient_id)
+
+    return {'code': 200, 'data': ret, 'msg': None}
 
 class PatientData(BaseModel):
     patient_id: str
@@ -118,8 +120,28 @@ class PatientData(BaseModel):
     age: int
     sequence_data_files: str
 
-@app.post('/settings_backend/')
+@app.post('/add_patient')
 def add_new_patient(patient_data: PatientData) -> dict:
+    '''
+
+    Add a new patient to the database.
+
+    Example data:
+    {
+      "patient_id": "ANEWPATIENT12345",
+      "sequence_data_id": "SEQID2345",
+      "name": "王XX",
+      "sex": "男",
+      "age": 30,
+      "sequence_data_files": "/path/to/data/fastq"
+    }
+
+    '''
+    # Check it doesn't exist already
+    ret = man.patient_exists(patient_data.patient_id)
+
+    if ret:
+        raise HTTPException(status_code=500, detail=f'{patient_data.patient_id} already exists!')
 
     ret_code = man.api.add_new_patient(
         patient_id=patient_data.patient_id,
@@ -131,9 +153,10 @@ def add_new_patient(patient_data: PatientData) -> dict:
         )
 
     if not ret_code:
-        return {'code': 400, 'data': False, 'msg': 'Failed to add Patient'}
+        raise HTTPException(status_code=404, detail=f'Failed to add {patient_data.patient_id}')
 
-    ret = man.patient_exists(patient_id)
+    # Check it's valid
+    ret = man.patient_exists(patient_data.patient_id)
 
     return {'code': 200, 'data': ret, 'msg': None}
 

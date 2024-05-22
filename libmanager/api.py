@@ -210,7 +210,7 @@ class api:
         """
         # Backend: Analysis summary
 
-        return "QC data summary will go here."
+        return "QC data summary will go here.\nAs a long text.\nIt's relatively short."
 
     def get_logs(self, patient_id:str) -> str:
         """
