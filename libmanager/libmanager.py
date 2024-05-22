@@ -188,8 +188,21 @@ class libmanager:
         **Purpose**
             Return all of the Risk DB table;
         '''
+        self.db_disease_codes = sqlite3.connect(self.db_disease_codes_path)
+        self.db_disease_codes_cursor = self.db_disease_codes.cursor()
 
-        return []
+        if lang == 'CN':
+            self.db_disease_codes_cursor.execute('SELECT desc_cn FROM diseasecodes_risk')
+        else:
+            self.db_disease_codes_cursor.execute('SELECT desc_en FROM diseasecodes_risk')
+
+        results = self.db_disease_codes_cursor.fetchall()
+        self.db_disease_codes.close()
+
+        if results:
+            results = [i[0] for i in results]
+
+        return results
 
     def _check_analysis_is_complete(self, patient_id: str) -> bool:
         """

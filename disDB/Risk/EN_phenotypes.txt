@@ -1,0 +1,48 @@
+Alzheimer disease
+Amyotrophic lateral sclerosis
+Arthritis
+Atherosclerosis
+Azoospermia
+Barrett's esophagus
+Cardiovascular disease
+Chronic obstructive pulmonary disease
+Cirrhosis of liver
+Coronary artery disease
+Coronary atherosclerosis
+Crohn's disease
+Endometriosis
+Fatty liver disease
+Graves disease
+Hashimoto's thyroiditis
+Heart failure
+Hypertension
+Hypertriglyceridemia
+Idiopathic pulmonary fibrosis
+Inflammatory bowel disease
+Irritable bowel syndrome
+Ischemic stroke
+Multiple sclerosis
+Myasthenia gravis
+Myocardial infarction
+Myocardial ischemia
+Nephrotic syndrome
+Osteoarthritis
+Osteonecrosis
+Osteoporosis
+Otosclerosis
+Parkinson disease
+Polycystic ovary syndrome
+Pulmonary alveolar proteinosis
+Rheumatoid arthritis
+Sjogren syndrome
+Somnambulism
+Spondylolisthesis
+Spondylosis
+Stevens-johnson syndrome
+Stroke
+Systemic lupus erythematosus
+Thrombocytopenia
+Type 1 diabetes mellitus
+Type 2 diabetes mellitus
+Ulcerative colitis
+Waldenstrom macroglobulinemia

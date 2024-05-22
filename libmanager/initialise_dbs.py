@@ -43,6 +43,7 @@ def init_dbs(home_path, script_path, log):
         for did, (lineEN, lineCN) in enumerate(zip(ohEN, ohCN)):
             if not (lineEN and lineCN): continue
             disease_dbc.execute('INSERT INTO diseasecodes_pharma VALUES (?, ?, ?)', (f'P{did+1}', lineEN.strip(), lineCN.strip()))
+    log.info('Setting up Pharma table')
 
     # Load ClinVar
     # Isn't this per patient?
@@ -50,7 +51,13 @@ def init_dbs(home_path, script_path, log):
 
     # Load Risk factors
     disease_dbc.execute('CREATE TABLE diseasecodes_risk (dis_code TEXT, desc_en TEXT, desc_cn TEXT)')
-    # Load from risk factor spreadsheet
+    # Load risk factors
+    with open(os.path.join(script_path, 'disDB', 'Risk', 'EN_phenotypes.txt'), 'rt', encoding="utf-8") as ohEN, \
+        open(os.path.join(script_path, 'disDB', 'Risk', 'CN_phenotypes.txt'), 'rt', encoding="utf-8") as ohCN:
+        for did, (lineEN, lineCN) in enumerate(zip(ohEN, ohCN)):
+            if not (lineEN and lineCN): continue
+            disease_dbc.execute('INSERT INTO diseasecodes_risk VALUES (?, ?, ?)', (f'R{did+1}', lineEN.strip(), lineCN.strip()))
+    log.info('Setting up Risk table')
 
     disease_db.commit()
     disease_db.close()

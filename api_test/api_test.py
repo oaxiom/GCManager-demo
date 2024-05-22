@@ -107,6 +107,7 @@ cmd_process("man.api.get_logs('72210953309787')")
 cmd_process("man.api.generate_report('Pharma', '72210953309787', 'Stroke')")
 # Expected Result:
 # /Users/andrew/GCMDataDEMO/data/PID.72210953309787/result.72210953309787.CN.P316.html
+cmd_process("man.api.generate_report('Risk', '72210953309787', 'Stroke')")
 
 cmd_process("man.settings.get_doctor_setting('lang')")
 # Expected Results:
