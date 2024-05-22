@@ -64,6 +64,8 @@ class settings:
         # TODO: valid key checking
         settings_doctor, settings_doctor_cur = self.__get_cursor('Doctorend')
         settings_doctor_cur.execute('UPDATE settings SET value=? WHERE setting_name=?', (value, key))
+        settings_doctor.commit()
+        settings_doctor.close()
 
     def get_backend_setting(self, key):
         '''
@@ -87,4 +89,5 @@ class settings:
         # TODO: valid key checking
         settings_backend, settings_backend_cur = self.__get_cursor('Backend')
         settings_backend_cur.execute('UPDATE settings SET value=? WHERE setting_name=?', (value, key))
+        settings_backend.commit()
         settings_backend.close()

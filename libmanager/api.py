@@ -83,11 +83,10 @@ class api:
 
     def export_vcf(self, patient_id: str) -> str:
         """
-        Returns the PATH to the CRAM file for this patient, of None
-        if the CRAM is not avaialable.
+        Returns the PATH to the VCF file for this patient, of None
+        if the VCF is not avaialable.
 
         The 保存所选VCF button.
-        The 保存所选CRAM button.
 
         """
         ###### Used in:
@@ -102,6 +101,8 @@ class api:
         Returns the PATH to the CRAM file for this patient, of None
         if the CRAM is not avaialable.
 
+        The 保存所选CRAM button.
+
         """
         ###### Used in:
         # Backend: Report Generator
@@ -111,12 +112,17 @@ class api:
 
     def generate_report(self, mode: str, patient_id: str, selected_report:str) -> str:
         '''
-        Generates the reports and returns the PATH to the HTML file.
+        Generates the reports and returns the PATH to the HTML file, and the HTML data.
+
+        Best to serve the HTML, right?
 
         mode can be one of :
-        if mode == 'Pharma': # 疾病与用药指导
-        elif mode == 'ClinVAR': # 临床表型相关变异
-        elif mode == 'Risk': # 疾病风险提示
+
+        'Pharma': 疾病与用药指导
+
+        'ClinVAR': 临床表型相关变异
+
+        'Risk': 疾病风险提示
 
         '''
         ###### Used in:

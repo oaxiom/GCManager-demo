@@ -409,6 +409,7 @@ class libmanager:
         self.db_PID_cursor.execute('INSERT INTO patient_data VALUES (:patient_id, "0Gb", 0, 0, 0)', newpid_row)
         self.db_PID.commit()
         self.db_PID.close()
+
         if os.path.exists(data_dir):
             raise Exception(f'Trying to add {patient_id} but the data directory {data_dir} already exists')
         os.mkdir(data_dir)

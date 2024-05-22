@@ -22,7 +22,7 @@ if not os.path.exists(home_path):
 man = libmanager.libmanager('Backend', log=log, home_path=home_path)
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 app = FastAPI()
 
@@ -47,7 +47,7 @@ def populate_report_generator(mode: str, lang: str) -> dict:
     'EN' English
     'CN' Chinese
 
-    Example values:
+    Example request:
 
     mode = Pharma
     lang = CN
@@ -113,12 +113,12 @@ def is_patient_id_valid(patient_id: str) -> dict:
     return {'code': 200, 'data': ret, 'msg': None}
 
 class PatientData(BaseModel):
-    patient_id: str
-    sequence_data_id: str
-    name: str
-    sex: str
-    age: int
-    sequence_data_files: str
+    patient_id: str = Field(examples=["ANEWPATIENT12345"])
+    sequence_data_id: str = Field(examples=["SEQID2345"])
+    name: str = Field(examples=["王XX"])
+    sex: str = Field(examples=["男"])
+    age: int = Field(examples=[30,])
+    sequence_data_files: str = Field(examples=["/path/to/data/fastq"])
 
 @app.post('/add_patient')
 def add_new_patient(patient_data: PatientData) -> dict:
@@ -278,8 +278,8 @@ def convert_bam_to_cram(patient_id: str) -> dict:
     return {'code': 200, 'data': man.api.convert_bam_to_cram(patient_id), 'msg': None}
 
 class Setting(BaseModel):
-    key: str
-    setting: str
+    key: str = Field(examples=["lang"])
+    setting: str = Field(examples=["EN", "CN"])
 
 @app.post('/settings_doctorend/')
 def set_system_doctor_setting(setting: Setting) -> dict:
