@@ -41,7 +41,7 @@ def cmd_process(cmd):
 
 ########
 # Testing;
-cmd_process("man.generate_report('Pharma', '72210953309787', 'Stroke')")
+#cmd_process("man.generate_report('Pharma', '72210953309787', 'Stroke')")
 #cmd_process("man.generate_report('Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
 #cmd_process("man.generate_report('Pharma', '72210953309787', 'Hypertension')")
 #cmd_process("man.generate_report('Pharma', '72210953309787', '中风')")
@@ -49,3 +49,5 @@ cmd_process("man.generate_report('Pharma', '72210953309787', 'Stroke')")
 
 # Risk:
 cmd_process("man.generate_report('Risk', '72210953309787', '克罗恩氏病')")
+cmd_process("man.generate_report('Risk', '72210953309787', 'Amyotrophic lateral sclerosis')")
+cmd_process("man.generate_report('Risk', '72210953309787', 'Rheumatoid arthritis')")

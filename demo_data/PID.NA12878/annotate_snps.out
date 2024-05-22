@@ -9,7 +9,23 @@ see: https://github.com/brentp/vcfanno
 =============================================
 vcfanno.go:116: found 1 sources from 1 files
 vcfanno.go:146: using 2 worker threads to decompress bgzip file
-bix.go:102: warning: data file /export/home/andrew/static_data/dbsnp138/dbsnp.vcf.gz is modified more recently than its index.
 api.go:811: WARNING: using op 'self' when with Number='1' for 'ID' from '/export/home/andrew/static_data/dbsnp138/dbsnp.vcf.gz' can result in out-of-order values when the query is multi-allelic
 api.go:812:        : this is not an issue if the query has been decomposed.
 vcfanno.go:195: Info Error: rs_ids not found in INFO >> this error/warning may occur many times. reporting once here...
+vcfanno.go:250: annotated 2595573 variants in 634.17 seconds (4092.9 / second)
+Stage 8: Finished annotating dbSNP
+INFO    : Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+INFO    : NumExpr defaulting to 8 threads.
+Loaded 367 SNPs
+1,000,000
+2,000,000
+Found 98 matches
+Stage 8: Finished PharmaGKB
+INFO    : Note: NumExpr detected 32 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+INFO    : NumExpr defaulting to 8 threads.
+Loaded 8,934 SNPs
+1,000,000
+2,000,000
+Found 2577 matches
+Stage 8: Finished Risk GWAS annotation
+Stage 8: Completed annotation and selection of SNPs

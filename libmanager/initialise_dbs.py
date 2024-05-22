@@ -81,6 +81,7 @@ def build_demo_data(man, home_path, script_path, log):
     user_home_path = os.path.expanduser('~')
     [shutil.copy(f, os.path.join(home_path, 'data', 'PID.72210953309787')) for f in glob.glob(os.path.join(script_path, 'demo_data', 'PID.72210953309787', '*.out'))]
     shutil.copy(os.path.join(script_path, 'demo_data', 'PID.72210953309787', '72210953309787.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.72210953309787'))
+    shutil.copy(os.path.join(script_path, 'demo_data', 'PID.72210953309787', '72210953309787.risk.txt'), os.path.join(home_path, 'data', 'PID.72210953309787'))
     shutil.copy(os.path.join(script_path, 'demo_data', 'PID.72210953309787', '72210953309787.sorted.dedupe.recal.cram'), os.path.join(home_path, 'data', 'PID.72210953309787'))
     shutil.copy(os.path.join(script_path, 'demo_data', 'PID.72210953309787', '72210953309787.gatk.dbsnp.vcf.gz'), os.path.join(home_path, 'data', 'PID.72210953309787'))
 
@@ -88,7 +89,7 @@ def build_demo_data(man, home_path, script_path, log):
     [shutil.copy(f, os.path.join(home_path, 'data', 'PID.NA12878')) for f in glob.glob(os.path.join(script_path, 'demo_data', 'PID.NA12878', '*.out'))]
     shutil.copy(os.path.join(script_path, 'demo_data', 'PID.NA12878', 'NA12878.gatk.dbsnp.vcf.gz'), os.path.join(home_path, 'data', 'PID.NA12878'))
     shutil.copy(os.path.join(script_path, 'demo_data', 'PID.NA12878', 'NA12878.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.NA12878'))
-    #shutil.copy(os.path.join(script_path, 'demo_data', 'PID.NA12878', 'NA12878.pharmagkb.final.txt'), os.path.join(home_path, 'data', 'PID.NA12878'))
+    shutil.copy(os.path.join(script_path, 'demo_data', 'PID.NA12878', 'NA12878.risk.txt'), os.path.join(home_path, 'data', 'PID.NA12878'))
 
     # Add fake details of the analysis to the database;
 

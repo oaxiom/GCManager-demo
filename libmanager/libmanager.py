@@ -17,6 +17,7 @@ from . import api
 from . import stagedata
 from . import logger
 from . import reporter_pharma
+from . import reporter_risk
 from . import settings
 from . import support
 
@@ -508,7 +509,10 @@ class libmanager:
 
             self.log.info(f'Search found: {disease_code}, {descEN}, {descCN}')
 
-            html_file = ''
+            rep = reporter_risk.reporter_risk(self.data_path, self.script_path, patient_id, patient_data, disease_code, descEN, descCN, self.log, lang)
+            #html_file = rep.generate_html_file()
+            html_file, html = rep.generate()
+
             html = ''
 
         self.db_disease_codes.close()
