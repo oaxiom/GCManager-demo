@@ -9,7 +9,6 @@
 import os, sys, shutil
 from . import tinyglbase
 from . import support
-from . import reporter_pharma
 from . import html_pharma
 
 class reporter_pharma:

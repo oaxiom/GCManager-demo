@@ -48,4 +48,4 @@ cmd_process("man.generate_report('Pharma', '72210953309787', 'Stroke')")
 #cmd_process("man.generate_report('Pharma', 'NA12878', 'qt 间期缩短')")
 
 # Risk:
-cmd_process("man.generate_report('Risk', '72210953309787', 'Stroke')")
+cmd_process("man.generate_report('Risk', '72210953309787', '克罗恩氏病')")
