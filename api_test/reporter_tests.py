@@ -28,12 +28,24 @@ man = libmanager.libmanager('Doctorend', log=log, home_path=home_path)
 def cmd_process(cmd):
     print(f'\n>>> {cmd}')
     res = eval(cmd)
+    if isinstance(res, str):
+        lines = res.split('\n')
+        if len(lines) > 10:
+            print('\n'.join(lines[0:9]))
+            return
+    elif isinstance(res, list):
+        if len(res) > 10:
+            print(res[0:9])
+            return
     print(res)
 
 ########
 # Testing;
 cmd_process("man.generate_report('Pharma', '72210953309787', 'Stroke')")
-cmd_process("man.generate_report('Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
-cmd_process("man.generate_report('Pharma', '72210953309787', 'Hypertension')")
-cmd_process("man.generate_report('Pharma', '72210953309787', '中风')")
-cmd_process("man.generate_report('Pharma', 'NA12878', 'qt 间期缩短')")
+#cmd_process("man.generate_report('Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
+#cmd_process("man.generate_report('Pharma', '72210953309787', 'Hypertension')")
+#cmd_process("man.generate_report('Pharma', '72210953309787', '中风')")
+#cmd_process("man.generate_report('Pharma', 'NA12878', 'qt 间期缩短')")
+
+# Risk:
+cmd_process("man.generate_report('Risk', '72210953309787', 'Stroke')")

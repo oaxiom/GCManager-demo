@@ -493,10 +493,23 @@ class libmanager:
             html_file, html = rep.generate()
 
         elif mode == 'ClinVAR':
+            html = ''
             html_file = ''
 
         elif mode == 'Risk':
+            self.db_disease_codes_cursor.execute('SELECT dis_code, desc_en, desc_cn FROM diseasecodes_risk WHERE desc_en=? OR desc_cn=?', (search_term, search_term))
+            res = self.db_disease_codes_cursor.fetchone()
+            if not res:
+                raise AssertionError(f'{search_term} was not found in diseasecodes_risk database')
+
+            disease_code = res[0]
+            descEN = res[1]
+            descCN = res[2]
+
+            self.log.info(f'Search found: {disease_code}, {descEN}, {descCN}')
+
             html_file = ''
+            html = ''
 
         self.db_disease_codes.close()
 
