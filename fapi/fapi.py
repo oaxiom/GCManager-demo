@@ -32,6 +32,19 @@ async def root():
 
 @app.get('/populate_patient_list/')
 def populate_patient_list() -> dict:
+    """
+    返回患者表，格式为：
+    [
+    {患者 ID: 'ID',
+    姓名: 'NAME',
+    年龄: 30,
+    性别: 'NAN',
+    是否已完成分析?, true}
+    ,
+    {}, {}, ...
+    ]
+    搜索患者
+    """
     return {'code': 200, 'data': man.api.populate_patient_list(), 'msg': None}
 
 @app.get('/populate_report_generator/{mode}')
@@ -67,7 +80,7 @@ def export_vcf(patient_id: str) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
-    print(man.api.export_vcf(patient_id))
+    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': man.api.export_vcf(patient_id), 'msg': None}
 
 @app.get("/export_cram/{patient_id}")
@@ -76,6 +89,7 @@ def export_cram(patient_id: str) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
+    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': man.api.export_cram(patient_id), 'msg': None}
 
 @app.get("/generate_report/{mode}/{patient_id}/")
@@ -93,6 +107,8 @@ def generate_report(mode: str, patient_id: str, selected_report:str) -> dict:
     selected_report = '中风'
 
     '''
+    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
+
     html_filename, html = man.api.generate_report(mode, patient_id, selected_report)
 
     return {'code': 200, 'data': {'html_filename': html_filename, 'html': html}, 'msg': None}
@@ -109,7 +125,6 @@ def is_patient_id_valid(patient_id: str) -> dict:
 
     '''
     ret = man.patient_exists(patient_id)
-
     return {'code': 200, 'data': ret, 'msg': None}
 
 class PatientData(BaseModel):
@@ -176,6 +191,7 @@ def report_current_anaylsis_stage(patient_id:str) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
+    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': man.api.report_current_anaylsis_stage(patient_id), 'msg': None}
 
 '''
@@ -194,6 +210,7 @@ def export_QC_statistics(patient_id: str) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
+    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': man.api.export_QC_statistics(patient_id), 'msg': None}
 
 @app.get("/get_logs/{patient_id}")
@@ -210,6 +227,7 @@ def get_logs(patient_id:str) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
+    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': man.api.get_logs(patient_id), 'msg': None}
 
 @app.get("/populate_patient_data_list/")
@@ -261,6 +279,7 @@ def clean_up_analysis(patient_id: str) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
+    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': man.api.clean_up_analysis(patient_id), 'msg': None}
 
 @app.get("/convert_bam_to_cram/")
@@ -275,6 +294,7 @@ def convert_bam_to_cram(patient_id: str) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
+    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': man.api.convert_bam_to_cram(patient_id), 'msg': None}
 
 class Setting(BaseModel):
