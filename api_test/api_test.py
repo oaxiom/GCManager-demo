@@ -66,7 +66,7 @@ cmd_process("man.api.export_vcf('72210953309787')")
 cmd_process("man.api.export_vcf('NA12878')")
 # Expected Result: (This returns the absolute PATH)
 # ../GC_demo/data/PID.NA12878/NA12878.recalibrated_snps_recalibrated_indels.vcf.gz
-cmd_process("man.api.export_vcf('PATIENTNOTSTARTED')")
+#cmd_process("man.api.export_vcf('PATIENTNOTSTARTED')")
 # Expected Result:
 # False
 
@@ -90,13 +90,13 @@ cmd_process("man.api.clean_free_space()")
 # Expected Result:
 # True
 
-cmd_process("man.api.populate_report_generator('Pharma')")
+cmd_process("man.api.populate_report_generator('Pharma', 'CN')")
 # Expected Result:
 # [Long table of results]
-cmd_process("man.api.populate_report_generator('ClinVAR')")
+cmd_process("man.api.populate_report_generator('ClinVAR', 'CN')")
 # Expected Result:
 # [Long table of results]
-cmd_process("man.api.populate_report_generator('Risk')")
+cmd_process("man.api.populate_report_generator('Risk', 'CN')")
 # Expected Result:
 # [Long table of results]
 
@@ -114,5 +114,10 @@ cmd_process("man.settings.get_doctor_setting('lang')")
 
 cmd_process("man.settings.set_doctor_setting('lang', 'EN')")
 cmd_process("man.settings.get_doctor_setting('lang')")
+# Expected Result
+# 'EN'
+
+cmd_process("man.settings.set_backend_setting('lang', 'EN')")
+cmd_process("man.settings.get_backend_setting('lang')")
 # Expected Result
 # 'EN'

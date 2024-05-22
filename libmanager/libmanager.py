@@ -365,7 +365,7 @@ class libmanager:
         if not r: return False
         if len(r) != 1: raise Exception('Patient database returned more than one entry!')
 
-        return r[0]
+        return True
 
     def add_patient(self,
         patient_id: str,

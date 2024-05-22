@@ -5,20 +5,16 @@ class settings:
     def __init__(self, home_path):
         self.home_path = home_path
 
-        self.settings_doctor = sqlite3.connect(os.path.join(self.home_path, "dbs/", "settings_doctor.db"))
-        self.settings_doctor_cur = self.settings_doctor.cursor()
-
-        self.settings_backend = sqlite3.connect(os.path.join(self.home_path, "dbs/", "settings_backend.db"))
-        self.settings_backend_cur = self.settings_backend.cursor()
-
     def __get_cursor(self, end):
+        assert end in ('Doctorend', 'Backend'), f'{end} not recognised'
+
         if end == 'Doctorend':
             db = sqlite3.connect(os.path.join(self.home_path, "dbs/", "settings_doctor.db"))
-            db_cur = settings_doctor.cursor()
+            db_cur = db.cursor()
 
-        elif end == 'backend':
+        elif end == 'Backend':
             db = sqlite3.connect(os.path.join(self.home_path, "dbs/", "settings_backend.db"))
-            db_cur = settings_backend.cursor()
+            db_cur = db.cursor()
 
         return db, db_cur
 
@@ -56,7 +52,7 @@ class settings:
         settings_doctor, settings_doctor_cur = self.__get_cursor('Doctorend')
         settings_doctor_cur.execute('SELECT value FROM settings WHERE setting_name=?', (key, ))
         # TODO: return sanity check
-        ret = self.settings_doctor_cur.fetchone()[0]
+        ret = settings_doctor_cur.fetchone()[0]
         settings_doctor.close()
         return ret
 
@@ -78,8 +74,8 @@ class settings:
         settings_backend, settings_backend_cur = self.__get_cursor('Backend')
         settings_backend_cur.execute('SELECT value FROM settings WHERE setting_name=?', (key, ))
         # TODO: return sanity check
-        ret = self.settings_backend_cur.fetchone()[0]
-        settings_doctor.close()
+        ret = settings_backend_cur.fetchone()[0]
+        settings_backend.close()
 
         return ret
 

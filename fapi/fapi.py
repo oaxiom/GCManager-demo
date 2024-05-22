@@ -22,6 +22,7 @@ if not os.path.exists(home_path):
 man = libmanager.libmanager('Backend', log=log, home_path=home_path)
 
 from fastapi import FastAPI
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -96,15 +97,45 @@ def generate_report(mode: str, patient_id: str, selected_report:str) -> dict:
 
     return {'code': 200, 'data': {'html_filename': html_filename, 'html': html}, 'msg': None}
 
-'''
-def add_new_patient(
-        patient_id: str,
-        sequence_data_id: str,
-        name: str,
-        sex: str,
-        age: int,
-        sequence_data_files: str) -> bool:
-'''
+@app.get("/patient/{patient_id}/")
+def is_patient_id_valid(mode: str, patient_id: str, selected_report:str) -> dict:
+    '''
+
+    Test if a patient_id is valid
+
+    Examples =
+    '72210953309787' (returns True)
+    '88888888' (returns False)
+
+    '''
+    return {'code': 200, 'data': man.patient_exists(patient_id), 'msg': None}
+
+class PatientData(BaseModel):
+    patient_id: str
+    sequence_data_id: str
+    name: str
+    sex: str
+    age: int
+    sequence_data_files: str
+
+@app.post('/settings_backend/')
+def add_new_patient(patient_data: PatientData) -> dict:
+
+    ret_code = man.api.add_new_patient(
+        patient_id=patient_data.patient_id,
+        sequence_data_id=patient_data.sequence_data_id,
+        name=patient_data.name,
+        sex=patient_data.sex,
+        age=patient_data.age,
+        sequence_data_files=patient_data.sequence_data_files
+        )
+
+    if not ret_code:
+        return {'code': 400, 'data': False, 'msg': 'Failed to add Patient'}
+
+    ret = man.patient_exists(patient_id)
+
+    return {'code': 200, 'data': ret, 'msg': None}
 
 @app.get("/report_current_anaylsis_stage/{patient_id}")
 def report_current_anaylsis_stage(patient_id:str) -> dict:
@@ -210,7 +241,7 @@ def clean_up_analysis(patient_id: str) -> dict:
     return {'code': 200, 'data': man.api.clean_up_analysis(patient_id), 'msg': None}
 
 @app.get("/convert_bam_to_cram/")
-def convert_bam_to_cram() -> dict:
+def convert_bam_to_cram(patient_id: str) -> dict:
     '''
     Convert a BAM file to CRAM
     转换所选BAM 成 CRAM
@@ -223,22 +254,46 @@ def convert_bam_to_cram() -> dict:
     '''
     return {'code': 200, 'data': man.api.convert_bam_to_cram(patient_id), 'msg': None}
 
-'''
-def set_system_doctor_setting(key:str, value:str) -> bool:
-'''
+class Setting(BaseModel):
+    key: str
+    setting: str
+
+@app.post('/settings_doctorend/')
+def set_system_doctor_setting(setting: Setting) -> dict:
+    '''
+
+    Example value:
+    {
+    "key": "lang",
+    "setting": "EN"
+    }
+
+    '''
+    man.api.set_system_doctor_setting(setting.key, setting.setting)
+    return {'code': 200, 'data': man.api.get_system_doctor_setting(setting.key), 'msg': None}
+
+@app.post('/settings_backend/')
+def set_system_backend_setting(setting: Setting) -> dict:
+    '''
+
+    Example value:
+    {
+    "key": "lang",
+    "setting": "EN"
+    }
+
+    '''
+    man.api.set_system_backend_setting(setting.key, setting.setting)
+    return {'code': 200, 'data': man.api.get_system_backend_setting(setting.key), 'msg': None}
 
 @app.get("/get_system_doctor_setting/{key}")
-def get_system_doctor_setting( key:str) -> dict:
+def get_system_doctor_setting(key:str) -> dict:
     '''
     Get a system setting on: 系统设置 page
     Example value:
     key = 'lang'
     '''
     return {'code': 200, 'data': man.api.get_system_doctor_setting(key), 'msg': None}
-
-'''
-def set_system_backend_setting(key:str, value:str) -> bool:
-'''
 
 @app.get("/get_system_backend_setting/{key}")
 def get_system_backend_setting(key:str) -> dict:
