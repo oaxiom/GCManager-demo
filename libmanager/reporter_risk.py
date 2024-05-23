@@ -104,6 +104,36 @@ class reporter_risk:
         <td>Risk Classification</td>
     '''
 
+    def __calc_overall_risk_factor(self, risky):
+        '''
+        This is a very simple, high, low, med.
+
+        '''
+
+        # I just sum all the + and -, then add/subtract.
+
+        plus = 0
+        mins = 0
+        for r in risky:
+            if '-' in r: mins += len(r)
+            if '+' in r: plus += len(r)
+
+        print(plus, mins)
+
+        factor = plus - mins
+
+        #print(risky)
+
+        print(factor)
+
+        judgement = '不会增加风险' # No increased risk
+        if factor > 50:
+            judgement = '中度增加风险'  # Moderate increased risk
+        if factor > 200:
+            judgement = '高风险' # High risk
+
+        return judgement, factor
+
     def __report_generator_Risk(self, annotated_data):
 
         # Currently searches by EN
@@ -114,9 +144,11 @@ class reporter_risk:
 
         print(search_results)
 
-        search_results.sort('risky')
+        search_results.sort('sorter')
         search_results.reverse()
         rest_of_table = []
+
+        judgement, fact = self.__calc_overall_risk_factor(search_results['risky'])
 
         if not search_results:
             # TODO: Check this works: Deal with no advice situations;
@@ -143,9 +175,9 @@ class reporter_risk:
 
         # TODO: Fix hacky language support
         if self.lang == 'EN':
-            html = html_risk.html('EN', self.patient_id, self.disease_name, self.patient_data, rest_of_table)
+            html = html_risk.html('EN', self.patient_id, self.disease_name, self.patient_data, rest_of_table, judgement, fact)
         elif self.lang == 'CN':
-            html = html_risk.html('CN', self.patient_id, self.disease_name, self.patient_data, rest_of_table)
+            html = html_risk.html('CN', self.patient_id, self.disease_name, self.patient_data, rest_of_table, judgement, fact)
 
         html_filename = os.path.join(self.data_path, f"result.{self.patient_id}.{self.lang}.Risk.{self.disease_code}.html")
 

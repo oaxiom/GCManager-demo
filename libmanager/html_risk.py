@@ -6,6 +6,8 @@ def html(
     search_term:str,
     patient_data:dict,
     main_table:str,
+    judgement:str,
+    factor:str,
     ):
 
     # TODO: check patient data
@@ -15,7 +17,8 @@ def html(
         #if not no_reccomendation_table: no_reccomendation_table = '<td>None</td><td>None</td>'
         #return html_en(patient_id=patient_id, search_term=search_term, patient_data=patient_data, main_table=main_table)
     elif lang == 'CN':
-        return html_cn(patient_id=patient_id, search_term=search_term, patient_data=patient_data, main_table=main_table)
+        return html_cn(patient_id=patient_id, search_term=search_term, patient_data=patient_data, main_table=main_table,
+            judgement=judgement, factor=factor)
 
 
 def html_en(
@@ -23,6 +26,8 @@ def html_en(
     search_term:str,
     patient_data:dict,
     main_table:str,
+    judgement:str,
+    factor:str,
     ):
     # English version;
 
@@ -111,6 +116,8 @@ def html_cn(
     search_term:str,
     patient_data:dict,
     main_table:str,
+    judgement:str,
+    factor:str,
     ):
     # Chinese version;
 
@@ -153,7 +160,16 @@ def html_cn(
 
 <h2>指导</h2>
 
-<p>NA</p>
+<table style="width:50%">
+    <tr>
+        <td>总体风险/Overall Risk</td>
+        <td>{judgement}</td>
+    </tr>
+    <tr>
+        <td>风险评分/Risk score</td>
+        <td>{factor}</td>
+    </tr>
+</table>
 
 <h3>精准用药汇总</h3>
 <table>
