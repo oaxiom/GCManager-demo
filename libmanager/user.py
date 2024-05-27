@@ -63,7 +63,11 @@ class user_db:
 
         user_db.commit()
         user_db.close()
-        self.log.info(f'Added User: {email}')
+
+        if is_admin:
+            self.log.info(f'Added an Admin User: {email}')
+        else:
+            self.log.info(f'Added an Normal User: {email}')
 
         return True
 

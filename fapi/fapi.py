@@ -97,21 +97,33 @@ def change_password(username:str, newpassword:str, user=Depends(user_manager)) -
 
     return {'code': 200, 'data': True, 'msg': f'Succesfully changed password for user {email}'}
 
+#TODO: Recover password
+#Not clear how this is done at the moment; Need internet connection?
 #def recover_password()
 
 @app.post("/auth/delete")
-def delete(user: UserCreate) -> dict:
+def delete(user_email_to_delete:str, requesting_user=Depends(user_manager)) -> dict:
     """
     Delete a User
     """
-    if gcman.users.user_exists(user.email):
-        raise HTTPException(status_code=400, detail="A user with this email already exists")
+    print(requesting_user, user_email_to_delete)
 
-    if gcman.users.is_admin(user.email):
+    if not get_user(requesting_user): # I guess impossible to get here, but check anyway
+        raise InvalidCredentialsException
+    if not gcman.users.is_admin(requesting_user):
+        raise HTTPException(status_code=400, detail="The current user is not an admin")
+
+    if not get_user(user_email_to_delete):
+        raise HTTPException(status_code=400, detail=f"A user with this email {email} does not exist")
+    if gcman.users.is_admin(requesting_user):
         raise HTTPException(status_code=400, detail="An admin user cannot be deleted")
 
-    gcman.users.delete_user(user.email)
-    return {'code': 200, 'data': True, 'msg': f"{user.email} succesfully deleted"}
+    ret = gcman.users.delete_user(user.email)
+    if not ret:
+        # I guess impossible to get here, but check anyway
+        raise HTTPException(status_code=400, detail="Unknown Error")
+
+    return {'code': 200, 'data': ret, 'msg': f"{email} succesfully deleted"}
 
 '''
 # Logout needs to go on the server side if using JWTs.
@@ -177,7 +189,7 @@ def populate_report_generator(mode: str, lang: str, user=Depends(user_manager)) 
     """
     return {'code': 200, 'data': gcman.api.populate_report_generator(mode, lang), 'msg': None}
 
-@app.get("/export_vcf/{patient_id:str}")
+@app.get("/patient/export_vcf/{patient_id:str}")
 def export_vcf(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
     Returns the PATH to the CRAM file for this patient, of None
@@ -192,7 +204,7 @@ def export_vcf(patient_id: str, user=Depends(user_manager)) -> dict:
     if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': gcman.api.export_vcf(patient_id), 'msg': None}
 
-@app.get("/export_cram/{patient_id}")
+@app.get("/patient/export_cram/{patient_id}")
 def export_cram(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
     Example value:
@@ -201,7 +213,7 @@ def export_cram(patient_id: str, user=Depends(user_manager)) -> dict:
     if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': gcman.api.export_cram(patient_id), 'msg': None}
 
-@app.get("/generate_report/{mode}/{patient_id}/")
+@app.get("/patient/generate_report/{mode}/{patient_id}")
 def generate_report(mode: str, patient_id: str, selected_report:str, user=Depends(user_manager)) -> dict:
     '''
     Mode can be one of:
@@ -222,7 +234,7 @@ def generate_report(mode: str, patient_id: str, selected_report:str, user=Depend
 
     return {'code': 200, 'data': {'html_filename': html_filename, 'html': html}, 'msg': None}
 
-@app.get("/patient/{patient_id}/")
+@app.get("/patient/{patient_id}")
 def is_patient_id_valid(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
 
@@ -284,7 +296,7 @@ def add_new_patient(patient_data: PatientData, user=Depends(user_manager)) -> di
 
     return {'code': 200, 'data': ret, 'msg': None}
 
-@app.get("/report_current_anaylsis_stage/{patient_id}")
+@app.get("/patient/report_current_anaylsis_stage/{patient_id}")
 def report_current_anaylsis_stage(patient_id:str, user=Depends(user_manager)) -> dict:
     '''
     Returns the current analysis stage for the indicated data,
@@ -307,7 +319,7 @@ def report_current_anaylsis_stage(patient_id:str, user=Depends(user_manager)) ->
 def delete_patient(self, patient_id:str) -> bool:
 '''
 
-@app.get("/export_QC_statistics/{patient_id}")
+@app.get("/patient/export_QC_statistics/{patient_id}")
 def export_QC_statistics(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
     Returns the analysis summary as a string.
@@ -322,7 +334,7 @@ def export_QC_statistics(patient_id: str, user=Depends(user_manager)) -> dict:
     if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': gcman.api.export_QC_statistics(patient_id), 'msg': None}
 
-@app.get("/get_logs/{patient_id}")
+@app.get("/patient/get_logs/{patient_id}")
 def get_logs(patient_id:str, user=Depends(user_manager)) -> dict:
     '''
     Return all the log data.
@@ -385,7 +397,7 @@ def clean_free_space(user=Depends(user_manager)) -> dict:
 
     return {'code': 200, 'data': gcman.api.clean_free_space(), 'msg': None}
 
-@app.get("/clean_up_analysis/{patient_id}")
+@app.get("/patient/clean_up_analysis/{patient_id}")
 def clean_up_analysis(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
     Example value:
@@ -397,7 +409,7 @@ def clean_up_analysis(patient_id: str, user=Depends(user_manager)) -> dict:
     if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': gcman.api.clean_up_analysis(patient_id), 'msg': None}
 
-@app.get("/convert_bam_to_cram/")
+@app.get("/patient/convert_bam_to_cram/{patient_id}")
 def convert_bam_to_cram(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
     Convert a BAM file to CRAM
@@ -416,7 +428,7 @@ class Setting(BaseModel):
     key: str = Field(examples=["lang"])
     setting: str = Field(examples=["EN", "CN"])
 
-@app.post('/settings_doctorend/')
+@app.post('/settings/doctorend/')
 def set_system_doctor_setting(setting: Setting, user=Depends(user_manager)) -> dict:
     '''
 
@@ -430,7 +442,7 @@ def set_system_doctor_setting(setting: Setting, user=Depends(user_manager)) -> d
     gcman.api.set_system_doctor_setting(setting.key, setting.setting)
     return {'code': 200, 'data': gcman.api.get_system_doctor_setting(setting.key), 'msg': None}
 
-@app.post('/settings_backend/')
+@app.post('/settings/backend/')
 def set_system_backend_setting(setting: Setting, user=Depends(user_manager)) -> dict:
     '''
 
@@ -444,7 +456,7 @@ def set_system_backend_setting(setting: Setting, user=Depends(user_manager)) -> 
     gcman.api.set_system_backend_setting(setting.key, setting.setting)
     return {'code': 200, 'data': gcman.api.get_system_backend_setting(setting.key), 'msg': None}
 
-@app.get("/get_system_doctor_setting/{key}")
+@app.get("/settings/get_doctorend/{key}")
 def get_system_doctor_setting(key:str, user=Depends(user_manager)) -> dict:
     '''
     Get a system setting on: 系统设置 page
@@ -453,7 +465,7 @@ def get_system_doctor_setting(key:str, user=Depends(user_manager)) -> dict:
     '''
     return {'code': 200, 'data': gcman.api.get_system_doctor_setting(key), 'msg': None}
 
-@app.get("/get_system_backend_setting/{key}")
+@app.get("/settings/get_backend/{key}")
 def get_system_backend_setting(key:str, user=Depends(user_manager)) -> dict:
     '''
     Get a system setting on: 系统设置 page
