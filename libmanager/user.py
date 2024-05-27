@@ -59,6 +59,8 @@ class user_db:
 
         hpass = security.hash_password(password)
 
+        # TODO: Salt the user db with the MAC address?
+
         user_db_cursor.execute('INSERT INTO users VALUES (?, ?, ?, ?)', (uuid.bytes_le, username, hpass, is_admin))
 
         user_db.commit()
