@@ -71,14 +71,14 @@ class user_db:
 
         return True
 
-    def delete_user(self, email):
+    def delete_user(self, username):
         """
 
         **Purpose**
             Delete a non-admin user
 
         """
-        if self.is_admin(email):
+        if self.is_admin(username):
             return False
 
         user_db, user_db_cursor = self.__get_db()
@@ -120,7 +120,7 @@ class user_db:
         hpass = security.hash_password(newpassword)
 
         user_db, user_db_cursor = self.__get_db()
-        user_db_cursor.execute("UPDATE users SET hpass=? WHERE username=?", (hpass, email, ))
+        user_db_cursor.execute("UPDATE users SET hpass=? WHERE username=?", (hpass, username, ))
         user_db.commit()
         user_db.close()
 
@@ -133,7 +133,7 @@ class user_db:
             Also works as a 'is_user_valid()' method
         '''
         user_db, user_db_cursor = self.__get_db()
-        user_db_cursor.execute("SELECT email FROM users WHERE username= :username", {'username': email})
+        user_db_cursor.execute("SELECT username FROM users WHERE username= :username", {'username': username})
         res = user_db_cursor.fetchone()
         user_db.close()
         if res: return res[0]
@@ -146,7 +146,7 @@ class user_db:
 
         """
         user_db, user_db_cursor = self.__get_db()
-        user_db_cursor.execute("SELECT email FROM users WHERE username= :username", {'username': email})
+        user_db_cursor.execute("SELECT username FROM users WHERE username= :username", {'username': username})
         res = user_db_cursor.fetchone()
         user_db.close()
         if res: return True
@@ -162,7 +162,7 @@ class user_db:
             return False
 
         user_db, user_db_cursor = self.__get_db()
-        user_db_cursor.execute("SELECT is_admin FROM users WHERE username= :username", {'username': email})
+        user_db_cursor.execute("SELECT is_admin FROM users WHERE username= :username", {'username': username})
         res = user_db_cursor.fetchone()
         user_db.close()
         return bool(res[0])

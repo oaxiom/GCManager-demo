@@ -36,7 +36,7 @@ with open(os.path.join(home_path, 'dbs', ".env"), "r") as f:
     gcs = f.read()
 
 class UserCreate(BaseModel):
-    email: str
+    username: str
     password: str
     model_config = ConfigDict(from_attributes=True)
 
@@ -46,8 +46,8 @@ class User(UserCreate):
 user_manager = LoginManager(gcs, token_url='/auth/token')
 
 @user_manager.user_loader()
-def get_user(email: str):  # could also be an asynchronous function
-    return gcman.users.get(email)
+def get_user(username: str):  # could also be an asynchronous function
+    return gcman.users.get(username)
 
 @app.post("/auth/register")
 def register(user: UserCreate) -> dict:
@@ -55,24 +55,24 @@ def register(user: UserCreate) -> dict:
     Register a new user.
 
     """
-    if gcman.users.user_exists(user.email):
-        raise HTTPException(status_code=400, detail="A user with this email already exists")
+    if gcman.users.user_exists(user.username):
+        raise HTTPException(status_code=400, detail="A user with this username already exists")
 
-    gcman.users.add_user(uuid.uuid4(), user.email, user.password)
+    gcman.users.add_user(uuid.uuid4(), user.username, user.password)
     return {'code': 200, 'data': True, 'msg': "Successful registration"}
 
 @app.post('/auth/token')
 def login(data: OAuth2PasswordRequestForm = Depends()) -> dict:
-    email = data.username
+    username = data.username
     password = data.password
 
-    if not get_user(email):
+    if not get_user(username):
         raise InvalidCredentialsException
-    if not gcman.users.check_password(email, password):
+    if not gcman.users.check_password(username, password):
         raise InvalidCredentialsException
 
     access_token = user_manager.create_access_token(
-        data=dict(sub=email),
+        data=dict(sub=username),
         expires=datetime.timedelta(hours=1)
         )
 
@@ -80,13 +80,13 @@ def login(data: OAuth2PasswordRequestForm = Depends()) -> dict:
 
 @app.post('/auth/change')
 def change_password(username:str, newpassword:str, user=Depends(user_manager)) -> dict:
-    email = username
-    #password = user.password # old password is valid because of the logintoken
 
-    if not get_user(email):
+    # old password must be valid because of the logintoken. Ask again anyway?
+
+    if not get_user(username):
         raise InvalidCredentialsException
 
-    ret = gcman.users.change_password(email, newpassword)
+    ret = gcman.users.change_password(username, newpassword)
 
     if not ret: # probably old == new
         raise InvalidCredentialsException
@@ -95,35 +95,35 @@ def change_password(username:str, newpassword:str, user=Depends(user_manager)) -
     # Logout needs to go on the server side if using JWTs.
     # See: https://github.com/MushroomMaula/fastapi_login/issues/82
 
-    return {'code': 200, 'data': True, 'msg': f'Succesfully changed password for user {email}'}
+    return {'code': 200, 'data': True, 'msg': f'Succesfully changed password for user {username}'}
 
 #TODO: Recover password
 #Not clear how this is done at the moment; Need internet connection?
 #def recover_password()
 
 @app.post("/auth/delete")
-def delete(user_email_to_delete:str, requesting_user=Depends(user_manager)) -> dict:
+def delete(username_to_delete:str, requesting_user=Depends(user_manager)) -> dict:
     """
     Delete a User
     """
-    print(requesting_user, user_email_to_delete)
-
+    # Check we are admin, and valid
     if not get_user(requesting_user): # I guess impossible to get here, but check anyway
         raise InvalidCredentialsException
     if not gcman.users.is_admin(requesting_user):
         raise HTTPException(status_code=400, detail="The current user is not an admin")
 
-    if not get_user(user_email_to_delete):
-        raise HTTPException(status_code=400, detail=f"A user with this email {email} does not exist")
-    if gcman.users.is_admin(requesting_user):
+    # Check user_to_delete is valid and not and andin
+    if not get_user(username_to_delete):
+        raise HTTPException(status_code=400, detail=f"A user with this username {username_to_delete} does not exist")
+    if gcman.users.is_admin(username_to_delete):
         raise HTTPException(status_code=400, detail="An admin user cannot be deleted")
 
-    ret = gcman.users.delete_user(user.email)
+    ret = gcman.users.delete_user(username_to_delete)
     if not ret:
         # I guess impossible to get here, but check anyway
         raise HTTPException(status_code=400, detail="Unknown Error")
 
-    return {'code': 200, 'data': ret, 'msg': f"{email} succesfully deleted"}
+    return {'code': 200, 'data': ret, 'msg': f"{username_to_delete} succesfully deleted"}
 
 '''
 # Logout needs to go on the server side if using JWTs.
@@ -131,16 +131,9 @@ def delete(user_email_to_delete:str, requesting_user=Depends(user_manager)) -> d
 
 @app.post('/auth/logout')
 def logout(user=Depends(user_manager)):
-    print(user)
-    print(user_manager)
-
-    email = user
-
-    if not get_user(email): # Should be valid anyway,
+    username = user
+    if not get_user(username): # Should be valid anyway,
         raise InvalidCredentialsException
-
-    # invalidate the old token?!
-    user_manager.default_expiry = datetime.datetime.now()
 
     return {'code': 200, 'data': True, 'msg': f'User {user} succesfully logged out'}
 '''
