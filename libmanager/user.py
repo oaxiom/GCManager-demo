@@ -24,7 +24,7 @@ class user_db:
 
         """
         user_db, user_db_cursor = self.__get_db()
-        user_db_cursor.execute('CREATE TABLE users (UID INT, email TEXT, hpass TEXT)')
+        user_db_cursor.execute('CREATE TABLE users (UID INT, email TEXT, hpass TEXT, is_admin INT)')
         user_db.commit()
         user_db.close()
 
@@ -50,7 +50,7 @@ class user_db:
         user_db_cursor = user_db.cursor()
         return user_db, user_db_cursor
 
-    def add_user(self, uuid, email, password):
+    def add_user(self, uuid, email, password, is_admin=False):
         """
         **Purpose**
             Add a user;
@@ -59,13 +59,32 @@ class user_db:
 
         hpass = security.hash_password(password)
 
-        user_db_cursor.execute('INSERT INTO users VALUES (?, ?, ?)', (uuid.bytes_le, email, hpass))
+        user_db_cursor.execute('INSERT INTO users VALUES (?, ?, ?, ?)', (uuid.bytes_le, email, hpass, is_admin))
 
         user_db.commit()
         user_db.close()
         self.log.info(f'Added User: {email}')
 
-    def check_password(self, password, user_email):
+        return True
+
+    def delete_user(self, email):
+        """
+
+        **Purpose**
+            Delete a non-admin user
+
+        """
+        if self.is_admin(email):
+            return False
+
+        user_db, user_db_cursor = self.__get_db()
+        user_db_cursor.execute("DELETE FROM users WHERE email=?", (email, ))
+        user_db.commit()
+        user_db.close()
+
+        return True
+
+    def check_password(self, user_email, password):
         # get the hpass:
         user_db, user_db_cursor = self.__get_db()
         user_db_cursor.execute("SELECT hpass FROM users WHERE email=?", (user_email, ))
@@ -85,10 +104,23 @@ class user_db:
         -d 'grant_type=&username=admin%40notanemail.edu.cn&password=notarealpass&scope=&client_id=aa&client_secret=aa'
 
         # That can't be right...
-
         """
-
         return security.verify_password(password, hpass)
+
+    def change_password(self, email, newpassword):
+        # Check old != new
+        ret = self.check_password(email, newpassword)
+        if ret:
+            return False # old password == new password!
+
+        hpass = security.hash_password(newpassword)
+
+        user_db, user_db_cursor = self.__get_db()
+        user_db_cursor.execute("UPDATE users SET hpass=? WHERE email=?", (hpass, email, ))
+        user_db.commit()
+        user_db.close()
+
+        return True
 
     def get(self, email:str):
         '''
@@ -115,3 +147,15 @@ class user_db:
         user_db.close()
         if res: return True
         return None
+
+    def is_admin(self, email:str) -> bool:
+        """
+        **Purpose**
+            Check if this user is an admin
+
+        """
+        user_db, user_db_cursor = self.__get_db()
+        user_db_cursor.execute("SELECT is_admin FROM users WHERE email= :email", {'email': email})
+        res = user_db_cursor.fetchone()
+        user_db.close()
+        return bool(res[0])

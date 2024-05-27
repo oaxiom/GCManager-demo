@@ -51,4 +51,7 @@ if 'demo' not in VERSION:
 else:
     res = man._initialize(True)
 
+# TODO: Set an Admin user:
+
+
 sys.exit(res)

@@ -47,8 +47,7 @@ user_manager = LoginManager(gcs, token_url='/auth/token')
 
 @user_manager.user_loader()
 def get_user(email: str):  # could also be an asynchronous function
-    user = gcman.users.get(email)
-    return user
+    return gcman.users.get(email)
 
 @app.post("/auth/register")
 def register(user: UserCreate) -> dict:
@@ -58,22 +57,18 @@ def register(user: UserCreate) -> dict:
     """
     if gcman.users.user_exists(user.email):
         raise HTTPException(status_code=400, detail="A user with this email already exists")
-    else:
-        gcman.users.add_user(uuid.uuid4(), user.email, user.password)
-        return {'code': 200, 'data': True, 'msg': "Successful registration"}
+
+    gcman.users.add_user(uuid.uuid4(), user.email, user.password)
+    return {'code': 200, 'data': True, 'msg': "Successful registration"}
 
 @app.post('/auth/token')
-def login(data: OAuth2PasswordRequestForm = Depends()):
+def login(data: OAuth2PasswordRequestForm = Depends()) -> dict:
     email = data.username
     password = data.password
 
-    user = get_user(email)  # same function to retrieve the user
-
-    print(gcman.users.check_password(password, email))
-
-    if not user:
+    if not get_user(email):
         raise InvalidCredentialsException
-    if not gcman.users.check_password(password, email):
+    if not gcman.users.check_password(email, password):
         raise InvalidCredentialsException
 
     access_token = user_manager.create_access_token(
@@ -83,9 +78,60 @@ def login(data: OAuth2PasswordRequestForm = Depends()):
 
     return {'access_token': access_token, 'token_type': 'bearer'}
 
-# TODO :
-#def change_password(user=Depends(user_manager))
+@app.post('/auth/change')
+def change_password(username:str, newpassword:str, user=Depends(user_manager)) -> dict:
+    email = username
+    #password = user.password # old password is valid because of the logintoken
+
+    if not get_user(email):
+        raise InvalidCredentialsException
+
+    ret = gcman.users.change_password(email, newpassword)
+
+    if not ret: # probably old == new
+        raise InvalidCredentialsException
+
+    # TODO: invalidate the old token
+    # Logout needs to go on the server side if using JWTs.
+    # See: https://github.com/MushroomMaula/fastapi_login/issues/82
+
+    return {'code': 200, 'data': True, 'msg': f'Succesfully changed password for user {email}'}
+
 #def recover_password()
+
+@app.post("/auth/delete")
+def delete(user: UserCreate) -> dict:
+    """
+    Delete a User
+    """
+    if gcman.users.user_exists(user.email):
+        raise HTTPException(status_code=400, detail="A user with this email already exists")
+
+    if gcman.users.is_admin(user.email):
+        raise HTTPException(status_code=400, detail="An admin user cannot be deleted")
+
+    gcman.users.delete_user(user.email)
+    return {'code': 200, 'data': True, 'msg': f"{user.email} succesfully deleted"}
+
+'''
+# Logout needs to go on the server side if using JWTs.
+# See: https://github.com/MushroomMaula/fastapi_login/issues/82
+
+@app.post('/auth/logout')
+def logout(user=Depends(user_manager)):
+    print(user)
+    print(user_manager)
+
+    email = user
+
+    if not get_user(email): # Should be valid anyway,
+        raise InvalidCredentialsException
+
+    # invalidate the old token?!
+    user_manager.default_expiry = datetime.datetime.now()
+
+    return {'code': 200, 'data': True, 'msg': f'User {user} succesfully logged out'}
+'''
 
 ###### App FAPI
 
@@ -111,7 +157,7 @@ def populate_patient_list(user=Depends(user_manager)) -> dict:
     return {'code': 200, 'data': gcman.api.populate_patient_list(), 'msg': None}
 
 @app.get('/populate_report_generator/{mode}')
-def populate_report_generator(mode: str, lang: str) -> dict:
+def populate_report_generator(mode: str, lang: str, user=Depends(user_manager)) -> dict:
     """
     Mode can be one of:
 
@@ -132,7 +178,7 @@ def populate_report_generator(mode: str, lang: str) -> dict:
     return {'code': 200, 'data': gcman.api.populate_report_generator(mode, lang), 'msg': None}
 
 @app.get("/export_vcf/{patient_id:str}")
-def export_vcf(patient_id: str) -> dict:
+def export_vcf(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
     Returns the PATH to the CRAM file for this patient, of None
     if the CRAM is not avaialable.
@@ -147,7 +193,7 @@ def export_vcf(patient_id: str) -> dict:
     return {'code': 200, 'data': gcman.api.export_vcf(patient_id), 'msg': None}
 
 @app.get("/export_cram/{patient_id}")
-def export_cram(patient_id: str) -> dict:
+def export_cram(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
     Example value:
     patient_id = '72210953309787'
@@ -156,7 +202,7 @@ def export_cram(patient_id: str) -> dict:
     return {'code': 200, 'data': gcman.api.export_cram(patient_id), 'msg': None}
 
 @app.get("/generate_report/{mode}/{patient_id}/")
-def generate_report(mode: str, patient_id: str, selected_report:str) -> dict:
+def generate_report(mode: str, patient_id: str, selected_report:str, user=Depends(user_manager)) -> dict:
     '''
     Mode can be one of:
 
@@ -177,7 +223,7 @@ def generate_report(mode: str, patient_id: str, selected_report:str) -> dict:
     return {'code': 200, 'data': {'html_filename': html_filename, 'html': html}, 'msg': None}
 
 @app.get("/patient/{patient_id}/")
-def is_patient_id_valid(patient_id: str) -> dict:
+def is_patient_id_valid(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
 
     Test if a patient_id is valid
@@ -199,7 +245,7 @@ class PatientData(BaseModel):
     sequence_data_files: str = Field(examples=["/path/to/data/fastq"])
 
 @app.post('/add_patient')
-def add_new_patient(patient_data: PatientData) -> dict:
+def add_new_patient(patient_data: PatientData, user=Depends(user_manager)) -> dict:
     '''
 
     Add a new patient to the database.
@@ -239,7 +285,7 @@ def add_new_patient(patient_data: PatientData) -> dict:
     return {'code': 200, 'data': ret, 'msg': None}
 
 @app.get("/report_current_anaylsis_stage/{patient_id}")
-def report_current_anaylsis_stage(patient_id:str) -> dict:
+def report_current_anaylsis_stage(patient_id:str, user=Depends(user_manager)) -> dict:
     '''
     Returns the current analysis stage for the indicated data,
     in the form:
@@ -262,7 +308,7 @@ def delete_patient(self, patient_id:str) -> bool:
 '''
 
 @app.get("/export_QC_statistics/{patient_id}")
-def export_QC_statistics(patient_id: str) -> dict:
+def export_QC_statistics(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
     Returns the analysis summary as a string.
     Used on the Analysis summary page.
@@ -277,7 +323,7 @@ def export_QC_statistics(patient_id: str) -> dict:
     return {'code': 200, 'data': gcman.api.export_QC_statistics(patient_id), 'msg': None}
 
 @app.get("/get_logs/{patient_id}")
-def get_logs(patient_id:str) -> dict:
+def get_logs(patient_id:str, user=Depends(user_manager)) -> dict:
     '''
     Return all the log data.
     Launched by the button 查看分析日志
@@ -294,7 +340,7 @@ def get_logs(patient_id:str) -> dict:
     return {'code': 200, 'data': gcman.api.get_logs(patient_id), 'msg': None}
 
 @app.get("/populate_patient_data_list/")
-def populate_patient_data_list() -> dict:
+def populate_patient_data_list(user=Depends(user_manager)) -> dict:
     '''
 
     Return the patient data table which includes the space used,
@@ -325,7 +371,7 @@ def populate_patient_data_list() -> dict:
     return {'code': 200, 'data': gcman.api.populate_patient_data_list(), 'msg': None}
 
 @app.get("/clean_free_space/")
-def clean_free_space() -> dict:
+def clean_free_space(user=Depends(user_manager)) -> dict:
     """
 
     The button: 清除缓存 on the 患者数据管理 page.
@@ -334,19 +380,25 @@ def clean_free_space() -> dict:
     不删除演示版本中的患者
 
     """
+    if not gcman.users.is_admin(user):
+        raise InvalidCredentialsException
+
     return {'code': 200, 'data': gcman.api.clean_free_space(), 'msg': None}
 
 @app.get("/clean_up_analysis/{patient_id}")
-def clean_up_analysis(patient_id: str) -> dict:
+def clean_up_analysis(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
     Example value:
     patient_id = '72210953309787'
     '''
+    if not gcman.users.is_admin(user):
+        raise InvalidCredentialsException
+
     if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': gcman.api.clean_up_analysis(patient_id), 'msg': None}
 
 @app.get("/convert_bam_to_cram/")
-def convert_bam_to_cram(patient_id: str) -> dict:
+def convert_bam_to_cram(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
     Convert a BAM file to CRAM
     转换所选BAM 成 CRAM
@@ -365,7 +417,7 @@ class Setting(BaseModel):
     setting: str = Field(examples=["EN", "CN"])
 
 @app.post('/settings_doctorend/')
-def set_system_doctor_setting(setting: Setting) -> dict:
+def set_system_doctor_setting(setting: Setting, user=Depends(user_manager)) -> dict:
     '''
 
     Example value:
@@ -379,7 +431,7 @@ def set_system_doctor_setting(setting: Setting) -> dict:
     return {'code': 200, 'data': gcman.api.get_system_doctor_setting(setting.key), 'msg': None}
 
 @app.post('/settings_backend/')
-def set_system_backend_setting(setting: Setting) -> dict:
+def set_system_backend_setting(setting: Setting, user=Depends(user_manager)) -> dict:
     '''
 
     Example value:
@@ -393,7 +445,7 @@ def set_system_backend_setting(setting: Setting) -> dict:
     return {'code': 200, 'data': gcman.api.get_system_backend_setting(setting.key), 'msg': None}
 
 @app.get("/get_system_doctor_setting/{key}")
-def get_system_doctor_setting(key:str) -> dict:
+def get_system_doctor_setting(key:str, user=Depends(user_manager)) -> dict:
     '''
     Get a system setting on: 系统设置 page
     Example value:
@@ -402,7 +454,7 @@ def get_system_doctor_setting(key:str) -> dict:
     return {'code': 200, 'data': gcman.api.get_system_doctor_setting(key), 'msg': None}
 
 @app.get("/get_system_backend_setting/{key}")
-def get_system_backend_setting(key:str) -> dict:
+def get_system_backend_setting(key:str, user=Depends(user_manager)) -> dict:
     '''
     Get a system setting on: 系统设置 page
     Example value:

@@ -138,6 +138,6 @@ def build_demo_data(man, home_path, script_path, log):
     db_PID.close()
 
     # Add some users;
-    man.users.add_user(uuid.uuid4(), 'admin@notanemail.edu.cn', 'notarealpass')
-
+    man.users.add_user(uuid.uuid4(), 'admin', 'admin123', is_admin=True)
+    man.users.add_user(uuid.uuid4(), 'anormaluser@email.email', 'user123', is_admin=True)
 
