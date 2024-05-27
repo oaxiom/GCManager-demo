@@ -24,7 +24,7 @@ class user_db:
 
         """
         user_db, user_db_cursor = self.__get_db()
-        user_db_cursor.execute('CREATE TABLE users (UID INT, email TEXT, hpass TEXT, is_admin INT)')
+        user_db_cursor.execute('CREATE TABLE users (UID INT, username TEXT, hpass TEXT, is_admin INT)')
         user_db.commit()
         user_db.close()
 
@@ -50,7 +50,7 @@ class user_db:
         user_db_cursor = user_db.cursor()
         return user_db, user_db_cursor
 
-    def add_user(self, uuid, email, password, is_admin=False):
+    def add_user(self, uuid, username, password, is_admin=False):
         """
         **Purpose**
             Add a user;
@@ -59,15 +59,15 @@ class user_db:
 
         hpass = security.hash_password(password)
 
-        user_db_cursor.execute('INSERT INTO users VALUES (?, ?, ?, ?)', (uuid.bytes_le, email, hpass, is_admin))
+        user_db_cursor.execute('INSERT INTO users VALUES (?, ?, ?, ?)', (uuid.bytes_le, username, hpass, is_admin))
 
         user_db.commit()
         user_db.close()
 
         if is_admin:
-            self.log.info(f'Added an Admin User: {email}')
+            self.log.info(f'Added an Admin User: {username}')
         else:
-            self.log.info(f'Added an Normal User: {email}')
+            self.log.info(f'Added a Normal User: {username}')
 
         return True
 
@@ -82,16 +82,16 @@ class user_db:
             return False
 
         user_db, user_db_cursor = self.__get_db()
-        user_db_cursor.execute("DELETE FROM users WHERE email=?", (email, ))
+        user_db_cursor.execute("DELETE FROM users WHERE username=?", (username, ))
         user_db.commit()
         user_db.close()
 
         return True
 
-    def check_password(self, user_email, password):
+    def check_password(self, username, password):
         # get the hpass:
         user_db, user_db_cursor = self.__get_db()
-        user_db_cursor.execute("SELECT hpass FROM users WHERE email=?", (user_email, ))
+        user_db_cursor.execute("SELECT hpass FROM users WHERE username=?", (username, ))
         hpass = user_db_cursor.fetchone()[0] # I presume you checked user_exists()
         user_db.close()
 
@@ -111,55 +111,58 @@ class user_db:
         """
         return security.verify_password(password, hpass)
 
-    def change_password(self, email, newpassword):
+    def change_password(self, username, newpassword):
         # Check old != new
-        ret = self.check_password(email, newpassword)
+        ret = self.check_password(username, newpassword)
         if ret:
             return False # old password == new password!
 
         hpass = security.hash_password(newpassword)
 
         user_db, user_db_cursor = self.__get_db()
-        user_db_cursor.execute("UPDATE users SET hpass=? WHERE email=?", (hpass, email, ))
+        user_db_cursor.execute("UPDATE users SET hpass=? WHERE username=?", (hpass, email, ))
         user_db.commit()
         user_db.close()
 
         return True
 
-    def get(self, email:str):
+    def get(self, username:str):
         '''
         **Purpose**
             get user details, or return None
             Also works as a 'is_user_valid()' method
         '''
         user_db, user_db_cursor = self.__get_db()
-        user_db_cursor.execute("SELECT email FROM users WHERE email= :email", {'email': email})
+        user_db_cursor.execute("SELECT email FROM users WHERE username= :username", {'username': email})
         res = user_db_cursor.fetchone()
         user_db.close()
         if res: return res[0]
         return None
 
-    def user_exists(self, email:str) -> bool:
+    def user_exists(self, username:str) -> bool:
         """
         **Purpose**
             Check if a user exists already
 
         """
         user_db, user_db_cursor = self.__get_db()
-        user_db_cursor.execute("SELECT email FROM users WHERE email= :email", {'email': email})
+        user_db_cursor.execute("SELECT email FROM users WHERE username= :username", {'username': email})
         res = user_db_cursor.fetchone()
         user_db.close()
         if res: return True
         return None
 
-    def is_admin(self, email:str) -> bool:
+    def is_admin(self, username:str) -> bool:
         """
         **Purpose**
             Check if this user is an admin
 
         """
+        if not self.user_exists(username):
+            return False
+
         user_db, user_db_cursor = self.__get_db()
-        user_db_cursor.execute("SELECT is_admin FROM users WHERE email= :email", {'email': email})
+        user_db_cursor.execute("SELECT is_admin FROM users WHERE username= :username", {'username': email})
         res = user_db_cursor.fetchone()
         user_db.close()
         return bool(res[0])

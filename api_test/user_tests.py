@@ -49,17 +49,18 @@ def cmd_process(cmd):
 
 ########
 # Testing;
-cmd_process("man.users.user_exists('admin@notanemail.edu.cn')")
+cmd_process("man.users.user_exists('admin')")
 cmd_process("man.users.user_exists('nonexistantuser')")
 
-cmd_process("man.users.add_user(uuid.uuid4(), 'email@emaio', 'nonexistantuserpass')")
+cmd_process("man.users.add_user(uuid.uuid4(), 'ausername', 'nonexistantuserpass')")
+cmd_process("man.users.user_exists('ausername')")
 
 cmd_process("man.users.is_admin('admin')")
-cmd_process("man.users.is_admin('email@emaio')")
+cmd_process("man.users.is_admin('ausername')")
 
-cmd_process("man.users.change_password('email@emaio', 'nonexistantuserpass')") # Should fail as old=new
-cmd_process("man.users.change_password('email@emaio', 'nonexistantuserpass123')")
+cmd_process("man.users.change_password('ausername', 'nonexistantuserpass')") # Should fail as old=new
+cmd_process("man.users.change_password('ausername', 'nonexistantuserpass123')")
 
-cmd_process("man.users.user_exists('email@emaio')")
-cmd_process("man.users.delete_user('email@emaio')")
-cmd_process("man.users.user_exists('email@emaio')")
+cmd_process("man.users.user_exists('ausername')")
+cmd_process("man.users.delete_user('ausername')")
+cmd_process("man.users.user_exists('ausername')")

@@ -139,5 +139,5 @@ def build_demo_data(man, home_path, script_path, log):
 
     # Add some users;
     man.users.add_user(uuid.uuid4(), 'admin', 'admin123', is_admin=True)
-    man.users.add_user(uuid.uuid4(), 'anormaluser@email.email', 'user123', is_admin=False)
+    man.users.add_user(uuid.uuid4(), 'anormaluser', 'user123', is_admin=False)
 
