@@ -32,8 +32,11 @@ class user_db:
         if os.path.exists(env_path):
             self.log.warning(".env file already exists. Exiting...")
         else:
+            self.log.info(f'Set up new .env')
             with open(env_path, "w") as f:
                 f.write(os.urandom(24).hex())
+
+        self.log.info(f'Setup user DB')
 
         return True
 
@@ -54,13 +57,22 @@ class user_db:
         """
         user_db, user_db_cursor = self.__get_db()
 
-        user_db_cursor.execute('INSERT INTO users VALUES (?, ?, ?)', (uuid.bytes_le, email, password))
+        hpass = security.hash_password(password)
 
-        print(uuid, email, password)
+        user_db_cursor.execute('INSERT INTO users VALUES (?, ?, ?)', (uuid.bytes_le, email, hpass))
 
         user_db.commit()
         user_db.close()
         self.log.info(f'Added User: {email}')
+
+    def check_password(self, password, user_email):
+        # get the hpass:
+        user_db, user_db_cursor = self.__get_db()
+        user_db_cursor.execute("SELECT hpass FROM users WHERE email=?", user_email)
+        hpass = user_db_cursor.fetchone()[0] # I presume you checked user_exists()
+        user_db.close()
+
+        return security.verify_password(password, hpass)
 
     def get(self, user):
         '''
@@ -68,7 +80,12 @@ class user_db:
             get user details, or return None
             Also works as a 'is_user_valid()' method
         '''
-        return False
+        user_db, user_db_cursor = self.__get_db()
+        user_db_cursor.execute("SELECT email FROM users WHERE email= :email", {'email': email})
+        res = user_db_cursor.fetchone()
+        user_db.close()
+        if res: return res[0]
+        return None
 
     def user_exists(self, email:str) -> bool:
         """
@@ -76,7 +93,6 @@ class user_db:
             Check if a user exists already
 
         """
-        print(email)
         user_db, user_db_cursor = self.__get_db()
         user_db_cursor.execute("SELECT email FROM users WHERE email= :email", {'email': email})
         res = user_db_cursor.fetchone()

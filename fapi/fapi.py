@@ -56,7 +56,6 @@ def register(user: UserCreate) -> dict:
     if gcman.users.user_exists(user.email):
         raise HTTPException(status_code=400, detail="A user with this email already exists")
     else:
-        # TODO: Hash passwords in real world applications
         gcman.users.add_user(uuid.uuid4(), user.email, user.password)
         return {'code': 200, 'data': True, 'msg': "Successful registration"}
 
@@ -68,7 +67,7 @@ def login(data: OAuth2PasswordRequestForm = Depends()):
     user = get_user(email)  # same function to retrieve the user
     if not user:
         raise InvalidCredentialsException
-    elif password != user['password']:
+    elif gcman.users.check_password(user['password'], user_email):
         raise InvalidCredentialsException
 
     access_token = user_manager.create_access_token(
@@ -124,7 +123,7 @@ def populate_report_generator(mode: str, lang: str) -> dict:
     lang = CN
 
     """
-    return {'code': 200, 'data': man.api.populate_report_generator(mode, lang), 'msg': None}
+    return {'code': 200, 'data': gcman.api.populate_report_generator(mode, lang), 'msg': None}
 
 @app.get("/export_vcf/{patient_id:str}")
 def export_vcf(patient_id: str) -> dict:
@@ -139,7 +138,7 @@ def export_vcf(patient_id: str) -> dict:
     patient_id = '72210953309787'
     '''
     if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': man.api.export_vcf(patient_id), 'msg': None}
+    return {'code': 200, 'data': gcman.api.export_vcf(patient_id), 'msg': None}
 
 @app.get("/export_cram/{patient_id}")
 def export_cram(patient_id: str) -> dict:
@@ -148,7 +147,7 @@ def export_cram(patient_id: str) -> dict:
     patient_id = '72210953309787'
     '''
     if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': man.api.export_cram(patient_id), 'msg': None}
+    return {'code': 200, 'data': gcman.api.export_cram(patient_id), 'msg': None}
 
 @app.get("/generate_report/{mode}/{patient_id}/")
 def generate_report(mode: str, patient_id: str, selected_report:str) -> dict:
@@ -165,9 +164,9 @@ def generate_report(mode: str, patient_id: str, selected_report:str) -> dict:
     selected_report = '中风'
 
     '''
-    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
+    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
 
-    html_filename, html = man.api.generate_report(mode, patient_id, selected_report)
+    html_filename, html = gcman.api.generate_report(mode, patient_id, selected_report)
 
     return {'code': 200, 'data': {'html_filename': html_filename, 'html': html}, 'msg': None}
 
@@ -182,7 +181,7 @@ def is_patient_id_valid(patient_id: str) -> dict:
     '88888888' (returns False)
 
     '''
-    ret = man.patient_exists(patient_id)
+    ret = gcman.patient_exists(patient_id)
     return {'code': 200, 'data': ret, 'msg': None}
 
 class PatientData(BaseModel):
@@ -216,7 +215,7 @@ def add_new_patient(patient_data: PatientData) -> dict:
     if ret:
         raise HTTPException(status_code=500, detail=f'{patient_data.patient_id} already exists!')
 
-    ret_code = man.api.add_new_patient(
+    ret_code = gcman.api.add_new_patient(
         patient_id=patient_data.patient_id,
         sequence_data_id=patient_data.sequence_data_id,
         name=patient_data.name,
@@ -250,7 +249,7 @@ def report_current_anaylsis_stage(patient_id:str) -> dict:
     patient_id = '72210953309787'
     '''
     if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': man.api.report_current_anaylsis_stage(patient_id), 'msg': None}
+    return {'code': 200, 'data': gcman.api.report_current_anaylsis_stage(patient_id), 'msg': None}
 
 '''
 def delete_patient(self, patient_id:str) -> bool:
@@ -269,7 +268,7 @@ def export_QC_statistics(patient_id: str) -> dict:
     patient_id = '72210953309787'
     '''
     if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': man.api.export_QC_statistics(patient_id), 'msg': None}
+    return {'code': 200, 'data': gcman.api.export_QC_statistics(patient_id), 'msg': None}
 
 @app.get("/get_logs/{patient_id}")
 def get_logs(patient_id:str) -> dict:
@@ -285,8 +284,8 @@ def get_logs(patient_id:str) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
-    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': man.api.get_logs(patient_id), 'msg': None}
+    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
+    return {'code': 200, 'data': gcman.api.get_logs(patient_id), 'msg': None}
 
 @app.get("/populate_patient_data_list/")
 def populate_patient_data_list() -> dict:
@@ -317,7 +316,7 @@ def populate_patient_data_list() -> dict:
 
 
     '''
-    return {'code': 200, 'data': man.api.populate_patient_data_list(), 'msg': None}
+    return {'code': 200, 'data': gcman.api.populate_patient_data_list(), 'msg': None}
 
 @app.get("/clean_free_space/")
 def clean_free_space() -> dict:
@@ -329,7 +328,7 @@ def clean_free_space() -> dict:
     不删除演示版本中的患者
 
     """
-    return {'code': 200, 'data': man.api.clean_free_space(), 'msg': None}
+    return {'code': 200, 'data': gcman.api.clean_free_space(), 'msg': None}
 
 @app.get("/clean_up_analysis/{patient_id}")
 def clean_up_analysis(patient_id: str) -> dict:
@@ -337,8 +336,8 @@ def clean_up_analysis(patient_id: str) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
-    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': man.api.clean_up_analysis(patient_id), 'msg': None}
+    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
+    return {'code': 200, 'data': gcman.api.clean_up_analysis(patient_id), 'msg': None}
 
 @app.get("/convert_bam_to_cram/")
 def convert_bam_to_cram(patient_id: str) -> dict:
@@ -352,8 +351,8 @@ def convert_bam_to_cram(patient_id: str) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
-    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': man.api.convert_bam_to_cram(patient_id), 'msg': None}
+    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
+    return {'code': 200, 'data': gcman.api.convert_bam_to_cram(patient_id), 'msg': None}
 
 class Setting(BaseModel):
     key: str = Field(examples=["lang"])
@@ -370,8 +369,8 @@ def set_system_doctor_setting(setting: Setting) -> dict:
     }
 
     '''
-    man.api.set_system_doctor_setting(setting.key, setting.setting)
-    return {'code': 200, 'data': man.api.get_system_doctor_setting(setting.key), 'msg': None}
+    gcman.api.set_system_doctor_setting(setting.key, setting.setting)
+    return {'code': 200, 'data': gcman.api.get_system_doctor_setting(setting.key), 'msg': None}
 
 @app.post('/settings_backend/')
 def set_system_backend_setting(setting: Setting) -> dict:
@@ -384,8 +383,8 @@ def set_system_backend_setting(setting: Setting) -> dict:
     }
 
     '''
-    man.api.set_system_backend_setting(setting.key, setting.setting)
-    return {'code': 200, 'data': man.api.get_system_backend_setting(setting.key), 'msg': None}
+    gcman.api.set_system_backend_setting(setting.key, setting.setting)
+    return {'code': 200, 'data': gcman.api.get_system_backend_setting(setting.key), 'msg': None}
 
 @app.get("/get_system_doctor_setting/{key}")
 def get_system_doctor_setting(key:str) -> dict:
@@ -394,7 +393,7 @@ def get_system_doctor_setting(key:str) -> dict:
     Example value:
     key = 'lang'
     '''
-    return {'code': 200, 'data': man.api.get_system_doctor_setting(key), 'msg': None}
+    return {'code': 200, 'data': gcman.api.get_system_doctor_setting(key), 'msg': None}
 
 @app.get("/get_system_backend_setting/{key}")
 def get_system_backend_setting(key:str) -> dict:
@@ -403,4 +402,4 @@ def get_system_backend_setting(key:str) -> dict:
     Example value:
     key = 'lang'
     '''
-    return {'code': 200, 'data': man.api.get_system_backend_setting(key), 'msg': None}
+    return {'code': 200, 'data': gcman.api.get_system_backend_setting(key), 'msg': None}
