@@ -20,6 +20,7 @@ from . import reporter_pharma
 from . import reporter_risk
 from . import settings
 from . import support
+from . import user
 
 class libmanager:
     def __init__(self, end_type, log, home_path):
@@ -44,6 +45,8 @@ class libmanager:
 
         self.db_PID = None
         self.db_disease_codes = None
+
+        self.users = user.user_db(self.home_path, self.log)
 
         # TODO: Move these open/close to a function to clean up the code
 

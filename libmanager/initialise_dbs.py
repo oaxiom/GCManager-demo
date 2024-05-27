@@ -9,8 +9,10 @@
 # Huang Zongkang
 #
 
-import sys, os, sqlite3, shutil, glob, datetime
+import sys, os, sqlite3, shutil, glob, datetime, uuid
+
 from . import settings
+from . import user
 
 def init_dbs(home_path, script_path, log):
     log.info('Setting up tables')
@@ -65,6 +67,8 @@ def init_dbs(home_path, script_path, log):
     # System preferences DB
     settings.settings(home_path).initialize_dbs()
 
+    # users
+    user.user_db(home_path, log).initialize_dbs()
 
 def build_demo_data(man, home_path, script_path, log):
     log.info('Moving DEMO data')
@@ -132,4 +136,8 @@ def build_demo_data(man, home_path, script_path, log):
 
     db_PID.commit()
     db_PID.close()
+
+    # Add some users;
+    man.users.add_user(uuid.uuid4(), 'admin@notanemail.edu.cn', 'notarealpass')
+
 

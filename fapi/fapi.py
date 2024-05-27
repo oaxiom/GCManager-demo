@@ -6,7 +6,7 @@
 # Andrew P. Hutchins
 #
 
-import sys, os
+import sys, os, uuid
 sys.path.append('../')
 
 from libmanager import support, VERSION, libmanager
@@ -19,19 +19,77 @@ else:
 if not os.path.exists(home_path):
     log.error(f"Panic! Data path {home_path} is missing")
     sys.exit(-1)
-man = libmanager.libmanager('Backend', log=log, home_path=home_path)
 
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+gcman = libmanager.libmanager('Backend', log=log, home_path=home_path)
+
+from fastapi import FastAPI, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
+from fastapi_login.exceptions import InvalidCredentialsException
+from pydantic import UUID4, BaseModel, Field, ConfigDict
+from fastapi_login import LoginManager
 
 app = FastAPI()
+
+###### User management
+
+with open(os.path.join(home_path, 'dbs', ".env"), "r") as f:
+    gcs = f.read()
+
+class UserCreate(BaseModel):
+    email: str
+    password: str
+    model_config = ConfigDict(from_attributes=True)
+
+class User(UserCreate):
+    id: UUID4
+
+user_manager = LoginManager(gcs, token_url='/auth/token')
+
+@user_manager.user_loader()
+def get_user(email: str):  # could also be an asynchronous function
+    user = gcman.users.get(email)
+    return user
+
+@app.post("/auth/register")
+def register(user: UserCreate) -> dict:
+
+    if gcman.users.user_exists(user.email):
+        raise HTTPException(status_code=400, detail="A user with this email already exists")
+    else:
+        # TODO: Hash passwords in real world applications
+        gcman.users.add_user(uuid.uuid4(), user.email, user.password)
+        return {'code': 200, 'data': True, 'msg': "Successful registration"}
+
+@app.post('/auth/token')
+def login(data: OAuth2PasswordRequestForm = Depends()):
+    email = data.username
+    password = data.password
+
+    user = get_user(email)  # same function to retrieve the user
+    if not user:
+        raise InvalidCredentialsException
+    elif password != user['password']:
+        raise InvalidCredentialsException
+
+    access_token = user_manager.create_access_token(
+        data=dict(sub=email),
+        expires=timedelta(hours=1)
+        )
+
+    return {'access_token': access_token, 'token_type': 'bearer'}
+
+# TODO :
+#def change_password(user=Depends(user_manager))
+#def recover_password()
+
+###### App FAPI
 
 @app.get("/")
 async def root():
     return {"message": f"GCManager {VERSION}"}
 
 @app.get('/populate_patient_list/')
-def populate_patient_list() -> dict:
+def populate_patient_list(user=Depends(user_manager)) -> dict:
     """
     返回患者表，格式为：
     [
