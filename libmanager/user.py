@@ -68,13 +68,29 @@ class user_db:
     def check_password(self, password, user_email):
         # get the hpass:
         user_db, user_db_cursor = self.__get_db()
-        user_db_cursor.execute("SELECT hpass FROM users WHERE email=?", user_email)
+        user_db_cursor.execute("SELECT hpass FROM users WHERE email=?", (user_email, ))
         hpass = user_db_cursor.fetchone()[0] # I presume you checked user_exists()
         user_db.close()
 
+        # Bad? surely, as password is transmitted in the clear...
+        # But if it's wrong, it doesn't matter?
+        # But if it's right, it does...
+
+        """
+        Yeah, the CURL is like this:
+        curl -X 'POST' \
+        'http://127.0.0.1:8000/auth/token' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/x-www-form-urlencoded' \
+        -d 'grant_type=&username=admin%40notanemail.edu.cn&password=notarealpass&scope=&client_id=aa&client_secret=aa'
+
+        # That can't be right...
+
+        """
+
         return security.verify_password(password, hpass)
 
-    def get(self, user):
+    def get(self, email:str):
         '''
         **Purpose**
             get user details, or return None

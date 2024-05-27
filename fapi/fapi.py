@@ -6,7 +6,7 @@
 # Andrew P. Hutchins
 #
 
-import sys, os, uuid
+import sys, os, uuid, datetime
 sys.path.append('../')
 
 from libmanager import support, VERSION, libmanager
@@ -52,7 +52,10 @@ def get_user(email: str):  # could also be an asynchronous function
 
 @app.post("/auth/register")
 def register(user: UserCreate) -> dict:
+    """
+    Register a new user.
 
+    """
     if gcman.users.user_exists(user.email):
         raise HTTPException(status_code=400, detail="A user with this email already exists")
     else:
@@ -65,14 +68,17 @@ def login(data: OAuth2PasswordRequestForm = Depends()):
     password = data.password
 
     user = get_user(email)  # same function to retrieve the user
+
+    print(gcman.users.check_password(password, email))
+
     if not user:
         raise InvalidCredentialsException
-    elif gcman.users.check_password(user['password'], user_email):
+    if not gcman.users.check_password(password, email):
         raise InvalidCredentialsException
 
     access_token = user_manager.create_access_token(
         data=dict(sub=email),
-        expires=timedelta(hours=1)
+        expires=datetime.timedelta(hours=1)
         )
 
     return {'access_token': access_token, 'token_type': 'bearer'}
@@ -102,7 +108,7 @@ def populate_patient_list(user=Depends(user_manager)) -> dict:
     ]
     搜索患者
     """
-    return {'code': 200, 'data': man.api.populate_patient_list(), 'msg': None}
+    return {'code': 200, 'data': gcman.api.populate_patient_list(), 'msg': None}
 
 @app.get('/populate_report_generator/{mode}')
 def populate_report_generator(mode: str, lang: str) -> dict:
@@ -137,7 +143,7 @@ def export_vcf(patient_id: str) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
-    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
+    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': gcman.api.export_vcf(patient_id), 'msg': None}
 
 @app.get("/export_cram/{patient_id}")
@@ -146,7 +152,7 @@ def export_cram(patient_id: str) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
-    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
+    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': gcman.api.export_cram(patient_id), 'msg': None}
 
 @app.get("/generate_report/{mode}/{patient_id}/")
@@ -210,7 +216,7 @@ def add_new_patient(patient_data: PatientData) -> dict:
 
     '''
     # Check it doesn't exist already
-    ret = man.patient_exists(patient_data.patient_id)
+    ret = gcman.patient_exists(patient_data.patient_id)
 
     if ret:
         raise HTTPException(status_code=500, detail=f'{patient_data.patient_id} already exists!')
@@ -228,7 +234,7 @@ def add_new_patient(patient_data: PatientData) -> dict:
         raise HTTPException(status_code=404, detail=f'Failed to add {patient_data.patient_id}')
 
     # Check it's valid
-    ret = man.patient_exists(patient_data.patient_id)
+    ret = gcman.patient_exists(patient_data.patient_id)
 
     return {'code': 200, 'data': ret, 'msg': None}
 
@@ -248,7 +254,7 @@ def report_current_anaylsis_stage(patient_id:str) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
-    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
+    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': gcman.api.report_current_anaylsis_stage(patient_id), 'msg': None}
 
 '''
@@ -267,7 +273,7 @@ def export_QC_statistics(patient_id: str) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
-    if not man.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
+    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': gcman.api.export_QC_statistics(patient_id), 'msg': None}
 
 @app.get("/get_logs/{patient_id}")
