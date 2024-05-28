@@ -16,6 +16,7 @@ if 'demo' in VERSION:
     home_path = os.path.join(os.path.expanduser('~'), 'GCMDataDEMO/') # Pre-initialised demo data
 else:
     sys.exit(-1)
+
 if not os.path.exists(home_path):
     log.error(f"Panic! Data path {home_path} is missing")
     sys.exit(-1)
@@ -375,7 +376,7 @@ def populate_patient_data_list(user=Depends(user_manager)) -> dict:
     '''
     return {'code': 200, 'data': gcman.api.populate_patient_data_list(), 'msg': None}
 
-@app.get("/clean_free_space/")
+@app.get("/system/clean_free_space/")
 def clean_free_space(user=Depends(user_manager)) -> dict:
     """
 
@@ -466,3 +467,12 @@ def get_system_backend_setting(key:str, user=Depends(user_manager)) -> dict:
     key = 'lang'
     '''
     return {'code': 200, 'data': gcman.api.get_system_backend_setting(key), 'msg': None}
+
+@app.post("/system/initialize")
+def initialize(adminpass:str) -> dict:
+    '''
+    Initialise the system.
+    '''
+    gcman.initialise(adminpass)
+
+    return {'code': 200, 'data': True, 'msg': 'Initialized system, and set admin password'}

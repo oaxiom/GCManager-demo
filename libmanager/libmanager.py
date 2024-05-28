@@ -9,10 +9,9 @@
 # TODO:
 # 1. Fix up the exceptions
 
-import os, sys, sqlite3, datetime, glob
+import os, sys, sqlite3, datetime, glob, uuid
 
 from . import analysis_progress
-from . import initialise_dbs
 from . import api
 from . import stagedata
 from . import logger
@@ -21,6 +20,7 @@ from . import reporter_risk
 from . import settings
 from . import support
 from . import user
+from . import initialise
 
 class libmanager:
     def __init__(self, end_type, log, home_path):
@@ -84,18 +84,15 @@ class libmanager:
 
         return True
 
-    def _initialize(self, demo:bool = False):
+    def initialize(self, adminpass:str, demo:bool = False):
         '''
         **Purpose**
             Internal method to setup the empty databases
 
 
         '''
-        initialise_dbs.init_dbs(self.home_path, self.script_path, self.log)
-
-        if demo:
-            initialise_dbs.build_demo_data(self, self.home_path, self.script_path, self.log)
-
+        initialise.initialize_system(self, self.end_type, self.log, self.script_path, self.home_path, demo=demo)
+        self.users.add_user(uuid.uuid4(), 'admin', adminpass, is_admin=True)
         return True
 
     def _sql_booler(self, v):
