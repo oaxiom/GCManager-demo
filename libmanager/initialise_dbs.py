@@ -68,7 +68,7 @@ def init_dbs(home_path, script_path, log):
     settings.settings(home_path).initialize_dbs()
 
     # users
-    user.user_db(home_path, log).initialize_dbs()
+    user.users(home_path, log).initialize_dbs()
 
 def build_demo_data(man, home_path, script_path, log):
     log.info('Moving DEMO data')

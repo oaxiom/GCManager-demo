@@ -160,6 +160,8 @@ class reporter_risk:
                     effect = '防护的' # Protective
                 elif '+' in gene['risky']:
                     effect = '有害的' # Deleterious
+                else:
+                    effect = ''
 
                 tab_row = f'''
             <tr>
@@ -178,6 +180,9 @@ class reporter_risk:
             html = html_risk.html('EN', self.patient_id, self.disease_name, self.patient_data, rest_of_table, judgement, fact)
         elif self.lang == 'CN':
             html = html_risk.html('CN', self.patient_id, self.disease_name, self.patient_data, rest_of_table, judgement, fact)
+        else:
+            html = '' # Error!
+
 
         html_filename = os.path.join(self.data_path, f"result.{self.patient_id}.{self.lang}.Risk.{self.disease_code}.html")
 

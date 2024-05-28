@@ -9,12 +9,11 @@
 '''
 
 Questions:
-1. Is this running continuously, or invoked only when needed?
+TODO: Deprecate
 
 '''
 
-import os, sqlite3, datetime, logging
-from . import analysis_progress
+import os
 from . import support
 
 class api:

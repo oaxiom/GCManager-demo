@@ -46,7 +46,7 @@ class libmanager:
         self.db_PID = None
         self.db_disease_codes = None
 
-        self.users = user.user_db(self.home_path, self.log)
+        self.users = user.users(self.home_path, self.log)
 
         # TODO: Move these open/close to a function to clean up the code
 

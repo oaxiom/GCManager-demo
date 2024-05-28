@@ -8,7 +8,7 @@ import sys, os, sqlite3, uuid
 
 from . import security
 
-class user_db:
+class users:
     def __init__(self, home_path, log):
         '''
         **Purpose**

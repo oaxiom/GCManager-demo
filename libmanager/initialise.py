@@ -8,7 +8,7 @@
 # Andrew P. Hutchins,
 #
 
-import sys, os, shutil, logging
+import sys, os, shutil
 
 sys.path.append('../')
 from . import VERSION
