@@ -198,7 +198,8 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         self.__deathline = None # Error reporting in load_CSV()
         self.__deathindx = None
 
-        if force_tsv: format["force_tsv"] = True
+        if force_tsv:
+            format["force_tsv"] = True
 
         if filename:
             if format:
@@ -249,8 +250,6 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         csv_headers = frozenset(["csv", "xls", "tsv", "txt", "bed"])
         if filename.split(".")[-1].lower() in csv_headers: # check the last one for a csv-like header
             self.loadCSV(filename=filename, format=format, gzip=gzip, **kargs)
-        elif filename.split(".")[-1] in ["glb"]:
-            self = glload(filename) # will this work?
         else:
             self.loadCSV(filename=filename, format=format, gzip=gzip, **kargs)
 
@@ -302,7 +301,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             try:
                 self._loadCSV(filename=self.fullfilename, format=format, **kargs)
             except Exception:
-                raise AssertionError("'%s' appears mangled, the file does not fit the format specifier" % self.fullfilename, self.fullfilename)
+                raise AssertionError(f"'{self.fullfilename}' appears mangled, the file does not fit the format specifier")
 
     def _loadCSV(self, **kargs):
         """
@@ -909,7 +908,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         elif isinstance(index, slice):
             # returns a new genelist corresponding to the slice.
             newl = self.shallowcopy()
-            newl.linearData = utils.qdeepcopy(self.linearData[index]) # separate the data so it can be modified.
+            newl.linearData = qdeepcopy(self.linearData[index]) # separate the data so it can be modified.
             newl._optimiseData()
         return newl # deep copy the slice.
 
@@ -942,13 +941,6 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         the shallow copy mechanism even though 90% of the operations are copies.
         """
         return copy.copy(self) # But doesnt this just call __copy__() anyway?
-
-    def _collectIdenticalKeys(self, gene_list):
-        """
-        (Internal)
-        returns a list of keys in common between this list and gene_list
-        """
-        return list(set(self.keys()) & set(gene_list.keys()))
 
     def getColumns(self, return_keys=None):
         """
@@ -1256,48 +1248,6 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             return newl
         return None
 
-    def addEmptyKey(self, key=None, value=None):
-        """
-        **Purpose**
-            You need to add a empty key ot the list so that it becomes compatible with some downstream function.
-            But you don't care what is in the key, or just want to set the key to a specific value for the entire list
-
-            This is the one to use::
-
-                gl = genelist("a_bed.bed", format=format.minimal_bed)
-
-                print(gl)
-                0: loc: chr1:1000-2000
-
-                # Argh! I need a strand key for the downstream, but I don't actually care what's in strand!
-
-                gl = g∂l.addEmptyKey("strand", "+")
-
-                # Phew! That's better!
-
-                print(gl)
-                0: loc: chr1:1000-2000, strand: +
-
-        **Arguments**
-            key (Required)
-                the key to name to add
-
-            value (Optional, default=None)
-                A value to fill into each new key.
-
-        **Returns**
-            A new genelist with the added key.
-        """
-        assert key , "You must specify a new key name"
-
-        newl = self.deepcopy()
-        for item in newl:
-            item[key] = value
-
-        newl._optimiseData()
-        self.log.info("addEmptyKey: Added a new key '%s'" % key)
-        return newl
-
     def removeDuplicates(self, key=None):
         """
         **Purpose**
@@ -1364,22 +1314,21 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             self.log.info("removeDuplicates: {} duplicates, list now {} items long".format(len(self)-len(newl), len(newl)))
             return newl
 
-        else:
-            assert key in list(self.keys()), f"the key '{key}' was not found in this genelist"
+        assert key in list(self.keys()), f"the key '{key}' was not found in this genelist"
 
-            newl = self.shallowcopy()
-            newl.linearData = []
-            count = 0
+        newl = self.shallowcopy()
+        newl.linearData = []
+        count = 0
 
-            for item in self.qkeyfind[key]:
-                newl.linearData.append(self.linearData[min(self.qkeyfind[key][item])]) # grab first
-                # Will only apply a single item (the earliest) even if there
-                # IS only one of these items.
+        for item in self.qkeyfind[key]:
+            newl.linearData.append(self.linearData[min(self.qkeyfind[key][item])]) # grab first
+            # Will only apply a single item (the earliest) even if there
+            # IS only one of these items.
 
-            newl._optimiseData()
+        newl._optimiseData()
 
-            self.log.info("removeDuplicates: {} duplicates, list now {} items long".format(len(self) - len(newl), len(newl)))
-            return newl
+        self.log.info("removeDuplicates: {} duplicates, list now {} items long".format(len(self) - len(newl), len(newl)))
+        return newl
 
     def removeExactDuplicates(self):
         """
@@ -1408,63 +1357,6 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         newl._optimiseData()
 
         self.log.info("removeExactDuplicates: %s exact duplicates" % (len(self) - len(newl)))
-        return newl
-
-    def removeEmptyDataByKey(self, key=None):
-        """
-        **Purpose**
-            remove any entry that has empty data within 'key'
-
-            For example, consider this data::
-
-                1: name: Nanog, annot: ,      score: 20
-                2: name: Sox2,  annot: yep,   score: 30
-                3: name: Stat3, annot: kinda, score:
-
-            You can see some columns with empty data::
-
-                data.removeEmptyDataByKey("annot")
-
-            will result in::
-
-                1: name: Nanog, annot: ,      score: 20
-                2: name: Stat3, annot: kinda, score:
-
-            Notice that although score is also empty, this function only considers
-            data in the annot: key
-
-            Similarly, using "score" will delete the Stat3 entry only::
-
-                data.removeEmptyDataByKey("score")
-                print data
-
-                1: name: Nanog, annot: ,      score: 20
-                2: name: Sox2,  annot: yep,   score: 30
-
-        **Arguments**
-            key
-                The key in which to delete empty data
-
-        **Returns**
-            The new list with empty data in key removed
-        """
-        assert key, "No key specified"
-
-        newl = self.deepcopy()
-        oldl = newl.linearData # preserve the copies
-        newl.linearData = []
-        count = 0
-        p = progressbar(len(self))
-
-        for item in oldl:
-            if item[key]:
-                newl.linearData.append(item) # grab first
-            # Will only apply a single item (the earliest) even if there
-            # IS only one of these items.
-
-        newl._optimiseData()
-
-        self.log.info("Removed empty data in %s key: %s entries" % (key, len(self) - len(newl)))
         return newl
 
     def load_list(self, list_to_load, name=False):
@@ -1587,31 +1479,6 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         newgl._optimiseData()
         self.log.info("Renamed key '%s' to '%s'" % (old_key_name, new_key_name))
         return newgl
-
-    def repairKey(self, key_to_repair, fill_in_key, **kargs):
-        '''
-        **Purpose**
-            genelists will tolerate 'holes' (missing key:values) in individual entries.
-
-            A specific example is loading things like a gtf file, which in that format will tolerate missing attirbute tags
-
-            glbase is quite happy with this, but it may cause problems downstream if you try to grab a single key from a genelist
-
-            This method will fill in the holes in 'key_to_repair' by dragging data from 'fill_in key'
-        '''
-        assert key_to_repair in list(self.keys()), 'key_to_repair: "%s" not found' % key_to_repair
-        assert fill_in_key in list(self.keys()), 'fill_in_key: "%s" not found' % fill_in_key
-
-        replaced = 0
-        newl = self.deepcopy()
-        for item in newl:
-            if key_to_repair not in item or not item[key_to_repair]:
-                item[key_to_repair] = item[fill_in_key]
-                replaced += 1
-        newl._optimiseData()
-
-        self.log.info('repairKey: Repaired %s keys' % replaced)
-        return newl
 
     def remove(self, key=None, value=None):
         """

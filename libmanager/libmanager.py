@@ -108,6 +108,8 @@ class libmanager:
             if v == '1': return '是'
             return '不'
 
+        return 'No'
+
     def get_patients_table(self) -> list:
         '''
         **Purpose**
