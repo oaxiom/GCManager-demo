@@ -294,13 +294,6 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         self.filename = os.path.split(os.path.realpath(filename))[1]
         self.fullfilename = filename
 
-        # decide whether to respect the force_tsv arg.
-        if not format:
-            if "force_tsv" in kargs and kargs["force_tsv"]:
-                format = sniffer_tsv
-            else:
-                format = sniffer
-
         if "debug" in format and format["debug"]:
             print("--------")
             print("DEBUG load:")
@@ -588,7 +581,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         if r:
             newl = self.shallowcopy() # shallowcopy for once as we will load in our own list.
             newl.load_list(r)
-            return(newl)
+            return newl
         return None
 
     def index(self, key, value):
@@ -938,10 +931,10 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         newl = False
         if isinstance(index, int):
             # this should return a single dictionary.
-            return(self.linearData[index])
+            return self.linearData[index]
         elif isinstance(index, str):
             # returns all labels with that item.
-            return(self._findAllLabelsByKey(index))
+            return self._findAllLabelsByKey(index)
         elif isinstance(index, slice):
             # returns a new genelist corresponding to the slice.
             newl = self.shallowcopy()
@@ -1351,7 +1344,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
 
         if len(newl.linearData):
             newl._optimiseData()
-            return(newl)
+            return newl
         return None
 
     def addEmptyKey(self, key=None, value=None):
@@ -1369,7 +1362,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
 
                 # Argh! I need a strand key for the downstream, but I don't actually care what's in strand!
 
-                gl = gl.addEmptyKey("strand", "+")
+                gl = g∂l.addEmptyKey("strand", "+")
 
                 # Phew! That's better!
 
@@ -1394,7 +1387,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
 
         newl._optimiseData()
         self.log.info("addEmptyKey: Added a new key '%s'" % key)
-        return(newl)
+        return newl
 
     def removeDuplicates(self, key=None):
         """

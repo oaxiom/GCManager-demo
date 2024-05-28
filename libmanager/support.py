@@ -24,4 +24,4 @@ def prepare_logging():
         format='%(levelname)-8s: %(message)s',
         datefmt='%m-%d %H:%M')
 
-    return logging.getLogger(f'GCmanager')
+    return logging.getLogger('GCmanager')

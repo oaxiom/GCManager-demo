@@ -24,10 +24,10 @@ gcman = libmanager.libmanager('Backend', log=log, home_path=home_path)
 if not os.path.exists(home_path):
     if 'demo' in VERSION:
         gcman.initialize('admin123456', demo=True)
-        log.warning('System DB not found. Initializing a blank producction DB')
+        log.warning('System DB not found. Initializing a blank production DB')
     else: # Production
         gcman.initialize('admin123456')
-        log.warning('System DB not found. Initializing a blank producction DB')
+        log.warning('System DB not found. Initializing a blank DEMO DB')
 
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
