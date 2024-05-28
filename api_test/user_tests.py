@@ -31,7 +31,7 @@ if os.path.exists(home_path):
 os.mkdir(home_path)
 os.mkdir(os.path.join(home_path, 'data'))
 os.mkdir(os.path.join(home_path, 'dbs'))
-man._initialize(True)
+man.initialize(True)
 
 def cmd_process(cmd):
     print(f'\n>>> {cmd}')

@@ -497,14 +497,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
                     self.qkeyfind[key][item[key]].append(index)
 
                 except TypeError:
-                    # TODO: This is indeed present if the genelist is an expresion object;
-                    # The item in unhashable and cannot be added to the qkeyfind
-                    # This should be pretty rare if not impossible.
-                    #self.log.error(f'!Unhashable key: {key} for qkeyfind system')
                     pass
-
-                # Now to do a find you just go:
-                # item_indeces = self.qkeyfind["name"]["Stat3"]
 
         return True
 
@@ -583,28 +576,6 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             newl.load_list(r)
             return newl
         return None
-
-    def index(self, key, value):
-        """
-        **Purpose**
-            A bit like the Python index() but for key:value pairs
-
-            NOTE: The method is lazy and finds the first index and returns that.
-
-        **Arguments**
-            Key (Required)
-                the key to search in
-
-            Value (Required)
-                the value to find
-
-        **Returns**
-            The index of the list where the item is contained.
-        """
-        assert key, "index: must send key"
-        assert value, "index: must send value"
-
-        return min(self.qkeyfind[key][value])
 
     def _findAllLabelsByKey(self, key):
         """
@@ -1126,68 +1097,6 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         newgl._optimiseData()
         return newgl
 
-    def filter_by_value(self, key=None, evaluator=None, value=None, **kargs):
-        """
-        **Purpose**
-            Filter data based on a key with some numeric data.
-
-            If you skip the keyword arguments you can write nice things like this:
-
-            newdata = expn.filter_by_value("q-value", "<", 0.05)
-
-        **Arguments**
-            key (Required)
-                The name of the key to use to filter the data on.
-                or a name of a condition in the expression object to filter on.
-
-            evaluator (Required, values=["gt", "lt", "gte", "lte", "equal"])
-                The comparator.
-                    gt = '>' greater than value
-                    lt = '<' less than value
-                    gte = '>=' greater than or equal to value
-                    lte = '<=' less than or equal to value
-                    equal = "==" equal to value
-
-                    You can also send the > < >= <= or == as a string symbol as well.
-
-            value (Required)
-                The value of change required to pass the test.
-
-        **Returns**
-            A new genelist-like object containing only the items that pass.
-        """
-        assert key, "filter_by_value: 'key' argument is required"
-        assert evaluator in ("gt", "lt", "gte", "lte", "equal", ">", "<", ">=", "<=", "=="), "filter_by_value: evaluator argument '%s' not recognised" % evaluator
-
-        if self.__repr__() == "glbase.expression" and key in self._conditions:
-            assert key in self._conditions, "filter_by_value:'%s' not found in this expression object" % key
-            its_a_condition = True
-        else:
-            assert key in list(self.keys()), "filter_by_value: no key named '%s' found in this genelist object" % key
-            its_a_condition = False
-
-        new_expn = []
-
-        conv_dict = {"gt": ">", "lt": "<", "gte": ">=", "lte": " <=", "equal": "=="}
-        if evaluator in ("gt", "lt", "gte", "lte", "equal"):
-            evaluator = conv_dict[evaluator]
-
-        if its_a_condition:
-            cond_index = self._conditions.index(key)
-            for item in self.linearData:
-                if eval("%s %s %s" % (item["conditions"][cond_index], evaluator, value)):
-                    new_expn.append(item)
-        else: # filter on a normal key.
-            for item in self.linearData:
-                if eval("%s %s %s" % (item[key], evaluator, value)):
-                    new_expn.append(item)
-
-        ret = self.shallowcopy()
-        ret.load_list(new_expn) # In case I make optimisations to load_list()
-
-        self.log.info("filter_by_value: Filtered expression for ['%s' %s %s], found: %s" % (key, evaluator, value, len(ret)))
-        return ret
-
     def map(self, genelist=None, peaklist=None, microarray=None, genome=None, key=None,
         greedy=True, logic="and", silent=False, **kargs):
         """
@@ -1702,112 +1611,6 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
         newl._optimiseData()
 
         self.log.info('repairKey: Repaired %s keys' % replaced)
-        return newl
-
-    def splitKeyValue(self, key, key_sep=" ", val_sep=":"):
-        """
-        **Purpose**
-            split() the values of key into key:value pairs and add them back into the genelist
-
-            An example is this:
-
-            After loading a fasta  the entries are like this:
-
-            0: name: ENSP00000451042 pep:known chromosome:GRCh37:14:22907539:22907546:1 gene:ENSG00000223997 transcript:ENST00000415118 gene_biotype:TR_D_gene transcript_biotype:TR_D_gene, seq: EIV
-
-            Note that the name value contains the long string:
-
-            "ENSP00000451042 pep:known chromosome:GRCh37:14:22907539:22907546:1 gene:ENSG00000223997 transcript:ENST00000415118 gene_biotype:TR_D_gene transcript_biotype:TR_D_gene"
-
-            It would be more useful to split this up into key:value pairs so glbase can get at the values:
-
-            fasta = fasta.splitKeyValue("name", " ", ":")
-
-            Results in the more useful:
-
-            0: seq: EIV, transcript_biotype: TR_D_gene, pep: known, gene_biotype: TR_D_gene, gene: ENSG00000223997, transcript: ENST00000415118, chromosome: GRCh37:14:22907539:22907546:1
-
-            NOTE: This will work for a relatively simple example, but will fail in more complex versions.
-
-            Notice how the first ENSP00000451042 is lost as it does not have a val_sep (:).
-
-        **Arguments**
-            key (Required)
-                The key to split
-
-            key_sep (Required, default=" ")
-                the separator to discriminate key:value pairs
-
-            val_sep (Required, default=",")
-                the separator inbetween the key and value.
-
-        **Returns**
-            A new genelist
-        """
-
-        newl = self.shallowcopy()
-        newl.linearData = []
-
-        for row in self:
-            newk = dict(row)
-            kk = newk.pop(key)
-
-            kvs = kk.split(key_sep)
-
-            for i in kvs:
-                if val_sep in i: # no val_sep so omit it;
-                    t = i.split(val_sep) # potential error if more than one sep.
-                    k = t[0]
-                    v = val_sep.join(t[1:])
-
-                    newk[k] = v
-
-            newl.linearData.append(newk)
-
-        newl._optimiseData()
-        self.log.info("splitKeyValue: split '%s' into ~'%s'%s'%s' key value pairs" % (key, len(k), val_sep, len(v)))
-        return newl
-
-    def joinKey(self, new_key_name, formatter, keyA, keyB, keep_originals=False):
-        """
-        **Purpose**
-            Perform a string formatting operation on two keys to jon them together.
-
-            Does this:
-
-            item[new_key_name] = formatter % (keyA, keyB)
-
-        **Arguments**
-            new_key_name (Required)
-                The new key name.
-
-            formatter (REquired)
-                string format operation to perform.
-
-            keyA, keyB (Required)
-                the two keys to format.
-
-            keep_originals (Optional, default=False)
-                keep the original keys.
-
-        **Returns**
-            The new genelist
-        """
-        assert keyA in self.linearData[0], "keyA '%s' not found in this genelist" % keyA
-        assert keyB in self.linearData[0], "keyB '%s' not found in this genelist" % keyB
-
-        newl = self.deepcopy()
-
-        for item in newl:
-            item[new_key_name] = formatter.format(item[keyA], item[keyB])
-
-            if not keep_originals:
-                if new_key_name != keyA: # Don't delete if it is also the new key.
-                    del item[keyA]
-                if new_key_name != keyB:
-                    del item[keyB]
-
-        newl._optimiseData()
         return newl
 
     def remove(self, key=None, value=None):
