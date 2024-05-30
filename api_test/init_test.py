@@ -19,9 +19,11 @@ else:
     log.error('init_test only works in DEMO mode')
     sys.exit(-1)
 
+'''
 if not os.path.exists(home_path):
     log.error(f"Panic! Data path {home_path} is missing")
     sys.exit(-1)
+'''
 
 man = libmanager.libmanager('Doctorend', log=log, home_path=home_path)
 
