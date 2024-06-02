@@ -287,7 +287,11 @@ async def add_new_patient(
     "age": 30,
 
     '''
-    print(files)
+    # TODO: This function is 2x slow, as it copies the file first, then copies it again.
+    # Supposedly it should be possible to remove one of the copies by using the underlying Starlette
+    # Streamer.
+
+    gcman.log.info(f'Supplied {len(files)}')
 
     # Check it doesn't exist already
     if gcman.patient_exists(patient_id):
@@ -335,6 +339,7 @@ async def add_new_patient(
         finally:
             if 'f' in locals(): await run_in_threadpool(f.close)
             await file.close()
+            gcman.log.info(f'Copied file {file.filename} to {patient_id}')
 
     return {'code': 200, 'data': ret, 'msg': None}
 
