@@ -146,8 +146,7 @@ class api:
         sequence_data_id: str,
         name: str,
         sex: str,
-        age: int,
-        sequence_data_files: str) -> bool:
+        age: int,):
         """
         Add new patient data.
         Used on the screen to register a new patient
@@ -161,17 +160,14 @@ class api:
         # Sanitise input;
         age = int(age)
 
-        ret = self.manager.add_patient(
+        ret, sequence_data_path  = self.manager.add_patient(
             patient_id=patient_id,
             seq_id=sequence_data_id,
             name=name,
             sex=sex,
             age=age)
 
-        # TODO: copy sequence_data_files.
-        # In the DEMO this does nothing.
-
-        return ret
+        return ret, sequence_data_path
 
     def report_current_anaylsis_stage(self, patient_id:str):
         """

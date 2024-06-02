@@ -7,11 +7,16 @@
 #
 
 import sys, os, uuid, datetime
+import logging
+import shutil
+import aiofiles
 sys.path.append('../')
 
 from libmanager import support, VERSION, libmanager
 
 log = support.prepare_logging()
+
+logging.getLogger("multipart").setLevel(logging.ERROR)
 
 if 'demo' in VERSION:
     home_path = os.path.join(os.path.expanduser('~'), 'GCMDataDEMO/') # Pre-initialised demo data
@@ -29,9 +34,11 @@ if not os.path.exists(home_path):
         gcman.initialize('admin123456')
         log.warning('System DB not found. Initializing a blank DEMO DB')
 
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_login.exceptions import InvalidCredentialsException
+from fastapi.concurrency import run_in_threadpool
+from typing_extensions import Annotated
 from pydantic import UUID4, BaseModel, Field, ConfigDict
 from fastapi_login import LoginManager
 
@@ -150,7 +157,7 @@ def logout(user=Depends(user_manager)):
 
 @app.get("/")
 async def root():
-    return {"message": f"GCManager {VERSION}"}
+    return {"message": f"GCManager {VERSION} \n end_type={gcman.end_type}"}
 
 @app.get('/populate_patient_list/')
 def populate_patient_list(user=Depends(user_manager)) -> dict:
@@ -249,51 +256,85 @@ def is_patient_id_valid(patient_id: str, user=Depends(user_manager)) -> dict:
     ret = gcman.patient_exists(patient_id)
     return {'code': 200, 'data': ret, 'msg': None}
 
+'''
 class PatientData(BaseModel):
     patient_id: str = Field(examples=["ANEWPATIENT12345"])
     sequence_data_id: str = Field(examples=["SEQID2345"])
     name: str = Field(examples=["王XX"])
     sex: str = Field(examples=["男"])
     age: int = Field(examples=[30,])
-    sequence_data_files: str = Field(examples=["/path/to/data/fastq"])
+'''
 
 @app.post('/add_patient')
-def add_new_patient(patient_data: PatientData, user=Depends(user_manager)) -> dict:
+async def add_new_patient(
+    patient_id: Annotated[str, Form()],
+    sequence_data_id: Annotated[str, Form()],
+    name: Annotated[str, Form()],
+    sex: Annotated[str, Form()],
+    age: Annotated[str, Form()],
+    files: list[UploadFile],
+    user=Depends(user_manager)) -> dict:
     '''
 
     Add a new patient to the database.
 
     Example data:
-    {
-      "patient_id": "ANEWPATIENT12345",
-      "sequence_data_id": "SEQID2345",
-      "name": "王XX",
-      "sex": "男",
-      "age": 30,
-      "sequence_data_files": "/path/to/data/fastq"
-    }
+
+    "patient_id": "ANEWPATIENT12345",
+    "sequence_data_id": "SEQID2345",
+    "name": "王XX",
+    "sex": "男",
+    "age": 30,
 
     '''
+    print(files)
+
     # Check it doesn't exist already
-    ret = gcman.patient_exists(patient_data.patient_id)
+    if gcman.patient_exists(patient_id):
+        raise HTTPException(status_code=500, detail=f'{patient_id} already exists!')
 
-    if ret:
-        raise HTTPException(status_code=500, detail=f'{patient_data.patient_id} already exists!')
+    # Validate the files for the specific end;
+    if gcman.end_type == 'Doctorend':
+        # expects one file only, consisting of the indermediate file;
+        if len(files) != 1:
+            raise HTTPException(status_code=500, detail='Doctor end expects only one file')
+        # expects the file to have the extension .int.gz
+        if not files[0].filename.endswith('.int.gz'):
+            raise HTTPException(status_code=500, detail='Doctor end expects a file in the format .int.gz')
 
-    ret_code = gcman.api.add_new_patient(
-        patient_id=patient_data.patient_id,
-        sequence_data_id=patient_data.sequence_data_id,
-        name=patient_data.name,
-        sex=patient_data.sex,
-        age=patient_data.age,
-        sequence_data_files=patient_data.sequence_data_files
+    else: # Backend
+        # expected an even number of files.
+        if len(files) % 2 != 0:
+            raise HTTPException(status_code=500, detail='Analysis end expects an even number of files, one for each red pair')
+        # Expects all files to have the form _1.fastq.gz
+        for f in files:
+            if not f.filename.endswith('.fastq.gz'):
+                raise HTTPException(status_code=500, detail=f'File format appears incorrect, ".fastq.gz" in missing in file {f}')
+
+    ret_code, sequence_data_path = gcman.api.add_new_patient(
+        patient_id=patient_id,
+        sequence_data_id=sequence_data_id,
+        name=name,
+        sex=sex,
+        age=age,
         )
 
     if not ret_code:
-        raise HTTPException(status_code=404, detail=f'Failed to add {patient_data.patient_id}')
+        raise HTTPException(status_code=500, detail=f'Failed to add {patient_id}')
 
     # Check it's valid
-    ret = gcman.patient_exists(patient_data.patient_id)
+    ret = gcman.patient_exists(patient_id)
+
+    # copy the data;
+    for file in files:
+        try:
+            f = await run_in_threadpool(open, os.path.join(sequence_data_path, file.filename), 'wb')
+            await run_in_threadpool(shutil.copyfileobj, file.file, f)
+        except Exception:
+            return {'code': 500, 'data': None, 'msg': 'Upload file error'}
+        finally:
+            if 'f' in locals(): await run_in_threadpool(f.close)
+            await file.close()
 
     return {'code': 200, 'data': ret, 'msg': None}
 

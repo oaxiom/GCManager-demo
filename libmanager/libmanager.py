@@ -432,7 +432,9 @@ class libmanager:
 
         self.log.info(f'Added patient {patient_id}')
 
-        return True
+        sequence_data_path = data_dir # Copy the seq data here;
+
+        return True, sequence_data_path
 
     def summary_statistics(self, patient_id:str, ):
         '''
