@@ -307,7 +307,7 @@ async def add_new_patient(
 
     # Validate the files for the specific end;
     if gcman.end_type == 'Doctorend':
-        # expects one file only, consisting of the indermediate file;
+        # expects one file only, consisting of the intermediate file;
         if len(files) != 1:
             raise HTTPException(status_code=500, detail='Doctor end expects only one file')
         # expects the file to have the extension .int.gz
@@ -334,9 +334,6 @@ async def add_new_patient(
     if not ret_code:
         raise HTTPException(status_code=500, detail=f'Failed to add {patient_id}')
 
-    # Check it's valid
-    ret = gcman.patient_exists(patient_id)
-
     # copy the data;
     for file in files:
         try:
@@ -348,6 +345,11 @@ async def add_new_patient(
             if 'f' in locals(): await run_in_threadpool(f.close)
             await file.close()
             gcman.log.info(f'Copied file {file.filename} to {patient_id}')
+
+    # Check it's valid
+    ret = gcman.patient_exists(patient_id)
+
+    # TODO: Check that the FASTQ/INT data makes sense:
 
     return {'code': 200, 'data': ret, 'msg': None}
 
@@ -377,8 +379,7 @@ def delete_patient(self, patient_id:str) -> bool:
 @app.get("/patient/export_QC_statistics/{patient_id}")
 def export_QC_statistics(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
-    Returns the analysis summary as a string.
-    Used on the Analysis summary page.
+    Returns the QC data as a string.
 
     以字符串形式返回分析摘要。
     用于分析摘要页面。 "分析总结".

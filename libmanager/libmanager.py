@@ -10,6 +10,7 @@
 # 1. Fix up the exceptions
 
 import os, sys, sqlite3, datetime, glob, uuid
+import pathlib
 
 from . import analysis_progress
 from . import api
@@ -139,29 +140,50 @@ class libmanager:
 
         return clean_results
 
+    def __measure_disk_space(self, path):
+        # Report the disk space du -hs style for a directory
+        # TODO: move to utils;
+        KB = 1024
+        b = sum(file.stat().st_size for file in pathlib.Path(path).rglob('*'))
+        k = b / KB**1
+        m = k / KB**1
+        g = m / KB**1
+        return f'{k}kb', f'{m}Mb', f'{g}Gb'
+
     def get_patients_data_table(self) -> list:
         '''
         **Purpose**
-            Return all of the pateinet_data table;
+            Return all of the patient_data table;
         '''
         self.db_PID = sqlite3.connect(self.db_PID_path)
         self.db_PID_cursor = self.db_PID.cursor()
         self.db_PID_cursor.execute('SELECT * FROM patient_data')
         results = self.db_PID_cursor.fetchall()
-        self.db_PID.close()
         clean_results = []
 
         # Convert the 1/0 to Yes, No
         for row in results:
+            # Update the space used whilst here; this should be fast enough, even
+            # For hundreds of patients?
+            patient_path = os.path.join(self.db_path, f'PID.{row[0]}')
+
+            k, m, g = self.__measure_disk_space(patient_path)
+
+            # update the db;
+            self.db_PID_cursor.execute('UPDATE patient_data SET space_used = ? WHERE PID = ?', (g, row[0]))
+
             row = {
                 'patient_id': row[0],
-                'space_used': row[1],
+                'space_used': g,
                 'data_packed': self._sql_yesno(row[2]),
                 'cram_available': self._sql_yesno(row[3]),
                 'vcf_available': self._sql_yesno(row[4]),
                 }
 
             clean_results.append(row)
+
+        self.db_PID.commit()
+        self.db_PID.close()
 
         return clean_results
 
