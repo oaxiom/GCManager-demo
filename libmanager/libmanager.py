@@ -148,7 +148,7 @@ class libmanager:
         k = b / KB**1
         m = k / KB**1
         g = m / KB**1
-        return f'{k}kb', f'{m}Mb', f'{g}Gb'
+        return f'{k:.2}kb', f'{m:.2}Mb', f'{g:.2}Gb'
 
     def get_patients_data_table(self) -> list:
         '''
@@ -165,16 +165,17 @@ class libmanager:
         for row in results:
             # Update the space used whilst here; this should be fast enough, even
             # For hundreds of patients?
-            patient_path = os.path.join(self.db_path, f'PID.{row[0]}')
+            patient_path = os.path.join(self.data_path, f'PID.{row[0]}')
 
             k, m, g = self.__measure_disk_space(patient_path)
+            print(k, m, g)
 
             # update the db;
             self.db_PID_cursor.execute('UPDATE patient_data SET space_used = ? WHERE PID = ?', (g, row[0]))
 
             row = {
                 'patient_id': row[0],
-                'space_used': g,
+                'space_used': m,
                 'data_packed': self._sql_yesno(row[2]),
                 'cram_available': self._sql_yesno(row[3]),
                 'vcf_available': self._sql_yesno(row[4]),
