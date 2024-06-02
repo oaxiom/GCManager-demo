@@ -22,6 +22,7 @@ from . import settings
 from . import support
 from . import user
 from . import initialise
+from . import utils
 
 class libmanager:
     def __init__(self, end_type, log, home_path):
@@ -119,7 +120,7 @@ class libmanager:
             PatientID | analysis_complete
 
         '''
-        # TODO: Enable fuzzy searching
+        # TODO: Enable fuzzy searching?
         self.db_PID = sqlite3.connect(self.db_PID_path)
         self.db_PID_cursor = self.db_PID.cursor()
         self.db_PID_cursor.execute('SELECT PID, name, age, sex, analysis_done FROM patients')
@@ -140,16 +141,6 @@ class libmanager:
 
         return clean_results
 
-    def __measure_disk_space(self, path):
-        # Report the disk space du -hs style for a directory
-        # TODO: move to utils;
-        KB = 1024
-        b = sum(file.stat().st_size for file in pathlib.Path(path).rglob('*'))
-        k = b / KB**1
-        m = k / KB**1
-        g = m / KB**1
-        return f'{k:.2}kb', f'{m:.2}Mb', f'{g:.2}Gb'
-
     def get_patients_data_table(self) -> list:
         '''
         **Purpose**
@@ -167,8 +158,7 @@ class libmanager:
             # For hundreds of patients?
             patient_path = os.path.join(self.data_path, f'PID.{row[0]}')
 
-            k, m, g = self.__measure_disk_space(patient_path)
-            print(k, m, g)
+            k, m, g = utils.measure_disk_space(patient_path)
 
             # update the db;
             self.db_PID_cursor.execute('UPDATE patient_data SET space_used = ? WHERE PID = ?', (g, row[0]))
