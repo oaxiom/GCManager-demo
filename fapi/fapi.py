@@ -88,7 +88,7 @@ def login(data: OAuth2PasswordRequestForm = Depends()) -> dict:
 
     access_token = user_manager.create_access_token(
         data=dict(sub=username),
-        expires=datetime.timedelta(hours=1)
+        expires=datetime.timedelta(hours=2)
         )
 
     return {'access_token': access_token, 'token_type': 'bearer'}
@@ -278,20 +278,28 @@ async def add_new_patient(
 
     Add a new patient to the database.
 
-    Example data:
+    # Example data:
+    patient_id: ANEWPATIENT12345
 
-    "patient_id": "ANEWPATIENT12345",
-    "sequence_data_id": "SEQID2345",
-    "name": "王XX",
-    "sex": "男",
-    "age": 30,
+    sequence_data_id: SEQID2345
+
+    name: 王XX
+
+    sex: 男
+
+    age: 30
+
+    # Files:
+    GCManager-demo/demo_data/fastqs/SRR10286930_tiny_1.fastq.gz
+
+    GCManager-demo/demo_data/fastqs/SRR10286930_tiny_2.fastq.gz
 
     '''
     # TODO: This function is 2x slow, as it copies the file first, then copies it again.
     # Supposedly it should be possible to remove one of the copies by using the underlying Starlette
     # Streamer.
 
-    gcman.log.info(f'Supplied {len(files)}')
+    gcman.log.info(f'Supplied {len(files)} files')
 
     # Check it doesn't exist already
     if gcman.patient_exists(patient_id):
@@ -309,7 +317,7 @@ async def add_new_patient(
     else: # Backend
         # expected an even number of files.
         if len(files) % 2 != 0:
-            raise HTTPException(status_code=500, detail='Analysis end expects an even number of files, one for each red pair')
+            raise HTTPException(status_code=500, detail='Analysis end expects an even number of files, one for each read pair')
         # Expects all files to have the form _1.fastq.gz
         for f in files:
             if not f.filename.endswith('.fastq.gz'):
