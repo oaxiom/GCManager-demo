@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 #
 # Initialise the databases, pack, etc, designed to be run once to setup a clean installation.
 #

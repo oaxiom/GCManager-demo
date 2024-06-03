@@ -16,7 +16,7 @@ log = support.prepare_logging()
 if 'demo' in VERSION:
     home_path = os.path.join(os.path.expanduser('~'), 'GCMDataDEMO/') # Pre-initialised demo data
 else:
-    log.error('api_test only works in DEMO mode')
+    log.error('Only works in DEMO mode')
     sys.exit(-1)
 
 if not os.path.exists(home_path):
@@ -39,20 +39,11 @@ def cmd_process(cmd):
             return
     print(res[0])
 
+
+
 ########
 # Testing;
-#cmd_process("man.generate_report('Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
-#cmd_process("man.generate_report('Pharma', '72210953309787', 'Hypertension')")
-
-cmd_process("man.generate_report('Pharma', '72210953309787', '肌萎缩性脊髓侧索硬化症')")
-'''
-cmd_process("man.generate_report('Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
-cmd_process("man.generate_report('Pharma', '72210953309787', 'Hypertension')")
-
-cmd_process("man.generate_report('Pharma', 'NA12878', '肌萎缩性脊髓侧索硬化症')")
-
-# Risk:
-cmd_process("man.generate_report('Risk', '72210953309787', '克罗恩氏病')")
-cmd_process("man.generate_report('Risk', '72210953309787', 'Amyotrophic lateral sclerosis')")
-cmd_process("man.generate_report('Risk', '72210953309787', 'Rheumatoid arthritis')")
-'''
+pharma_reps = man.api.populate_report_generator('Pharma', 'CN')
+print(pharma_reps)
+for rep in pharma_reps:
+    cmd_process(f"man.generate_report('Pharma', '72210953309787', '{rep}')")
