@@ -182,7 +182,7 @@ def html_cn(
 在解释这些结果时应小心谨慎。
 并应遵循最佳临床实践。</p>
 
-<h2>Summary Table</h2>
+<h2>汇总表</h2>
 
 <table style="width:100%">
     <tr>
@@ -191,6 +191,8 @@ def html_cn(
         <td>疗效</td>
         <td>代谢</td>
         <td>风险</td>
+        <td>毒性</td>
+        <td>剂量</td>
         <td>常规用药</td>
     </tr>
     {summary_table}
@@ -213,7 +215,7 @@ def html_cn(
 <table style="width:60%">
     <tr>
         <td>药物</td>
-        <td>Guidance</td>
+        <td>用药分析</td>
     </tr>
     {no_reccomendation_table}
 </table>

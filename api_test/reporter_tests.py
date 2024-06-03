@@ -41,18 +41,18 @@ def cmd_process(cmd):
 
 ########
 # Testing;
-#cmd_process("man.generate_report('Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
-#cmd_process("man.generate_report('Pharma', '72210953309787', 'Hypertension')")
+#cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
+#cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Hypertension')")
 
-cmd_process("man.generate_report('Pharma', '72210953309787', '肌萎缩性脊髓侧索硬化症')")
+cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', '心房颤动')")
 '''
-cmd_process("man.generate_report('Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
-cmd_process("man.generate_report('Pharma', '72210953309787', 'Hypertension')")
+cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
+cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Hypertension')")
 
-cmd_process("man.generate_report('Pharma', 'NA12878', '肌萎缩性脊髓侧索硬化症')")
+cmd_process("man.generate_report('andrew', 'Pharma', 'NA12878', '肌萎缩性脊髓侧索硬化症')")
 
 # Risk:
-cmd_process("man.generate_report('Risk', '72210953309787', '克罗恩氏病')")
-cmd_process("man.generate_report('Risk', '72210953309787', 'Amyotrophic lateral sclerosis')")
-cmd_process("man.generate_report('Risk', '72210953309787', 'Rheumatoid arthritis')")
+cmd_process("man.generate_report('andrew', 'Risk', '72210953309787', '克罗恩氏病')")
+cmd_process("man.generate_report('andrew', 'Risk', '72210953309787', 'Amyotrophic lateral sclerosis')")
+cmd_process("man.generate_report('andrew', 'Risk', '72210953309787', 'Rheumatoid arthritis')")
 '''

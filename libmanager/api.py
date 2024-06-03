@@ -28,7 +28,7 @@ class api:
         self.log.info("Started API")
         self.manager = manager
 
-    def populate_patient_list(self) -> list:
+    def populate_patient_list(self, user) -> list:
         """
 
         Returns the table of patients, in the form:
@@ -49,7 +49,7 @@ class api:
         # Doctorend: Front Page
 
         #TODO: Enable fuzzy searching?
-        table = self.manager.get_patients_table()
+        table = self.manager.get_patients_table(user)
 
         # Returns a list of tuples,
         return table
@@ -109,7 +109,7 @@ class api:
 
         return self.manager.get_cram_path(patient_id)
 
-    def generate_report(self, mode: str, patient_id: str, selected_report:str) -> str:
+    def generate_report(self, user: str, mode: str, patient_id: str, selected_report:str) -> str:
         '''
         Generates the reports and returns the PATH to the HTML file, and the HTML data.
 
@@ -130,7 +130,7 @@ class api:
 
         assert mode in support.valid_genome_dbs, f'{mode} was not in {support.valid_genome_dbs.keys()}'
 
-        return self.manager.generate_report(mode, patient_id, selected_report)
+        return self.manager.generate_report(user, mode, patient_id, selected_report)
 
     def print_report(self, patient_id: str, selected_report_id: str):
         # Backend: Report Generator

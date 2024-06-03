@@ -38,8 +38,6 @@ class reporter_pharma:
         self.data_path = os.path.join(data_path, f'PID.{patient_id}')
         self.script_path = script_path # root for GCManager install;
 
-        print(self.data_path, self.script_path)
-
         self.patient_data = patient_data
 
         self.search_term = diseaseEN # Hardcoded to EN, for now, should use the disease_code
@@ -122,6 +120,8 @@ class reporter_pharma:
                     <td></td>
                     <td></td>
                     <td></td>
+                    <td></td>
+                    <td></td>
                     <td>+</td> <!-- normal medication -->
                 </tr>
                 '''
@@ -134,11 +134,10 @@ class reporter_pharma:
                         <td>{plus_conv(advice_data["疗效"])}</td>
                         <td>{plus_conv(advice_data["代谢"])}</td>
                         <td>{plus_conv(advice_data["风险"])}</td>
+                        <td>{plus_conv(advice_data["毒性"])}</td>
+                        <td>{plus_conv(advice_data["剂量"])}</td>
                         <td></td> <!-- normal medication -->
                         '''
-                        #<td>{plus_conv(advice_data["毒性"])}</td>
-                        #<td>{plus_conv(advice_data["剂量"])}</td>
-                        #'''
 
                     if rid == 0: #
                         tab_row = f'''
@@ -189,19 +188,13 @@ class reporter_pharma:
                 no_reccomendation.sort('drug_CN')
             search_results.sort('drug_CN')
 
-        # get the search_term
-
         #if not search_results:
         #    raise AssertionError(f'No associations matching {self.search_term} were found')
 
         rest_of_table = []
         no_reccomendation_table = []
 
-        print(search_results)
-        print(no_reccomendation)
-
         if not search_results:
-            # TODO: Check this works: Deal with no advice situations;
             rest_of_table = '<tr><td>无</td><td>无</td><td>无</td><td>无</td><td>无</td><td>无</td></tr>'
         else:
             if search_results:
@@ -248,8 +241,6 @@ class reporter_pharma:
                     elif impacts == '药物动力学': # Pharmacokinetics;
                         continue
                     summary_table_dict[drug_name][drug['gene']][impacts] += 1
-
-        print(summary_table_dict)
 
         # convert the summary_table to HTML:
         summary_table = self.__generate_summary_table(no_reccomendation, summary_table_dict)

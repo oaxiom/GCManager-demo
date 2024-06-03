@@ -174,7 +174,7 @@ def populate_patient_list(user=Depends(user_manager)) -> dict:
     ]
     搜索患者
     """
-    return {'code': 200, 'data': gcman.api.populate_patient_list(), 'msg': None}
+    return {'code': 200, 'data': gcman.api.populate_patient_list(user), 'msg': None}
 
 @app.get('/populate_report_generator/{mode}')
 def populate_report_generator(mode: str, lang: str, user=Depends(user_manager)) -> dict:
@@ -238,7 +238,7 @@ def generate_report(mode: str, patient_id: str, selected_report:str, user=Depend
     '''
     if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
 
-    html_filename, html = gcman.api.generate_report(mode, patient_id, selected_report)
+    html_filename, html = gcman.api.generate_report(user, mode, patient_id, selected_report)
 
     return {'code': 200, 'data': {'html_filename': html_filename, 'html': html}, 'msg': None}
 

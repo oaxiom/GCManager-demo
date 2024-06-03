@@ -39,11 +39,9 @@ def cmd_process(cmd):
             return
     print(res[0])
 
-
-
 ########
 # Testing;
 pharma_reps = man.api.populate_report_generator('Pharma', 'CN')
 print(pharma_reps)
 for rep in pharma_reps:
-    cmd_process(f"man.generate_report('Pharma', '72210953309787', '{rep}')")
+    cmd_process(f"man.generate_report('andrew', 'Pharma', '72210953309787', '{rep}')")

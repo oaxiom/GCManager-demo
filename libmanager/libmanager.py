@@ -112,7 +112,7 @@ class libmanager:
 
         return 'No'
 
-    def get_patients_table(self) -> list:
+    def get_patients_table(self, user) -> list:
         '''
         **Purpose**
             Return a list of lists in the form:
@@ -139,6 +139,7 @@ class libmanager:
 
             clean_results.append(row)
 
+        self.log.info(f'{user} asked for the patients_data_table')
         return clean_results
 
     def get_patients_data_table(self) -> list:
@@ -465,7 +466,7 @@ class libmanager:
 
         return r[0]
 
-    def generate_report(self, mode:str, patient_id:str, search_term:str, lang='CN'):
+    def generate_report(self, user:str, mode:str, patient_id:str, search_term:str, lang='CN'):
         '''
         **Purpose**
             Generate a HTML report for patient_id and search_term
@@ -476,6 +477,8 @@ class libmanager:
             Location of the saved HTML file
         '''
         assert mode in support.valid_genome_dbs, f'{mode} was not in {support.valid_genome_dbs.keys()}'
+
+        self.log.info(f'User "{user}" asked for a {mode} report for patient_id {patient_id} for the condition {search_term}')
 
         # TODO: Pull language out of system settings DB
 
