@@ -215,7 +215,7 @@ def html_cn(
 <table style="width:60%">
     <tr>
         <td>药物</td>
-        <td>用药分析</td>
+        <td>用药建议</td>
     </tr>
     {no_reccomendation_table}
 </table>

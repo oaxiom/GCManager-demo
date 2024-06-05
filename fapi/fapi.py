@@ -28,10 +28,10 @@ gcman = libmanager.libmanager('Backend', log=log, home_path=home_path)
 # Initialise system if DBs not found
 if not os.path.exists(home_path):
     if 'demo' in VERSION:
-        gcman.initialize('admin123456', demo=True)
+        gcman.initialize('admin123', demo=True)
         log.warning('System DB not found. Initializing a blank production DB')
     else: # Production
-        gcman.initialize('admin123456')
+        gcman.initialize('admin123')
         log.warning('System DB not found. Initializing a blank DEMO DB')
 
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form

@@ -155,23 +155,30 @@ class reporter_risk:
             rest_of_table = '<tr><td>No relevant advice available</td><td></td><td></td><td></td></tr>'
         else:
             for gene in search_results:
-                # do a risky score based on OR or BETA
+                # Get the bar width from OR or BETA
+                effect = ''
+                minus_row = ''
+                plus_row = ''
+                wid = 20 * len(gene['risky'])
+                # TODO: Make this more sensitive
                 if '-' in gene['risky']:
                     effect = '防护的' # Protective
+                    minus_row = f'<div class="rounded-rectangleL" style="width:{wid}px; background-color: #00aa00; float:right;"></div>'
                 elif '+' in gene['risky']:
                     effect = '有害的' # Deleterious
-                else:
-                    effect = ''
+                    plus_row = f'<div class="rounded-rectangleR" style="width:{wid}px; background-color: #0000aa;">0</div>'
 
                 tab_row = f'''
-            <tr>
-                <td>{gene['STRONGEST SNP-RISK ALLELE']}</td>
-                <td>{gene['mapped_gene']}</td>
-                <td>{effect}</td>
-                <td>{gene['risky']}</td>
-            </tr>
+                    <tr>
+                        <td>{gene['STRONGEST SNP-RISK ALLELE']}</td>
+                        <td>{gene['mapped_gene']}</td>
+                        <td>{effect}</td>
+                        <td style="text-align:right; padding: 0; margin: 0;">{minus_row}</td> <!-- minus risk bar -->
+                        <td style="padding: 0; margin: 0;">{plus_row}</td> <!-- plus risk bar -->
+                    </tr>
                     '''
-                rest_of_table.append(tab_row)
+
+                rest_of_table.append(tab_row.replace('  ', ''))
 
             rest_of_table = '\n'.join(rest_of_table)
 
