@@ -404,6 +404,7 @@ class libmanager:
         name: str,
         sex: str,
         age: int,
+        institution_sending: str,
         ):
         '''
         **Purpose**
@@ -429,9 +430,10 @@ class libmanager:
             'date_added': datetime.datetime.now().isoformat(' '),
             'date_analysis': 'null',
             'data_dir': data_dir,
+            'institution_sending': institution_sending,
             }
 
-        new_patient = '''INSERT INTO patients VALUES (:patient_id, :seq_id, :name, :age, :sex, :analysis_done, :date_added, :date_analysis, :data_dir)'''
+        new_patient = '''INSERT INTO patients VALUES (:patient_id, :seq_id, :name, :age, :sex, :analysis_done, :date_added, :date_analysis, :data_dir, :institution_sending)'''
 
         self.db_PID = sqlite3.connect(self.db_PID_path)
         self.db_PID_cursor = self.db_PID.cursor()
@@ -443,6 +445,7 @@ class libmanager:
 
         if os.path.exists(data_dir):
             raise Exception(f'Trying to add {patient_id} but the data directory {data_dir} already exists')
+
         os.mkdir(data_dir)
 
         self.log.info(f'Added patient {patient_id}')
@@ -540,7 +543,7 @@ class libmanager:
 
         return html_file, html
 
-    def get_help() -> str:
+    def get_help(self) -> str:
         """
         **Purpose**
             Return the help text.

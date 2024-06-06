@@ -41,7 +41,7 @@ def cmd_process(cmd):
 ########
 # Testing;
 
-cmd_process('man.api.populate_patient_list()')
+cmd_process('man.api.populate_patient_list("andrew")')
 # Expected result:
 # [('72210953309787', '何XX', 43, '男', '1'),
 #  ('NA12878', '王XX', 22, '男', '1'),
@@ -53,7 +53,7 @@ try:
     cmd_process('man.api.add_new_patient("ANEWPATIENT", "SEQIDNEW", "张XX", "女", 50, "PATH/TO/SEQ")')
 except Exception:
     print('Can only add this patient once per initialize.py')
-cmd_process('man.api.populate_patient_list()')
+cmd_process('man.api.populate_patient_list("andrew")')
 # Expected result:
 # [('72210953309787', '何XX', 43, '男', '1'),
 #  ('NA12878', '王XX', 22, '男', '1'),

@@ -21,7 +21,7 @@ def init_dbs(home_path, script_path, log):
     # TODO: Setup the date properly.
     PID = sqlite3.connect(os.path.join(home_path, 'dbs', "PID.db"))
     PIDcursor = PID.cursor()
-    PIDcursor.execute('CREATE TABLE patients (PID TEXT, SID TEXT, name TEXT, age INT, sex TEXT, analysis_done TEXT, date_added TEXT, date_analysis TEXT, data_dir TEXT)')
+    PIDcursor.execute('CREATE TABLE patients (PID TEXT, SID TEXT, name TEXT, age INT, sex TEXT, analysis_done TEXT, date_added TEXT, date_analysis TEXT, data_dir TEXT, institution_sending TEXT)')
     PID.commit()
 
     PIDcursor.execute('CREATE TABLE patient_data (PID TEXT, space_used INT, data_packed TEXT, cram_available TEXT, vcf_available TEXT)')
@@ -74,9 +74,9 @@ def build_demo_data(man, home_path, script_path, log):
     log.info('Moving DEMO data')
 
     # Setup two patients, and copy the data
-    man.add_patient('72210953309787', 'SEQ72210953309787', '何XX', '男', 43) # Complete
-    man.add_patient('NA12878', 'SEQNA12878', '王XX', '男', 22) # Complete
-    man.add_patient('PATIENTNOTSTARTED', 'SEQNOTSTARTED', '李XX', '女', 24) # Not started
+    man.add_patient('72210953309787', 'SEQ72210953309787', '何XX', '男', 43, 'HOSPITAL1') # Complete
+    man.add_patient('NA12878', 'SEQNA12878', '王XX', '男', 22, 'HOSPITAL1') # Complete
+    man.add_patient('PATIENTNOTSTARTED', 'SEQNOTSTARTED', '李XX', '女', 24, 'HOSPITAL1') # Not started
     # TODO: Add partially complete one;
 
     user_home_path = os.path.expanduser('~')
@@ -112,8 +112,9 @@ def build_demo_data(man, home_path, script_path, log):
             'data_packed': datetime.datetime.now().isoformat(' '),
             'cram_available': 1,
             'vcf_available': 1,
+            'institution_sending': 'HOSPITAL1',
         }
-    db_PID_cursor.execute('UPDATE patients SET analysis_done = :analysis_done, date_added= :date_added, date_analysis = :date_analysis, data_dir = :data_dir WHERE PID = :patient_id', newpid_row)
+    db_PID_cursor.execute('UPDATE patients SET analysis_done = :analysis_done, date_added= :date_added, date_analysis = :date_analysis, data_dir = :data_dir, institution_sending= :institution_sending WHERE PID = :patient_id', newpid_row)
     db_PID_cursor.execute('UPDATE summary_statistics SET aligned_reads = :aligned_reads WHERE PID = :patient_id', newpid_row)
     db_PID_cursor.execute('UPDATE patient_data SET space_used = :space_used, data_packed = :data_packed, cram_available = :cram_available, vcf_available =:vcf_available WHERE PID = :patient_id', newpid_row)
 
@@ -129,8 +130,9 @@ def build_demo_data(man, home_path, script_path, log):
             'data_packed': 0,
             'cram_available': 0,
             'vcf_available': 1,
+            'institution_sending': 'HOSPITAL2',
         }
-    db_PID_cursor.execute('UPDATE patients SET analysis_done = :analysis_done, date_added= :date_added, date_analysis = :date_analysis, data_dir = :data_dir WHERE PID = :patient_id', newpid_row)
+    db_PID_cursor.execute('UPDATE patients SET analysis_done = :analysis_done, date_added= :date_added, date_analysis = :date_analysis, data_dir = :data_dir, institution_sending= :institution_sending WHERE PID = :patient_id', newpid_row)
     db_PID_cursor.execute('UPDATE summary_statistics SET aligned_reads = :aligned_reads WHERE PID = :patient_id', newpid_row)
     db_PID_cursor.execute('UPDATE patient_data SET space_used = :space_used, data_packed = :data_packed, cram_available = :cram_available, vcf_available =:vcf_available WHERE PID = :patient_id', newpid_row)
 

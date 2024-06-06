@@ -272,6 +272,7 @@ async def add_new_patient(
     name: Annotated[str, Form()],
     sex: Annotated[str, Form()],
     age: Annotated[str, Form()],
+    institution_sending: Annotated[str, Form()], # 送检机构
     files: list[UploadFile],
     user=Depends(user_manager)) -> dict:
     '''
@@ -288,6 +289,8 @@ async def add_new_patient(
     sex: 男
 
     age: 30
+
+    institution_sending: 一家大医院
 
     # Files:
     GCManager-demo/demo_data/fastqs/SRR10286930_tiny_1.fastq.gz
@@ -329,6 +332,7 @@ async def add_new_patient(
         name=name,
         sex=sex,
         age=age,
+        institution_sending=institution_sending,
         )
 
     if not ret_code:
@@ -531,5 +535,5 @@ def get_system_backend_setting(key:str, user=Depends(user_manager)) -> dict:
     return {'code': 200, 'data': gcman.api.get_system_backend_setting(key), 'msg': None}
 
 @app.get('/settings/get_help_text')
-def get_help_text() -> str:
+def get_help_text() -> dict:
     return {'code': 200, 'data': gcman.get_help(), 'msg': None}
