@@ -529,3 +529,7 @@ def get_system_backend_setting(key:str, user=Depends(user_manager)) -> dict:
     key = 'lang'
     '''
     return {'code': 200, 'data': gcman.api.get_system_backend_setting(key), 'msg': None}
+
+@app.get('/settings/get_help_text')
+def get_help_text() -> str:
+    return {'code': 200, 'data': gcman.get_help(), 'msg': None}

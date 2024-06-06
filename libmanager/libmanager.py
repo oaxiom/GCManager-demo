@@ -23,6 +23,7 @@ from . import support
 from . import user
 from . import initialise
 from . import utils
+from . import help_text
 
 class libmanager:
     def __init__(self, end_type, log, home_path):
@@ -538,3 +539,10 @@ class libmanager:
         self.db_disease_codes.close()
 
         return html_file, html
+
+    def get_help() -> str:
+        """
+        **Purpose**
+            Return the help text.
+        """
+        return help_text.get_help(self.end_type, 'CN')
