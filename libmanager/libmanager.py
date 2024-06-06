@@ -537,8 +537,6 @@ class libmanager:
             #html_file = rep.generate_html_file()
             html_file, html = rep.generate()
 
-            html = ''
-
         self.db_disease_codes.close()
 
         return html_file, html

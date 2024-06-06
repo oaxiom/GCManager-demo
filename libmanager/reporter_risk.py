@@ -188,7 +188,7 @@ class reporter_risk:
         elif self.lang == 'CN':
             html = html_risk.html('CN', self.patient_id, self.disease_name, self.patient_data, rest_of_table, judgement, fact)
         else:
-            html = '' # Error!
+            html = 'No lang' # Error!
 
 
         html_filename = os.path.join(self.data_path, f"result.{self.patient_id}.{self.lang}.Risk.{self.disease_code}.html")

@@ -37,7 +37,7 @@ def cmd_process(cmd):
         if len(res) > 10:
             print(res[0:9])
             return
-    print(res[0])
+    print(res[1])
 
 ########
 # Testing;
