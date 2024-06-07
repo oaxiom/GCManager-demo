@@ -28,30 +28,8 @@ class api:
         self.log.info("Started API")
         self.manager = manager
 
-    def populate_patient_list(self, user) -> list:
-        """
-
-        Returns the table of patients, in the form:
-        [
-        (patient_id, name, age, sex, analysis_complete?),
-        ...
-        ]
-
-        返回患者表，格式为：
-        [
-        (患者 ID, 姓名, 年龄, 性别, 是否已完成分析?),
-        ...
-        ]
-        搜索患者
-
-        """
-        # Backend: Front Page
-        # Doctorend: Front Page
-
-        #TODO: Enable fuzzy searching?
+    def populate_patient_list(self, user:str) -> list:
         table = self.manager.get_patients_table(user)
-
-        # Returns a list of tuples,
         return table
 
     def populate_report_generator(self, mode:str, lang:str) -> list:

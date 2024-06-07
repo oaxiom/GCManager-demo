@@ -124,7 +124,7 @@ class libmanager:
         # TODO: Enable fuzzy searching?
         self.db_PID = sqlite3.connect(self.db_PID_path)
         self.db_PID_cursor = self.db_PID.cursor()
-        self.db_PID_cursor.execute('SELECT PID, name, age, sex, analysis_done FROM patients')
+        self.db_PID_cursor.execute('SELECT PID, name, age, sex, analysis_done, institution_sending FROM patients')
         results = self.db_PID_cursor.fetchall()
         self.db_PID.close()
 
@@ -135,7 +135,8 @@ class libmanager:
                 'name': row[1],
                 'age': row[2],
                 'sex': row[3],
-                'analysis_done': self._sql_yesno(row[4])
+                'analysis_done': self._sql_yesno(row[4]),
+                'insititution_sending': row[5],
                 }
 
             clean_results.append(row)
