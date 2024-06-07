@@ -8,6 +8,7 @@
 # 1. Use decorators for the db
 
 import sys, os, sqlite3, uuid
+import datetime
 
 from . import security
 
@@ -27,8 +28,8 @@ class users:
 
         """
         user_db, user_db_cursor = self.__get_db()
-        user_db_cursor.execute('CREATE TABLE users (UID INT, username TEXT, hpass TEXT, is_admin INT)')
-        user_db_cursor.execute('INSERT INTO users VALUES (?, ?, ?, ?)', (uuid.uuid4().bytes_le, 'sysadminrescue', '$2b$12$Q2mKXhVenm.EtRfdzkcAf.EWikxvRbu/KZ4zkMQmioY.RCiMRrYJC', True))
+        user_db_cursor.execute('CREATE TABLE users (UID INT, username TEXT, hpass TEXT, is_admin INT, creation_time TEXT)')
+        user_db_cursor.execute('INSERT INTO users VALUES (?, ?, ?, ?, ?)', (uuid.uuid4().bytes_le, 'sysadminrescue', '$2b$12$Q2mKXhVenm.EtRfdzkcAf.EWikxvRbu/KZ4zkMQmioY.RCiMRrYJC', True, datetime.datetime.now().isoformat(' ')))
         user_db.commit()
         user_db.close()
 
@@ -67,7 +68,7 @@ class users:
 
         # TODO: Salt the user db with the MAC address?
 
-        user_db_cursor.execute('INSERT INTO users VALUES (?, ?, ?, ?)', (uuid.bytes_le, username, hpass, is_admin))
+        user_db_cursor.execute('INSERT INTO users VALUES (?, ?, ?, ?, ?)', (uuid.bytes_le, username, hpass, is_admin, datetime.datetime.now().isoformat(' ')))
 
         user_db.commit()
         user_db.close()
@@ -176,3 +177,28 @@ class users:
         res = user_db_cursor.fetchone()
         user_db.close()
         return bool(res[0])
+
+    def get_user_table(self, user:str) -> bool:
+        """
+        **Purpose**
+            Get the
+
+        """
+        user_tab = []
+
+        user_db, user_db_cursor = self.__get_db()
+        user_db_cursor.execute("SELECT username, is_admin, creation_time FROM users")
+        res = user_db_cursor.fetchall()
+        user_db.close()
+
+        for row in res:
+            if row[0] == 'sysadminrescue': continue
+            user_tab.append({
+                'username': row[0],
+                'is_admin': row[1],
+                'creation_time': row[2]
+                })
+
+        self.log.info(f'{user} asked for a list of users')
+
+        return user_tab

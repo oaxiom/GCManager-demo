@@ -166,6 +166,20 @@ def set_end_type(end_type: str) -> dict:
         raise HTTPException(status_code=500, detail=f'{end_type} must be one of Doctorend or Backend')
     return {'code': 200, 'data': gcman.set_end_type(end_type), 'msg': None}
 
+@app.get('/populate_user_list/')
+def populate_user_list(user=Depends(user_manager)) -> dict:
+    """
+    # Example return:
+    [
+    {'username': 'anormaluser', 'is_admin': 0, 'creation_time': '2024-06-07 17:28:01.903834'},
+    {'username': 'admin', 'is_admin': 1, 'creation_time': '2024-06-07 17:28:02.237820'}
+    ]
+    """
+    if not gcman.users.is_admin(user):
+        raise HTTPException(status_code=400, detail="The current user is not an admin")
+
+    return {'code': 200, 'data': gcman.users.get_user_table(user), 'msg': None}
+
 @app.get('/populate_patient_list/')
 def populate_patient_list(user=Depends(user_manager)) -> dict:
     """

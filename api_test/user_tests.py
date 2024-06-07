@@ -23,7 +23,8 @@ if not os.path.exists(home_path):
     log.error(f"Panic! Data path {home_path} is missing")
     sys.exit(-1)
 
-man = libmanager.libmanager('Doctorend', log=log, home_path=home_path)
+man = libmanager.libmanager(log=log, home_path=home_path)
+man.set_end_type('Doctorend')
 
 # Must be a blank DB for this:
 if os.path.exists(home_path):
@@ -31,7 +32,7 @@ if os.path.exists(home_path):
 os.mkdir(home_path)
 os.mkdir(os.path.join(home_path, 'data'))
 os.mkdir(os.path.join(home_path, 'dbs'))
-man.initialize(True)
+man.initialize('admin123', True)
 
 def cmd_process(cmd):
     print(f'\n>>> {cmd}')
@@ -64,3 +65,5 @@ cmd_process("man.users.change_password('ausername', 'nonexistantuserpass123')")
 cmd_process("man.users.user_exists('ausername')")
 cmd_process("man.users.delete_user('ausername')")
 cmd_process("man.users.user_exists('ausername')")
+
+cmd_process("man.users.get_user_table('testing')")

@@ -23,7 +23,7 @@ if not os.path.exists(home_path):
     log.error(f"Panic! Data path {home_path} is missing")
     sys.exit(-1)
 
-man = libmanager.libmanager('Doctorend', log=log, home_path=home_path)
+man = libmanager.libmanager(log=log, home_path=home_path)
 
 def cmd_process(cmd):
     print(f'\n>>> {cmd}')
