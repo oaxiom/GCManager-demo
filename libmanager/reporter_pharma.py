@@ -45,8 +45,8 @@ class reporter_pharma:
         # TODO: Enable the if statment when you finished testing:
         #if not os.path.exists(os.path.join(data_path, f'PID.{patient_id}', 'simple.css')):
         # make sure the css is copied over
-        shutil.copy(os.path.join(self.script_path, 'static_data', 'html', 'simple.css' ),os.path.join(data_path, f'PID.{patient_id}', 'simple.css'))
-        shutil.copy(os.path.join(self.script_path, 'static_data', 'html', 'print.css' ),os.path.join(data_path, f'PID.{patient_id}', 'print.css'))
+        #shutil.copy(os.path.join(self.script_path, 'static_data', 'html', 'simple.css' ),os.path.join(data_path, f'PID.{patient_id}', 'simple.css'))
+        #shutil.copy(os.path.join(self.script_path, 'static_data', 'html', 'print.css' ),os.path.join(data_path, f'PID.{patient_id}', 'print.css'))
 
     def generate(self) -> str:
         """
@@ -136,7 +136,7 @@ class reporter_pharma:
                         <td>{plus_conv(advice_data["风险"])}</td>
                         <td>{plus_conv(advice_data["毒性"])}</td>
                         <td>{plus_conv(advice_data["剂量"])}</td>
-                        <td></td> <!-- normal medication -->
+                        <td></td>
                         '''
 
                     if rid == 0: #

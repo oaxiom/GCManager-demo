@@ -1,4 +1,5 @@
 
+from . import html_data
 
 def html(
     lang:str,
@@ -49,93 +50,60 @@ def html_cn(
     ):
     # Chinese version;
 
-    # As can't escape {} in f string?
-    div_style = '''
-    .rounded-rectangleL {
-    width: 200px;
-    height: 15px;
-    background-color: #FFFFFF;
-    border-radius: 2px;
-    }
-    .rounded-rectangleR {
-    right: 0px;
-    width: 200px;
-    height: 15px;
-    background-color: #FFFFFF;
-    border-radius: 2px;
-    }
-    '''
-
     html = f'''
 
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" media="screen" href="simple.css">
-<link rel="stylesheet" media="print" href="print.css">
 <style>
-{div_style}
+{html_data.style_sheet}
+{html_data.rounded_rects_styles}
 </style>
 </head>
 <body>
 
-<h1>疾病风险提示</h1>
+<div style="display: flex; justify-content: space-between;">
+  <img src='{html_data.helix_logo}'>
+  <h1 style="text-align: right;">药物基因组学报告</h1>
+</div>
 
-<h1>患者数据</h2>
+<hr>
 
-<table style="width:50%">
+<h2>患者数据</h2>
+
+<table style="width:70%">
     <tr>
-        <td>患者 ID</td>
-        <td>{patient_id}</td>
+        <td style="background-color: var(--tab-grey-bg);">患者 ID</td>
+        <td colspan="5">{patient_id}</td>
     </tr>
     <tr>
-        <td>姓名</td>
+        <td style="background-color: var(--tab-grey-bg);">姓名</td>
         <td>{patient_data['name']}</td>
-    </tr>
-    <tr>
-        <td>年龄</td>
+        <td style="background-color: var(--tab-grey-bg);">年龄</td>
         <td>{patient_data['age']}</td>
-    </tr>
-    <tr>
-        <td>性别</td>
+        <td style="background-color: var(--tab-grey-bg);">性别</td>
         <td>{patient_data['sex']}</td>
     </tr>
     <tr>
-        <td>Search Term</td>
-        <td>{search_term}</td>
+        <td style="background-color: var(--tab-grey-bg);">疾病</td>
+        <td colspan="5">{search_term}</td>
     </tr>
 </table>
-
-<!--
-<h2>指导</h2>
-<table style="width:50%">
-    <tr>
-        <td>总体风险/Overall Risk</td>
-        <td>{judgement}</td>
-    </tr>
-    <tr>
-        <td>风险评分</td>
-        <td>{factor}</td>
-    </tr>
-</table>
--->
-
-
-
 
 <h3>精准用药汇总</h3>
-<table>
+<table style="width:100%">
     <tr>
-        <th>单核苷酸多态性 (SNP) 基因型</th>
-        <th>基因</th>
-        <th>效应</th>
-        <th colspan="2">风险分类</th>
+        <th style="background-color: var(--tab-grey-bg);">单核苷酸多态性 (SNP) 基因型</th>
+        <th style="background-color: var(--tab-grey-bg);">基因</th>
+        <th style="background-color: var(--tab-grey-bg);">效应</th>
+        <th style="background-color: var(--tab-grey-bg);" colspan="2">风险分类</th>
     </tr>
     {main_table}
 </table>
 
+<hr>
 
-<h3>报告生成者中基科</h3>
+<h6 style='text-align:right'>中基科生物</h6>
 
 </body>
     '''

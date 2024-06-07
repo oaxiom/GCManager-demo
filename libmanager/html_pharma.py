@@ -1,4 +1,5 @@
 
+from . import html_data
 
 def html(
     lang:str,
@@ -37,8 +38,9 @@ def html_en(
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" media="screen" href="simple.css">
-<link rel="stylesheet" media="print" href="print.css">
+<style>
+{html_data.style_sheet}
+</style>
 </head>
 <body>
 
@@ -124,7 +126,7 @@ evidence of an association.</p>
     '''
     return html
 
-
+#############################
 
 def html_cn(
     patient_id:str,
@@ -141,35 +143,37 @@ def html_cn(
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" media="screen" href="simple.css">
-<link rel="stylesheet" media="print" href="print.css">
+<style>
+{html_data.style_sheet}
+</style>
 </head>
 <body>
 
-<h1>药物基因组学报告</h1>
+<div style="display: flex; justify-content: space-between;">
+  <img src='{html_data.helix_logo}'>
+  <h1 style="text-align: right;">药物基因组学报告</h1>
+</div>
 
-<h1>患者数据</h2>
+<hr>
 
-<table style="width:50%">
+<h2>患者数据</h2>
+
+<table style="width:70%">
     <tr>
-        <td>患者 ID</td>
-        <td>{patient_id}</td>
+        <td style="background-color: var(--tab-grey-bg);">患者 ID</td>
+        <td colspan="5">{patient_id}</td>
     </tr>
     <tr>
-        <td>姓名</td>
+        <td style="background-color: var(--tab-grey-bg);">姓名</td>
         <td>{patient_data['name']}</td>
-    </tr>
-    <tr>
-        <td>年龄</td>
+        <td style="background-color: var(--tab-grey-bg);">年龄</td>
         <td>{patient_data['age']}</td>
-    </tr>
-    <tr>
-        <td>性别</td>
+        <td style="background-color: var(--tab-grey-bg);">性别</td>
         <td>{patient_data['sex']}</td>
     </tr>
     <tr>
-        <td>疾病</td>
-        <td>{search_term}</td>
+        <td style="background-color: var(--tab-grey-bg);">疾病</td>
+        <td colspan="5">{search_term}</td>
     </tr>
 </table>
 
@@ -186,14 +190,14 @@ def html_cn(
 
 <table style="width:100%">
     <tr>
-        <td>药物</td>
-        <td>基因</td>
-        <td>疗效</td>
-        <td>代谢</td>
-        <td>风险</td>
-        <td>毒性</td>
-        <td>剂量</td>
-        <td>常规用药</td>
+        <th>药物</th>
+        <th>基因</th>
+        <th>疗效</th>
+        <th>代谢</th>
+        <th>风险</th>
+        <th>毒性</th>
+        <th>剂量</th>
+        <th>常规用药</th>
     </tr>
     {summary_table}
 </table>
@@ -201,12 +205,12 @@ def html_cn(
 <h3>精准用药汇总</h3>
 <table>
     <tr>
-        <td>药物</td>
-        <td>基因</td>
-        <td>单核苷酸多态性 (SNP) 基因型</td>
-        <td>效应</td>
-        <td>指南建议</td>
-        <td>证据等级</td>
+        <th>药物</th>
+        <th>基因</th>
+        <th>单核苷酸多态性 (SNP) 基因型</th>
+        <th>效应</th>
+        <th>指南建议</th>
+        <th>证据等级</th>
     </tr>
     {main_table}
 </table>
@@ -214,8 +218,8 @@ def html_cn(
 <h3>常规用药</h3>
 <table style="width:60%">
     <tr>
-        <td>药物</td>
-        <td>用药建议</td>
+        <th>药物</th>
+        <th>用药建议</th>
     </tr>
     {no_reccomendation_table}
 </table>
@@ -224,7 +228,11 @@ def html_cn(
 
 <p>注意：证据水平等级，表明支持遗传药物的证据 协会，1A、1B级表示得到很好的支持，2A、2B级可能得到支持，3级有一些支持关联的证据。</p>
 
-<h3 style='text-align:center'>中基科生物</h3>
+
+<hr>
+
+<h6 style='text-align:right'>中基科生物</h6>
+
 
 </body>
 </html>

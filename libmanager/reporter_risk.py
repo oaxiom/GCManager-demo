@@ -47,8 +47,8 @@ class reporter_risk:
         # TODO: Enable the if statment when you finished testing:
         #if not os.path.exists(os.path.join(data_path, f'PID.{patient_id}', 'simple.css')):
         # make sure the css is copied over
-        shutil.copy(os.path.join(self.script_path, 'static_data', 'html', 'simple.css' ),os.path.join(data_path, f'PID.{patient_id}', 'simple.css'))
-        shutil.copy(os.path.join(self.script_path, 'static_data', 'html', 'print.css' ),os.path.join(data_path, f'PID.{patient_id}', 'print.css'))
+        #shutil.copy(os.path.join(self.script_path, 'static_data', 'html', 'simple.css' ),os.path.join(data_path, f'PID.{patient_id}', 'simple.css'))
+        #shutil.copy(os.path.join(self.script_path, 'static_data', 'html', 'print.css' ),os.path.join(data_path, f'PID.{patient_id}', 'print.css'))
 
     def generate(self) -> str:
         """
@@ -152,7 +152,7 @@ class reporter_risk:
 
         if not search_results:
             # TODO: Check this works: Deal with no advice situations;
-            rest_of_table = '<tr><td>No relevant advice available</td><td></td><td></td><td></td></tr>'
+            rest_of_table = '<tr><td>无相关建议</td><td></td><td></td><td></td></tr>'
         else:
             for gene in search_results:
                 # Get the bar width from OR or BETA
@@ -166,7 +166,7 @@ class reporter_risk:
                     minus_row = f'<div class="rounded-rectangleL" style="width:{wid}px; background-color: #00aa00; float:right;"></div>'
                 elif '+' in gene['risky']:
                     effect = '有害的' # Deleterious
-                    plus_row = f'<div class="rounded-rectangleR" style="width:{wid}px; background-color: #0000aa;">0</div>'
+                    plus_row = f'<div class="rounded-rectangleR" style="width:{wid}px; background-color: #0000aa;"></div>'
 
                 tab_row = f'''
                     <tr>
