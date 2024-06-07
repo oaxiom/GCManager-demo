@@ -14,8 +14,8 @@ class analysis_progress:
         self.log = log
         self.home_path = home_path
         self.patient_id = None
-        self.last_timestamp = time.time()
 
+        self.last_timestamp = {}
         self.patients = {}
         self.current_stage = {}
 
@@ -24,7 +24,9 @@ class analysis_progress:
         **Purpose**
             returns the current progress as a dict, as percentages.
         '''
+        # Do the setup;
         if patient_id not in self.patients:
+            self.last_timestamp[patient_id] = time.time()
             self.current_stage[patient_id] = 1
             self.patients[patient_id] = {
                 1: 0,
@@ -44,7 +46,7 @@ class analysis_progress:
 
         now_timestamp = time.time()
 
-        delta = (now_timestamp - self.last_timestamp) // 0.4
+        delta = (now_timestamp - self.last_timestamp[patient_id]) // 0.6
 
         if delta >= 1:
             if self.patients[patient_id][self.current_stage[patient_id]] >= 100:
@@ -56,7 +58,7 @@ class analysis_progress:
         if self.patients[patient_id][self.current_stage[patient_id]] >= 100:
             self.patients[patient_id][self.current_stage[patient_id]] = 100
 
-        self.last_timestamp = now_timestamp
+        self.last_timestamp[patient_id] = time.time()
 
         return self.patients[patient_id]
 
