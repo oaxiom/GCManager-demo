@@ -262,18 +262,6 @@ class api:
         # TODO: Clean up patient data files
         return 'Clean up is complete'
 
-    def convert_bam_to_cram(self, patient_id: str) -> bool:
-        """
-        Convert a BAM file to CRAM
-        转换所选BAM 成 CRAM
-
-        NOTE: Does nothing in DEMO
-        不删除演示版本中的患者
-        """
-        # Backend: Patient Data Manager
-
-        return True
-
     def set_system_doctor_setting(self, key:str, value:str) -> bool:
         """
         Set a system setting on: 系统设置 page

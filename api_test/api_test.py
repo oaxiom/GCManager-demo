@@ -22,7 +22,8 @@ if not os.path.exists(home_path):
     log.error(f"Panic! Data path {home_path} is missing")
     sys.exit(-1)
 
-man = libmanager.libmanager('Backend', log=log, home_path=home_path)
+man = libmanager.libmanager(log=log, home_path=home_path)
+man.set_end_type('Backend')
 
 def cmd_process(cmd):
     print(f'\n>>> {cmd}')
@@ -78,6 +79,11 @@ cmd_process("man.api.export_cram('NA12878')")
 # False
 cmd_process("man.api.export_cram('PATIENTNOTSTARTED')")
 # WARNING : Asked for PATIENTNOTSTARTED CRAM file, but CRAM file is not available
+# False
+
+cmd_process("man.convert_bam_to_cram('tester', 'NA12878')")
+cmd_process("man.api.export_cram('NA12878')")
+# WARNING : Asked for NA12878 CRAM file, but CRAM file is not available
 # False
 
 cmd_process("man.api.populate_patient_data_list()")

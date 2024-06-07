@@ -227,6 +227,8 @@ class libmanager:
         **Purpose**
             check that the analysis is complete
         """
+        assert self.patient_exists(patient_id), f'{patient_id} not found'
+
         self.db_PID = sqlite3.connect(self.db_PID_path)
         self.db_PID_cursor = self.db_PID.cursor()
         self.db_PID_cursor.execute('SELECT analysis_done FROM patients WHERE PID= :patient_id', {'patient_id': patient_id})
@@ -243,6 +245,8 @@ class libmanager:
             Check if a VCF or CRAM exisits.
 
         """
+        assert self.patient_exists(patient_id), f'{patient_id} not found'
+
         assert to_check in ('vcf', 'cram'), f'{to_check} is not valid'
 
         self.db_PID = sqlite3.connect(self.db_PID_path)
@@ -305,7 +309,7 @@ class libmanager:
             collect and send all the log data
 
         '''
-        self.patient_exists(patient_id)
+        assert self.patient_exists(patient_id), f'{patient_id} not found'
 
         # Note that this still returns even if the analysis is incomplete;
 
@@ -336,7 +340,7 @@ class libmanager:
         **Purpose**
             Return the VCF filename;
         '''
-        self.patient_exists(patient_id)
+        assert self.patient_exists(patient_id), f'{patient_id} not found'
 
         if not self._check_analysis_is_complete(patient_id):
             self.log.error(f'Asked for {patient_id} VCF file, but VCF file is not available, analysis is incomplete')
@@ -359,7 +363,7 @@ class libmanager:
         **Purpose**
             Return the VCF filename;
         '''
-        self.patient_exists(patient_id)
+        assert self.patient_exists(patient_id), f'{patient_id} not found'
 
         if not self._check_analysis_is_complete(patient_id):
             self.log.error(f'Asked for {patient_id} CRAM file, but CRAM file is not available, analysis is incomplete')
@@ -376,6 +380,30 @@ class libmanager:
             raise LookupError(f'Asked for {patient_id} CRAM file, but CRAM file does not exist (although it was reported to exist)')
 
         return cram_path
+
+    def convert_bam_to_cram(self, user: str, patient_id: str) -> str:
+        """
+        Convert a BAM file to CRAM
+
+        """
+        assert self.patient_exists(patient_id), f'{patient_id} not found'
+
+        # Touch the CRAM file.
+        cram_filename = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.sorted.dedupe.recal.cram')
+
+        # touch the CRAM
+        with open(cram_filename, 'w') as oh:
+            oh.write('Dummy CRAM file')
+
+        self.db_PID = sqlite3.connect(self.db_PID_path)
+        self.db_PID_cursor = self.db_PID.cursor()
+        self.db_PID_cursor.execute('UPDATE patient_data SET cram_available=1 WHERE PID=:patient_id', (patient_id,))
+        self.db_PID.commit()
+        self.db_PID.close()
+
+        self.log.info(f'{user} converted a BAM to CRAM for {patient_id}')
+
+        return cram_filename
 
     def patient_exists(self, patient_id:str):
         '''
