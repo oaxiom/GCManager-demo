@@ -140,23 +140,6 @@ class api:
 
         return ret, sequence_data_path
 
-    def report_current_anaylsis_stage(self, patient_id:str):
-        """
-        Returns the current analysis stage for the indicated data,
-        in the form:
-        (100, 100, 100, 100, 25, 0, 0, 0)
-        Used on the Analysis state page
-
-        返回指示数据的当前分析阶段，
-        形式为：
-        (100, 100, 100, 100, 25, 0, 0, 0)
-        任务分析状态
-
-        """
-        # Backend: Analysis State
-
-        return (100, 100, 100, 100, 100, 100, 100, 100)
-
     def delete_patient(self, patient_id:str) -> bool:
         """
         Delete patient.

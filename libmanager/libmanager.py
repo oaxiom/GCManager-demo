@@ -113,6 +113,31 @@ class libmanager:
 
         return 'No'
 
+    def _get_patient_data(self, user, patient_id) -> dict:
+        '''
+        **Purpose**
+            get patient data for one row.
+
+        '''
+        # TODO: Enable fuzzy searching?
+        self.db_PID = sqlite3.connect(self.db_PID_path)
+        self.db_PID_cursor = self.db_PID.cursor()
+        self.db_PID_cursor.execute('SELECT PID, name, age, sex, analysis_done, institution_sending FROM patients WHERE PID=?', (patient_id,))
+        results = self.db_PID_cursor.fetchone()
+        self.db_PID.close()
+
+        row = {
+            'patient_id': row[0],
+            'name': row[1],
+            'age': row[2],
+            'sex': row[3],
+            'analysis_done': bool(row[4]),
+            'insititution_sending': row[5],
+            }
+
+        self.log.info(f'{user} asked for the patients_data for {patient_id}')
+        return row
+
     def get_patients_table(self, user) -> list:
         '''
         **Purpose**
@@ -236,7 +261,7 @@ class libmanager:
         analysis_done = self.db_PID_cursor.fetchone()
         self.db_PID.close()
 
-        if analysis_done[0]: return True
+        if int(analysis_done[0]): return True
 
         return False
 
@@ -524,6 +549,15 @@ class libmanager:
         if len(r) != 1: raise Exception('Patient database returned more than one entry!')
 
         return r[0]
+
+    def report_current_analysis_stage(self, patient_id:str):
+        """
+        Return the update;
+        """
+        assert self.patient_exists(patient_id), f'{patient_id} does not exist'
+        if self._check_analysis_is_complete(patient_id):
+            return {1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100, 7: 100, 8: 100, 9: 100}
+        return self.analysis_progress.report(patient_id)
 
     def generate_report(self, user:str, mode:str, patient_id:str, search_term:str, lang='CN'):
         '''
