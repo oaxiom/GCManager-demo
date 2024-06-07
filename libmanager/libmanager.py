@@ -26,11 +26,9 @@ from . import utils
 from . import help_text
 
 class libmanager:
-    def __init__(self, end_type, log, home_path):
-        assert end_type in ('Doctorend', 'Backend'), f'{end_type} must be one of Doctorend or Backend'
-
+    def __init__(self, log, home_path):
         self.log = logger.logger()
-        self.end_type = end_type
+        self.end_type = None
         self.home_path = home_path
         self.script_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], '..')
         self.db_path = os.path.join(self.home_path, 'dbs')
@@ -67,7 +65,7 @@ class libmanager:
 
         self.settings = settings.settings(self.home_path)
 
-        self.log.info(f"Started libmanager: {end_type}")
+        self.log.info(f"Started libmanager")
 
     def _security_check(self):
         '''
@@ -85,6 +83,20 @@ class libmanager:
 
         # TODO: Add md5sum check on self.db_disease_codes
 
+        return True
+
+    def set_end_type(self, end_type):
+        """
+
+        Set the end_type of the system
+        (Required)
+
+        """
+        assert end_type in ('Doctorend', 'Backend'), f'{end_type} must be one of Doctorend or Backend'
+
+        self.log.info(f"Set the end type as {end_type}")
+
+        self.end_type = end_type
         return True
 
     def initialize(self, adminpass:str, demo:bool = False):
