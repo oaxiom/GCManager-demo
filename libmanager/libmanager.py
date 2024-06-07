@@ -8,9 +8,11 @@
 
 # TODO:
 # 1. Fix up the exceptions
+# 2. Use decorators for the db open closing
 
 import os, sys, sqlite3, datetime, glob, uuid
 import pathlib
+import shutil
 
 from . import analysis_progress
 from . import api
@@ -48,20 +50,6 @@ class libmanager:
         self.db_disease_codes = None
 
         self.users = user.users(self.home_path, self.log)
-
-        # TODO: Move these open/close to a function to clean up the code
-
-        # Open PID database
-        #self.db_PID = sqlite3.connect(self.db_PID_path)
-        #self.db_PID_cursor = self.db_PID.cursor()
-        # ...
-        #self.db_PID.close()
-
-        # disease code databse:
-        #self.db_disease_codes.close() = sqlite3.connect(self.db_disease_codes_path)
-        #self.db_disease_codes_cursor = self.db_disease_codes.cursor()
-        # ...
-        #self.db_disease_codes.close()
 
         self.settings = settings.settings(self.home_path)
 
@@ -411,6 +399,7 @@ class libmanager:
         return True
 
     def add_patient(self,
+        user: str,
         patient_id: str,
         seq_id: str,
         name: str,
@@ -425,7 +414,7 @@ class libmanager:
         '''
         # Should be impossible, but just in case
         if self.patient_exists(patient_id):
-            raise Exception(f'Trying to add {patient_id} but it already exists')
+            raise Exception(f'{user} is trying to add {patient_id} but it already exists')
 
         # TODO: Check the size of the imported FASTQ files.
         # I guess if < 1Gb each, reject the data;
@@ -456,15 +445,40 @@ class libmanager:
         self.db_PID.close()
 
         if os.path.exists(data_dir):
-            raise Exception(f'Trying to add {patient_id} but the data directory {data_dir} already exists')
+            raise Exception(f'{user} is trying to add {patient_id} but the data directory {data_dir} already exists')
 
         os.mkdir(data_dir)
 
-        self.log.info(f'Added patient {patient_id}')
+        self.log.info(f'{user} added patient {patient_id}')
 
         sequence_data_path = data_dir # Copy the seq data here;
 
         return True, sequence_data_path
+
+    def delete_patient(self, user:str, patient_id:str) -> bool:
+        """
+
+        Delete a patient and clean up the data.
+
+        """
+        assert self.patient_exists(patient_id), f'{patient_id} does not exist'
+
+        # Check the data folder is valid;
+        patient_db_path = os.path.join(self.home_path, 'data', f'PID.{patient_id}')
+        assert os.path.exists(patient_db_path), f'{patient_db_path} file path is missing'
+        shutil.rmtree(patient_db_path, ignore_errors=False)
+        self.log.info(f'{user} deleted patient data {patient_db_path}')
+
+        # Purge from the DB
+        self.db_PID = sqlite3.connect(self.db_PID_path)
+        self.db_PID_cursor = self.db_PID.cursor()
+        self.db_PID_cursor.execute('DELETE FROM patients WHERE PID=?', (patient_id,))
+        self.db_PID_cursor.execute('DELETE FROM patient_data WHERE PID=?', (patient_id,))
+        self.db_PID.commit()
+        self.db_PID.close()
+        self.log.info(f'{user} deleted patient: {patient_id}')
+
+        return True
 
     def summary_statistics(self, patient_id:str, ):
         '''

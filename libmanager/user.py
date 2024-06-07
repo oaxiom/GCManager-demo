@@ -3,6 +3,9 @@
 # (c) 2024
 #
 # Author(s):
+#
+# TODO:
+# 1. Use decorators for the db
 
 import sys, os, sqlite3, uuid
 
@@ -45,6 +48,8 @@ class users:
         '''
         **Purpose**
             Get the db cursor.
+
+        TODO: Convert to a decorator
 
         '''
         user_db = sqlite3.connect(os.path.join(self.home_path, 'dbs', "user.db"))
@@ -101,6 +106,8 @@ class users:
         # Bad? surely, as password is transmitted in the clear...
         # But if it's wrong, it doesn't matter?
         # But if it's right, it does...
+        # I think this is only a big issue if the GCManager is detached from the
+        # front end at some point.
 
         """
         Yeah, the CURL is like this:
@@ -108,7 +115,7 @@ class users:
         'http://127.0.0.1:8000/auth/token' \
         -H 'accept: application/json' \
         -H 'Content-Type: application/x-www-form-urlencoded' \
-        -d 'grant_type=&username=admin%40notanemail.edu.cn&password=notarealpass&scope=&client_id=aa&client_secret=aa'
+        -d 'grant_type=&username=admin&password=notarealpass&scope=&client_id=aa&client_secret=aa'
 
         # That can't be right...
         """

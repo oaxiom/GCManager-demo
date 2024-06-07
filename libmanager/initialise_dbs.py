@@ -74,9 +74,9 @@ def build_demo_data(man, home_path, script_path, log):
     log.info('Moving DEMO data')
 
     # Setup two patients, and copy the data
-    man.add_patient('72210953309787', 'SEQ72210953309787', '何XX', '男', 43, 'HOSPITAL1') # Complete
-    man.add_patient('NA12878', 'SEQNA12878', '王XX', '男', 22, 'HOSPITAL1') # Complete
-    man.add_patient('PATIENTNOTSTARTED', 'SEQNOTSTARTED', '李XX', '女', 24, 'HOSPITAL1') # Not started
+    man.add_patient('demo_user', '72210953309787', 'SEQ72210953309787', '何XX', '男', 43, 'HOSPITAL1') # Complete
+    man.add_patient('demo_user', 'NA12878', 'SEQNA12878', '王XX', '男', 22, 'HOSPITAL1') # Complete
+    man.add_patient('demo_user', 'PATIENTNOTSTARTED', 'SEQNOTSTARTED', '李XX', '女', 24, 'HOSPITAL1') # Not started
     # TODO: Add partially complete one;
 
     user_home_path = os.path.expanduser('~')

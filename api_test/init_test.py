@@ -25,6 +25,7 @@ if not os.path.exists(home_path):
     sys.exit(-1)
 '''
 
-man = libmanager.libmanager('Doctorend', log=log, home_path=home_path)
+man = libmanager.libmanager(log=log, home_path=home_path)
+man.set_end_type('Doctorend')
 
 man.initialize('admin123', demo=True)

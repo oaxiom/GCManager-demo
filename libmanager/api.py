@@ -132,16 +132,8 @@ class api:
 
         return self.manager.generate_report(user, mode, patient_id, selected_report)
 
-    def print_report(self, patient_id: str, selected_report_id: str):
-        # Backend: Report Generator
-        # Doctorend: Report Generator
-        """
-        Not required? Just use the web browser HTML -> PDF function?
-
-        """
-        return None
-
     def add_new_patient(self,
+        user:str,
         patient_id: str,
         sequence_data_id: str,
         name: str,
@@ -161,6 +153,7 @@ class api:
         age = int(age)
 
         ret, sequence_data_path  = self.manager.add_patient(
+            user=user,
             patient_id=patient_id,
             seq_id=sequence_data_id,
             name=name,

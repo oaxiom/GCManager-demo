@@ -74,7 +74,7 @@ def register(user: UserCreate) -> dict:
         raise HTTPException(status_code=400, detail="A user with this username already exists")
 
     gcman.users.add_user(uuid.uuid4(), user.username, user.password)
-    return {'code': 200, 'data': True, 'msg': "Successful registration"}
+    return {'code': 200, 'data': (user.username, user.password), 'msg': "Successful registration"}
 
 @app.post('/auth/token')
 def login(data: OAuth2PasswordRequestForm = Depends()) -> dict:
@@ -111,10 +111,6 @@ def change_password(username:str, newpassword:str, user=Depends(user_manager)) -
     # See: https://github.com/MushroomMaula/fastapi_login/issues/82
 
     return {'code': 200, 'data': True, 'msg': f'Succesfully changed password for user {username}'}
-
-#TODO: Recover password
-#Not clear how this is done at the moment; Need internet connection?
-#def recover_password()
 
 @app.post("/auth/delete")
 def delete(username_to_delete:str, requesting_user=Depends(user_manager)) -> dict:
@@ -345,6 +341,7 @@ async def add_new_patient(
                 raise HTTPException(status_code=500, detail=f'File format appears incorrect, ".fastq.gz" in missing in file {f}')
 
     ret_code, sequence_data_path = gcman.api.add_new_patient(
+        user=user,
         patient_id=patient_id,
         sequence_data_id=sequence_data_id,
         name=name,
@@ -375,6 +372,26 @@ async def add_new_patient(
 
     return {'code': 200, 'data': ret, 'msg': None}
 
+@app.post('/del_patient')
+def delete_patient(patient_id:str, user=Depends(user_manager)) -> dict:
+    """
+
+    Delete a patient from the system.
+
+    Requires administrator privileges.
+
+    """
+    if not gcman.users.is_admin(user):
+        raise InvalidCredentialsException
+
+    if not gcman.patient_exists(patient_id):
+        raise HTTPException(status_code=500, detail=f'{patient_id} does not exist')
+
+    gcman.delete_patient(user, patient_id)
+
+    return {'code': 200, 'data': True, 'msg': None}
+
+
 @app.get("/patient/report_current_anaylsis_stage/{patient_id}")
 def report_current_anaylsis_stage(patient_id:str, user=Depends(user_manager)) -> dict:
     '''
@@ -393,10 +410,6 @@ def report_current_anaylsis_stage(patient_id:str, user=Depends(user_manager)) ->
     '''
     if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': gcman.api.report_current_anaylsis_stage(patient_id), 'msg': None}
-
-'''
-def delete_patient(self, patient_id:str) -> bool:
-'''
 
 @app.get("/patient/export_QC_statistics/{patient_id}")
 def export_QC_statistics(patient_id: str, user=Depends(user_manager)) -> dict:
