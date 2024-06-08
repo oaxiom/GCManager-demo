@@ -79,6 +79,10 @@ class libmanager:
 
         # TODO: Add md5sum check on self.db_disease_codes
 
+        # Copy protection method 1: Check this machine is correct
+        with open(os.path.join(self.db_path, ".mchne"), "r") as f:
+            mchne = f.read()
+
         return True
 
     def check_if_its_time_to_backup_db(self):
