@@ -33,7 +33,7 @@ def verify_password(plaintext: str, hashed: str) -> bool:
 
     return pwd_context.verify(plaintext, hashed)
 
-def get_keys():
+def gen_keys():
     private_key = rsa.generate_private_key(
         public_exponent=65537,
         key_size=2048,
@@ -44,32 +44,32 @@ def get_keys():
     return public_key, private_key
 
 # Storing the keys
-def store_keys(public_key, private_key):
+def store_keys(public_key, private_key, prefix):
     pem = private_key.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.PKCS8,
         encryption_algorithm=serialization.NoEncryption()
         )
-    with open('private_key.pem', 'wb') as f:
+    with open(f'{prefix}.private_key.pem', 'wb') as f:
         f.write(pem)
 
     pem = public_key.public_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PublicFormat.SubjectPublicKeyInfo
         )
-    with open('public_key.pem', 'wb') as f:
+    with open(f'{prefix}.public_key.pem', 'wb') as f:
         f.write(pem)
 
-def load_private_key():
-    with open("private_key.pem", "rb") as key_file:
+def load_private_key(key_filename):
+    with open(key_filename, "rb") as key_file:
         private_key = serialization.load_pem_private_key(
             key_file.read(),
             password=None,
         )
     return private_key
 
-def load_public_key():
-    with open("public_key.pem", "rb") as key_file:
+def load_public_key(key_filename):
+    with open(key_filename, "rb") as key_file:
         public_key = serialization.load_pem_public_key(
             key_file.read(),
         )
@@ -87,7 +87,7 @@ def encrypt(message, public_key):
         )
     return enc
 
-def decrypt(msg:str, private_key) -> str:
+def decrypt(msg, private_key) -> str:
     dec = private_key.decrypt(
         msg,
         padding.OAEP(
@@ -101,12 +101,12 @@ def decrypt(msg:str, private_key) -> str:
 if __name__ == '__main__':
     # A small tester:
 
-    public_key, private_key = get_keys()
+    public_key, private_key = gen_keys()
 
-    store_keys(public_key, private_key)
+    store_keys(public_key, private_key, prefix='test')
 
-    private_key = load_private_key()
-    public_key = load_public_key()
+    private_key = load_private_key('test.private_key.pem')
+    public_key = load_public_key('test.public_key.pem')
 
     enc = encrypt(b'encrypt some data', public_key)
 
