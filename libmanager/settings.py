@@ -30,6 +30,7 @@ class settings:
         # add the settings;
         settings_doctor_cur.execute('INSERT INTO settings VALUES (?,?)', ('lang', 'CN'))
         settings_doctor_cur.execute('INSERT INTO settings VALUES (?,?)', ('hospital_name', 'N/A'))
+        settings_doctor_cur.execute('INSERT INTO settings VALUES (?,?)', ('last_backup', '0'))
 
         settings_doctor.commit()
         settings_doctor.close()
@@ -39,6 +40,7 @@ class settings:
 
         settings_backend_cur.execute('INSERT INTO settings VALUES (?,?)', ('lang', 'CN'))
         settings_backend_cur.execute('INSERT INTO settings VALUES (?,?)', ('hospital_name', 'N/A'))
+        settings_backend_cur.execute('INSERT INTO settings VALUES (?,?)', ('last_backup', '0'))
 
         settings_backend.commit()
         settings_backend.close()

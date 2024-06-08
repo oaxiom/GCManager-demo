@@ -1,6 +1,6 @@
 #
 # (c) 2024 Helixiome, all rights reserved.
-# (c) 2024
+# (c) 2024 中基科生物
 #
 # Author(s):
 # Andrew P. Hutchins,
@@ -10,9 +10,16 @@
 # 1. Fix up the exceptions
 # 2. Use decorators for the db open closing
 
-import os, sys, sqlite3, datetime, glob, uuid
+import os, sys
+import sqlite3
+import datetime, glob, uuid
 import pathlib
 import shutil
+import time
+import asyncio
+import tarfile
+import gzip
+from threading import Thread
 
 from . import analysis_progress
 from . import api
@@ -35,6 +42,7 @@ class libmanager:
         self.script_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], '..')
         self.db_path = os.path.join(self.home_path, 'dbs')
         self.data_path = os.path.join(self.home_path, 'data')
+        self.backup_path = os.path.join(os.path.expanduser('~'), 'GCMBackup/')
 
         self.api = api.api(self, log, home_path)
 
@@ -73,6 +81,53 @@ class libmanager:
 
         return True
 
+    def check_if_its_time_to_backup_db(self):
+        '''
+        **Purpose**
+            see if enough time delta has elapsed to make it worth
+            doing a backup;
+
+        '''
+        if not self.end_type:
+            return None
+
+        if self.end_type == 'Doctorend':
+            last_backup_time = int(self.settings.get_doctor_setting('last_backup'))
+        elif self.end_type == 'Backend':
+            last_backup_time = int(self.settings.get_doctor_setting('last_backup'))
+
+        if time.time() - last_backup_time > 86400:  # 24 hours = 86400; time.time() reports seconds;
+            def backup_db(self, path_to_copy):
+                shutil.make_archive(os.path.join(self.backup_path, f'db_backup-{self.end_type}-{int(time.time())}'),
+                    'gztar',
+                    self.home_path, # root dir;
+                    path_to_copy)
+                return True
+
+            if self.end_type == 'Doctorend':
+                # Doctor end can be a full backup as space is reasonable
+                ret = Thread(target=backup_db, args=(self, self.home_path)).start()
+            elif self.end_type == 'Backend':
+                # Back end the space is massive. We can only backup the DBs.
+                # TODO: Add selected data from data/
+                ret = Thread(target=backup_db, args=(self, self.db_path)).start()
+
+            # Backup the database
+            self.log.info(f'Backing up database on {datetime.datetime.today():%Y-%m-%d}')
+
+            # Delete the oldest backup if > 20: #? Is this a good idea... Maybe skip this for now
+            # and see if it become a problem in production.
+
+        # Store
+        if self.end_type == 'Doctorend':
+            self.settings.set_doctor_setting('last_backup', int(time.time()))
+        elif self.end_type == 'Backend':
+            self.settings.set_doctor_setting('last_backup', int(time.time()))
+
+        self.log.info("Checked if it's time to do a DB backup")
+
+        return None
+
     def set_end_type(self, end_type):
         """
 
@@ -94,7 +149,7 @@ class libmanager:
 
 
         '''
-        initialise.initialize_system(self, self.end_type, self.log, self.script_path, self.home_path, demo=demo)
+        initialise.initialize_system(self, self.end_type, self.log, self.script_path, self.home_path, self.backup_path, demo=demo)
         self.users.add_user(uuid.uuid4(), 'admin', adminpass, is_admin=True)
         return True
 

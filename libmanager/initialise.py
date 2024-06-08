@@ -14,7 +14,7 @@ sys.path.append('../')
 from . import VERSION
 from . import initialise_dbs
 
-def initialize_system(gcmanager, end_type, log, script_path, home_path, demo):
+def initialize_system(gcmanager, end_type, log, script_path, home_path, backup_path, demo):
     assert end_type in ('Doctorend', 'Backend'), f'{end_type} must be one of Doctorend or Backend'
 
     log.info(f'GCManager {VERSION} initialise')
@@ -43,8 +43,10 @@ def initialize_system(gcmanager, end_type, log, script_path, home_path, demo):
     os.mkdir(home_path)
     os.mkdir(os.path.join(home_path, 'data'))
     os.mkdir(os.path.join(home_path, 'dbs'))
-
-    #
+    try:
+        os.mkdir(backup_path)
+    except FileExistsError:
+        pass # Never overwrite the backup_path
 
     initialise_dbs.init_dbs(home_path, script_path, log)
 

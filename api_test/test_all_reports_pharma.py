@@ -24,6 +24,7 @@ if not os.path.exists(home_path):
     sys.exit(-1)
 
 man = libmanager.libmanager(log=log, home_path=home_path)
+man.set_end_type('Doctorend')
 
 def cmd_process(cmd):
     print(f'\n>>> {cmd}')

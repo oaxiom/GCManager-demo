@@ -10,9 +10,12 @@ import sys, os, uuid, datetime
 import logging
 import shutil
 import aiofiles
+from contextlib import asynccontextmanager
+import asyncio
 sys.path.append('../')
 
 from libmanager import support, VERSION, libmanager
+from contextlib import asynccontextmanager
 
 log = support.prepare_logging()
 
@@ -42,8 +45,20 @@ from typing_extensions import Annotated
 from pydantic import UUID4, BaseModel, Field, ConfigDict
 from fastapi_login import LoginManager
 
-app = FastAPI()
+#gcman.set_end_type('Doctorend')
 
+async def check_backups(seconds):
+    while True:
+        gcman.check_if_its_time_to_backup_db()
+        await asyncio.sleep(seconds)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Run at startup
+    asyncio.create_task(check_backups(60*60)) # One an hour
+    yield
+
+app = FastAPI(lifespan=lifespan)
 
 ###### User management
 
