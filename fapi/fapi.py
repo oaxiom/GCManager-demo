@@ -55,7 +55,7 @@ async def check_backups(seconds):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Run at startup
-    asyncio.create_task(check_backups(60*60)) # One an hour
+    asyncio.create_task(check_backups(60*60*2)) # Once every two hours
     yield
 
 app = FastAPI(lifespan=lifespan)
