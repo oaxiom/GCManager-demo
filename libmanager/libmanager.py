@@ -400,8 +400,9 @@ class libmanager:
 
         self.log.info(f'{user} asked for analysis logs for {patient_id}')
 
-        if os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.gcm')):
-            gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.gcm'))
+        if os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.data.gcm')):
+            self.log.info(f'GCM is available for {patient_id}')
+            gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.data.gcm'), logger=self.log)
             return gcm.get_logs()
 
         # Note that this still returns even if the analysis is incomplete;
@@ -426,6 +427,28 @@ class libmanager:
         if is_completed: return '\n'.join(results)
 
         return '\n'.join(results)
+
+    def get_qc(self, user: str, patient_id: str) -> str:
+        '''
+        **Purpose**
+            collect and send all the log data
+
+        '''
+        assert self.patient_exists(patient_id), f'{patient_id} not found'
+
+        self.log.info(f'{user} asked for QC data for {patient_id}')
+
+        if os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.data.gcm')):
+            self.log.info(f'GCM is available for {patient_id}')
+            gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.data.gcm'), logger=self.log)
+            return gcm.get_qc()
+        else:
+            self.log.warning(f'QC data is not yet available for {patient_id}')
+            if self.settings.get_lang(self.end_type) == 'EN':
+                return 'QC data not available'
+            else:
+                return '质量控制数据不详'
+        return ''
 
     def get_vcf_path(self, patient_id: str) -> str:
         '''
@@ -514,7 +537,26 @@ class libmanager:
         r = r.fetchall()
         self.db_PID.close()
         if not r: return False
-        if len(r) != 1: raise Exception('Patient database returned more than one entry!')
+        if len(r) > 1: raise Exception('Patient database returned more than one entry!')
+
+        return True
+
+    def analysis_complete(self, patient_id:str) -> bool:
+        '''
+        **Purpose**
+            See if the analysis is complete
+
+        '''
+        self.db_PID = sqlite3.connect(self.db_PID_path)
+        self.db_PID_cursor = self.db_PID.cursor()
+        r = self.db_PID_cursor.execute('SELECT analysis_done from patients WHERE pid=?', (patient_id, ))
+        r = r.fetchall()
+        self.db_PID.close()
+
+        if len(r) > 1: raise Exception('Patient database returned more than one entry!')
+        if len(r) == 0: return False
+        r = int(r[0][0])
+        if not r: return False
 
         return True
 

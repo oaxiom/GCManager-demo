@@ -54,7 +54,7 @@ async def check_backups(seconds):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Run at startup
-    asyncio.create_task(check_backups(60*60*2)) # Once every two hours
+    asyncio.create_task(check_backups(60*60*4)) # Once every four hours
     yield
 
 app = FastAPI(lifespan=lifespan)
@@ -271,7 +271,9 @@ def generate_report(mode: str, patient_id: str, selected_report:str, user=Depend
     selected_report = '中风'
 
     '''
-    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
+    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found')
+
+    if not gcman.analsis_complete(patient_id): raise HTTPException(status_code=500, detail=f'Analysis is not complete for {patient_id}')
 
     html_filename, html = gcman.api.generate_report(user, mode, patient_id, selected_report)
 

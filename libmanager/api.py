@@ -116,7 +116,8 @@ class api:
         sequence_data_id: str,
         name: str,
         sex: str,
-        age: int,):
+        age: int,
+        institution_sending: str):
         """
         Add new patient data.
         Used on the screen to register a new patient
@@ -136,7 +137,11 @@ class api:
             seq_id=sequence_data_id,
             name=name,
             sex=sex,
-            age=age)
+            age=age,
+            institution_sending=institution_sending)
+
+        # Sends the sequence_data path back to the FAPI,
+        # so it knows where to copy the data.
 
         return ret, sequence_data_path
 

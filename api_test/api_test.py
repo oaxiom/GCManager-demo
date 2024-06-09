@@ -46,18 +46,23 @@ cmd_process('man.api.populate_patient_list("andrew")')
 #  ('NA12878', '王XX', 22, '男', '1'),
 #  ('PATIENTNOTSTARTED', '李XX', 24, '女', '0')]
 
+cmd_process("man.patient_exists('ANEWPATIENT')")
+cmd_process("man.patient_exists('72210953309787')")
+
 # This will only work once. If run a second time it will produce a 'patient already exists' error:
-# 这只会起作用一次。如果再次运行，将产生“患者已存在”错误：
-try:
-    cmd_process('man.api.add_new_patient("ANEWPATIENT", "SEQIDNEW", "张XX", "女", 50, "PATH/TO/SEQ")')
-except Exception:
-    print('Can only add this patient once per initialize.py')
+#try:
+cmd_process('man.api.add_new_patient("tester", "ANEWPATIENT", "SEQIDNEW", "张XX", "女", 50, "INSTITUTION")')
+#except Exception:
+#    print('Can only add this patient once per initialize.py')
 cmd_process('man.api.populate_patient_list("andrew")')
 # Expected result:
 # [('72210953309787', '何XX', 43, '男', '1'),
 #  ('NA12878', '王XX', 22, '男', '1'),
 #  ('PATIENTNOTSTARTED', '李XX', 24, '女', '0')
 #  ('ANEWPATIENT', '张XX', 50, '女', '0')]
+
+cmd_process("man.analysis_complete('ANEWPATIENT')")
+cmd_process("man.analysis_complete('72210953309787')")
 
 cmd_process("man.api.export_vcf('72210953309787')")
 # Expected Result: (This returns the absolute PATH)

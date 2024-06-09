@@ -45,6 +45,17 @@ class settings:
         settings_backend.commit()
         settings_backend.close()
 
+    def get_lang(self, end_type):
+        '''
+
+        Convenience function to help improve language support
+
+        '''
+        if end_type == 'Doctorend':
+            return self.get_doctor_setting('lang')
+        elif end_type == 'Backend':
+            return self.get_backend_setting('lang')
+
     def get_doctor_setting(self, key):
         '''
         get the setting for doctor interface
