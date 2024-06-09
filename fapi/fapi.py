@@ -308,7 +308,7 @@ async def add_new_patient(
     sequence_data_id: Annotated[str, Form()],
     name: Annotated[str, Form()],
     sex: Annotated[str, Form()],
-    age: Annotated[str, Form()],
+    age: Annotated[int, Form()],
     institution_sending: Annotated[str, Form()], # 送检机构
     files: list[UploadFile],
     user=Depends(user_manager)) -> dict:

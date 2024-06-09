@@ -536,6 +536,7 @@ class libmanager:
         r = self.db_PID_cursor.execute('SELECT * from patients WHERE pid=?', (patient_id, ))
         r = r.fetchall()
         self.db_PID.close()
+        if len(r) == 0: return False
         if not r: return False
         if len(r) > 1: raise Exception('Patient database returned more than one entry!')
 
