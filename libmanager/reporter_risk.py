@@ -38,8 +38,6 @@ class reporter_risk:
         self.data_path = os.path.join(data_path, f'PID.{patient_id}')
         self.script_path = script_path # root for GCManager install;
 
-        print(self.data_path, self.script_path)
-
         self.patient_data = patient_data
 
         self.search_term = diseaseEN # Hardcoded to EN, for now, should use the disease_code
@@ -76,7 +74,7 @@ class reporter_risk:
             I expect it would be a tiny minority, and very rare but needs to be fixed
             in future versions.
         '''
-        risk_snps = tinyglbase.genelist(filename, format={'force_tsv': True, 'SNPS': 1, 'patient_genotype': 2})
+        risk_snps = tinyglbase.genelist(filename, log=self.log, format={'force_tsv': True, 'SNPS': 1, 'patient_genotype': 2})
 
         riskdb = tinyglbase.glload(os.path.join(self.script_path, 'static_data', 'Risk', 'risk_table.glb' ))
 
@@ -90,7 +88,7 @@ class reporter_risk:
             risk_allele = SNP['STRONGEST SNP-RISK ALLELE'].split('-')[1]
             if risk_allele in SNP['patient_genotype']:
                 results.append(SNP)
-        over = tinyglbase.genelist(format=True)
+        over = tinyglbase.genelist(format=True, log=self.log)
         over.load_list(results)
 
         self.log.info(f'Matched {len(over)} SNPs to GWAS Risk alleles')

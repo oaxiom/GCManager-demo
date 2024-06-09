@@ -167,21 +167,6 @@ class api:
 
         return "QC data summary will go here.\nAs a long text.\nIt's relatively short."
 
-    def get_logs(self, patient_id:str) -> str:
-        """
-        Return all the log data.
-        Launched by the button 查看分析日志
-        and found on the page: 查看日志
-
-        返回所有日志数据。
-        通过按钮启动查看分析日志
-        在页面上找到：查看日志
-
-        """
-        # Backend: Patient Data Manager
-
-        return self.manager.get_logs(patient_id)
-
     def populate_patient_data_list(self) -> str:
         """
 

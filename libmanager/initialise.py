@@ -16,13 +16,13 @@ from . import VERSION
 from . import initialise_dbs
 from . import security
 
-def run(cmd):
-    try:
-        return subprocess.run(cmd, shell=True, capture_output=True, check=True, encoding="utf-8").stdout.strip()
-    except:
-        return None
-
 def guid():
+    def run(cmd):
+        try:
+            return subprocess.run(cmd, shell=True, capture_output=True, check=True, encoding="utf-8").stdout.strip()
+        except:
+            return None
+
     if sys.platform == 'darwin':
         return run("ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'",)
     if sys.platform == 'win32' or sys.platform == 'cygwin' or sys.platform == 'msys':
@@ -59,6 +59,7 @@ def initialize_system(gcmanager, end_type, log, script_path, home_path, backup_p
     os.mkdir(home_path)
     os.mkdir(os.path.join(home_path, 'data'))
     os.mkdir(os.path.join(home_path, 'dbs'))
+    os.mkdir(os.path.join(home_path, 'logs'))
     try:
         os.mkdir(backup_path)
     except FileExistsError:

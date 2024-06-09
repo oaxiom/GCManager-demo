@@ -6,6 +6,7 @@
 # Andrew P. Hutchins,
 #
 
+import os
 import logging
 
 valid_laguages = {
@@ -19,9 +20,3 @@ valid_genome_dbs = {
     'Risk': '疾病风险提示',
     }
 
-def prepare_logging():
-    logging.basicConfig(level=logging.DEBUG,
-        format='%(levelname)-8s: %(message)s',
-        datefmt='%m-%d %H:%M')
-
-    return logging.getLogger('GCmanager')

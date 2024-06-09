@@ -10,19 +10,17 @@ import sys, os
 sys.path.append('../')
 from libmanager import libmanager, support, VERSION
 
-log = support.prepare_logging()
-
 if 'demo' in VERSION:
     home_path = os.path.join(os.path.expanduser('~'), 'GCMDataDEMO/') # Pre-initialised demo data
 else:
-    log.error('api_test only works in DEMO mode')
+    print('api_test only works in DEMO mode')
     sys.exit(-1)
 
 if not os.path.exists(home_path):
-    log.error(f"Panic! Data path {home_path} is missing")
+    print(f"Panic! Data path {home_path} is missing")
     sys.exit(-1)
 
-man = libmanager.libmanager(log=log, home_path=home_path)
+man = libmanager.libmanager(home_path=home_path)
 man.set_end_type('Backend')
 
 def cmd_process(cmd):
@@ -106,7 +104,7 @@ cmd_process("man.api.populate_report_generator('Risk', 'CN')")
 # Expected Result:
 # [Long table of results]
 
-cmd_process("man.api.get_logs('72210953309787')")
+cmd_process("man.get_logs('tester', '72210953309787')")
 # Expected Result
 
 cmd_process("man.settings.get_doctor_setting('lang')")

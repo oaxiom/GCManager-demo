@@ -17,8 +17,6 @@ sys.path.append('../')
 from libmanager import support, VERSION, libmanager
 from contextlib import asynccontextmanager
 
-log = support.prepare_logging()
-
 logging.getLogger("multipart").setLevel(logging.ERROR)
 
 if 'demo' in VERSION:
@@ -26,7 +24,8 @@ if 'demo' in VERSION:
 else:
     home_path = os.path.join(os.path.expanduser('~'), 'GCMData/')
 
-gcman = libmanager.libmanager(log=log, home_path=home_path)
+gcman = libmanager.libmanager(home_path=home_path)
+log = gcman.log
 
 # Initialise system if DBs not found
 if not os.path.exists(home_path):
@@ -469,7 +468,7 @@ def get_logs(patient_id:str, user=Depends(user_manager)) -> dict:
     patient_id = '72210953309787'
     '''
     if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': gcman.api.get_logs(patient_id), 'msg': None}
+    return {'code': 200, 'data': gcman.get_logs(user, patient_id), 'msg': None}
 
 @app.get("/populate_patient_data_list/")
 def populate_patient_data_list(user=Depends(user_manager)) -> dict:
@@ -542,7 +541,7 @@ def convert_bam_to_cram(patient_id: str, user=Depends(user_manager)) -> dict:
     patient_id = '72210953309787'
     '''
     if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': gcman.api.convert_bam_to_cram(patient_id), 'msg': None}
+    return {'code': 200, 'data': gcman.convert_bam_to_cram(user, patient_id), 'msg': None}
 
 class Setting(BaseModel):
     key: str = Field(examples=["lang"])

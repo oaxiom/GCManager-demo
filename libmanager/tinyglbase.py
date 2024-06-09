@@ -181,16 +181,19 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             gl = genelist(..., format=format.full_bed)
 
     """
-    def __init__(self, filename=None,
+    def __init__(self,
+        filename=None,
         loadable_list=None,
         gzip=False,
-        format:dict =None,
+        format:dict = None,
         force_tsv:bool = False,
+        log=None,
         **kargs):
 
         assert format, 'You must provide a format'
+        assert log, 'tinyglbase requires an external log'
 
-        self.log = logger.logger()
+        self.log = log
         self.linearData = []
         self.debug = False
         self.name = "Generic List"
@@ -202,10 +205,7 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
             format["force_tsv"] = True
 
         if filename:
-            if format:
-                self.load(filename=filename, format=format, gzip=gzip)
-            else:
-                raise AssertionError('Due to excessive ambiguity the sniffing function of genelists has been removed and you now MUST provide a format argument, you can reenable this feature by specifying the sniffer: format=format.sniffer')
+            self.load(filename=filename, format=format, gzip=gzip)
             self.log.info(f"genelist: loaded '{filename}' found {len(self.linearData):,} items")
 
         elif loadable_list:

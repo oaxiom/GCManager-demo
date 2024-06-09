@@ -33,10 +33,11 @@ from . import user
 from . import initialise
 from . import utils
 from . import help_text
+from . import gcms
 
 class libmanager:
-    def __init__(self, log, home_path):
-        self.log = logger.logger()
+    def __init__(self, home_path):
+        self.log = logger.logger(os.path.join(home_path, 'logs'))
         self.end_type = None
         self.home_path = home_path
         self.script_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], '..')
@@ -44,12 +45,12 @@ class libmanager:
         self.data_path = os.path.join(self.home_path, 'data')
         self.backup_path = os.path.join(os.path.expanduser('~'), 'GCMBackup/')
 
-        self.api = api.api(self, log, home_path)
+        self.api = api.api(self, self.log, home_path)
 
         self.patient_id = None
         self.seq_id = None
 
-        self.analysis_progress = analysis_progress.analysis_progress(log=log, home_path=home_path)
+        self.analysis_progress = analysis_progress.analysis_progress(log=self.log, home_path=home_path)
 
         self.db_PID_path = os.path.join(self.home_path, 'dbs', "PID.db")
         self.db_disease_codes_path = os.path.join(self.home_path, 'dbs', "disease_codes.db")
@@ -122,13 +123,14 @@ class libmanager:
             # Delete the oldest backup if > 20: #? Is this a good idea... Maybe skip this for now
             # and see if it become a problem in production.
 
-        # Store
-        if self.end_type == 'Doctorend':
-            self.settings.set_doctor_setting('last_backup', int(time.time()))
-        elif self.end_type == 'Backend':
-            self.settings.set_doctor_setting('last_backup', int(time.time()))
+            # Store
+            if self.end_type == 'Doctorend':
+                self.settings.set_doctor_setting('last_backup', int(time.time()))
+            elif self.end_type == 'Backend':
+                self.settings.set_doctor_setting('last_backup', int(time.time()))
 
-        self.log.info("Checked if it's time to do a DB backup")
+        else:
+            self.log.info("Checked if it's time to do a DB backup")
 
         return None
 
@@ -388,7 +390,7 @@ class libmanager:
 
         return False, results
 
-    def get_logs(self, patient_id: str) -> str:
+    def get_logs(self, user: str, patient_id: str) -> str:
         '''
         **Purpose**
             collect and send all the log data
@@ -396,8 +398,13 @@ class libmanager:
         '''
         assert self.patient_exists(patient_id), f'{patient_id} not found'
 
-        # Note that this still returns even if the analysis is incomplete;
+        self.log.info(f'{user} asked for analysis logs for {patient_id}')
 
+        if os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.gcm')):
+            gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.gcm'))
+            return gcm.get_logs()
+
+        # Note that this still returns even if the analysis is incomplete;
         log_path = os.path.join(self.data_path, f'PID.{patient_id}')
 
         results = []
@@ -428,31 +435,31 @@ class libmanager:
         assert self.patient_exists(patient_id), f'{patient_id} not found'
 
         if not self._check_analysis_is_complete(patient_id):
-            self.log.error(f'Asked for {patient_id} VCF file, but VCF file is not available, analysis is incomplete')
-            raise LookupError(f'Asked for {patient_id} VCF file, but VCF file is not available, analysis is incomplete')
+            self.log.info(f'Asked for {patient_id} VCF file, but VCF file is not available, analysis is incomplete')
+            return False
 
         if not self._check_cram_vcf_status(patient_id, 'vcf'):
-            self.log.warning(f'Asked for {patient_id} VCF file, but VCF file is not avaialble')
-            raise LookupError(f'Asked for {patient_id} VCF file, but VCF file is not available, analysis is incomplete')
+            self.log.warning(f'Asked for {patient_id} VCF file, but VCF file is not available')
+            return False
 
         vcf_path = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.gatk.dbsnp.vcf.gz')
 
         if not os.path.exists(vcf_path):
             self.log.error(f'Asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
-            raise LookupError(f'Asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
+            return False
 
         return vcf_path
 
     def get_cram_path(self, patient_id: str) -> str:
         '''
         **Purpose**
-            Return the VCF filename;
+            Return the CRAM filename;
         '''
         assert self.patient_exists(patient_id), f'{patient_id} not found'
 
         if not self._check_analysis_is_complete(patient_id):
-            self.log.error(f'Asked for {patient_id} CRAM file, but CRAM file is not available, analysis is incomplete')
-            raise LookupError(f'Asked for {patient_id} CRAM file, but CRAM file is not available, analysis is incomplete')
+            self.log.info(f'Asked for {patient_id} CRAM file, but CRAM file is not available, analysis is incomplete')
+            return False
 
         if not self._check_cram_vcf_status(patient_id, 'cram'):
             self.log.warning(f'Asked for {patient_id} CRAM file, but CRAM file is not available')
@@ -462,7 +469,7 @@ class libmanager:
 
         if not os.path.exists(cram_path):
             self.log.error(f'Asked for {patient_id} CRAM file, but CRAM file does not exist (although it was reported to exist)')
-            raise LookupError(f'Asked for {patient_id} CRAM file, but CRAM file does not exist (although it was reported to exist)')
+            return False
 
         return cram_path
 

@@ -73,7 +73,7 @@ class reporter_pharma:
             in future versions.
         '''
         # output.write(f'{chrom}\t{rsid}\t{genotype}\n')
-        pharmagkb_snps = tinyglbase.genelist(filename, format={'force_tsv': True, 'SNP': 1, 'patient_genotype': 2})
+        pharmagkb_snps = tinyglbase.genelist(filename, log=self.log, format={'force_tsv': True, 'SNP': 1, 'patient_genotype': 2})
 
         pharmagkb = tinyglbase.glload(os.path.join(self.script_path, 'static_data', 'PharmaGKB', 'pharma_table.glb' ))
         over = pharmagkb.map(genelist=pharmagkb_snps, key='SNP')
@@ -83,7 +83,7 @@ class reporter_pharma:
         for SNP in over:
             if set(SNP['genotype']) == set(SNP['patient_genotype']):
                 results.append(SNP)
-        over = tinyglbase.genelist(format=True)
+        over = tinyglbase.genelist(format=True, log=self.log)
         over.load_list(results)
 
         return over, pharmagkb
