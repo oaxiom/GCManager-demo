@@ -9,6 +9,8 @@ import pickle
 import gzip
 from . import tinyglbase
 
+# TODO: Store the analysis date in the gcm file
+
 class gcm_file:
     def __init__(self, filename, logger):
         with open(filename, 'rb') as oh:

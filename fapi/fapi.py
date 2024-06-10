@@ -167,7 +167,7 @@ def logout(user=Depends(user_manager)):
 
 @app.get("/")
 async def root():
-    return {"message": f"GCManager {VERSION} \n end_type={gcman.end_type}"}
+    return {"message": f"GCManager {VERSION} ; end_type={gcman.end_type}"}
 
 @app.get('/set_end_type')
 def set_end_type(end_type: str) -> dict:
@@ -293,15 +293,6 @@ def is_patient_id_valid(patient_id: str, user=Depends(user_manager)) -> dict:
     ret = gcman.patient_exists(patient_id)
     return {'code': 200, 'data': ret, 'msg': None}
 
-'''
-class PatientData(BaseModel):
-    patient_id: str = Field(examples=["ANEWPATIENT12345"])
-    sequence_data_id: str = Field(examples=["SEQID2345"])
-    name: str = Field(examples=["王XX"])
-    sex: str = Field(examples=["男"])
-    age: int = Field(examples=[30,])
-'''
-
 @app.post('/add_patient')
 async def add_new_patient(
     patient_id: Annotated[str, Form()],
@@ -339,9 +330,10 @@ async def add_new_patient(
 
     ## If Doctorend:
 
-    TODO
+    GCManager-demo/demo_data/gcms/
 
     '''
+    assert gcman.end_type in ('Doctorend', 'Backend'), f'end_type appears not to have been set'
     # TODO: This function is 2x slow, as it copies the file first, then copies it again.
     # Supposedly it should be possible to remove one of the copies by using the underlying Starlette
     # Streamer.
@@ -358,8 +350,8 @@ async def add_new_patient(
         if len(files) != 1:
             raise HTTPException(status_code=500, detail='Doctor end expects only one file')
         # expects the file to have the extension .int.gz
-        if not files[0].filename.endswith('.int.gz'):
-            raise HTTPException(status_code=500, detail='Doctor end expects a file in the format .int.gz')
+        if not files[0].filename.lower().endswith('.gcm'):
+            raise HTTPException(status_code=500, detail='Doctor end expects a file in the format .gcm')
 
     else: # Backend
         # expected an even number of files.
@@ -367,9 +359,33 @@ async def add_new_patient(
             raise HTTPException(status_code=500, detail='Analysis end expects an even number of files, one for each read pair')
         # Expects all files to have the form _1.fastq.gz
         for f in files:
-            if not f.filename.endswith('.fastq.gz'):
-                raise HTTPException(status_code=500, detail=f'File format appears incorrect, ".fastq.gz" in missing in file {f}')
+            if not f.filename.lower().endswith('.fastq.gz'):
+                raise HTTPException(status_code=500, detail=f'File format appears incorrect, ".fastq.gz" is missing in file {f}')
 
+    # copy the data to a temporary location
+    temp_data_path = os.path.join(gcman.home_path, 'tmp')
+    os.mkdir(temp_data_path)
+
+    for file in files:
+        # Need to rename the files:
+        if gcman.end_type == 'Doctorend':
+            destination_filename = f'{patient_id}.data.gcm' # Easy case
+        elif gcman.end_type == 'Backend':
+            # TODO: Difficult case...
+            destination_filename = file.filename
+
+        try:
+            f = await run_in_threadpool(open, os.path.join(temp_data_path, destination_filename), 'wb')
+            await run_in_threadpool(shutil.copyfileobj, file.file, f)
+        except Exception:
+            return {'code': 500, 'data': None, 'msg': 'Upload file error'}
+        finally:
+            if 'f' in locals(): await run_in_threadpool(f.close)
+            await file.close()
+            gcman.log.info(f'Copied file {file.filename} to {patient_id}')
+
+    # You have to do this after the copy, otherwise you end up with a half-done patient if the
+    # upload fails.
     ret_code, sequence_data_path = gcman.api.add_new_patient(
         user=user,
         patient_id=patient_id,
@@ -380,27 +396,25 @@ async def add_new_patient(
         institution_sending=institution_sending,
         )
 
-    if not ret_code:
-        raise HTTPException(status_code=500, detail=f'Failed to add {patient_id}')
+    # move the data to the correct location
+    allfiles = os.listdir(temp_data_path)
+    for f in allfiles:
+        src_path = os.path.join(temp_data_path, f)
+        dst_path = os.path.join(sequence_data_path, f)
+        shutil.move(src_path, dst_path)
 
-    # copy the data;
-    for file in files:
-        try:
-            f = await run_in_threadpool(open, os.path.join(sequence_data_path, file.filename), 'wb')
-            await run_in_threadpool(shutil.copyfileobj, file.file, f)
-        except Exception:
-            return {'code': 500, 'data': None, 'msg': 'Upload file error'}
-        finally:
-            if 'f' in locals(): await run_in_threadpool(f.close)
-            await file.close()
-            gcman.log.info(f'Copied file {file.filename} to {patient_id}')
+    # And sanitise tmp
+    shutil.rmtree(temp_data_path)
 
-    # Check it's valid
-    ret = gcman.patient_exists(patient_id)
+    if gcman.end_type == 'Doctorend':
+        # Need to rename the files as {patient_id}.data.gcm
+        gcman.get_qc(user, patient_id) # See if we can load the gcm
+        # Set the analysis as complete;
+        gcman.set_analysis_complete(patient_id)
 
-    # TODO: Check that the FASTQ/INT data makes sense:
+    # TODO: Check that the FASTQ data makes sense?
 
-    return {'code': 200, 'data': ret, 'msg': None}
+    return {'code': 200, 'data': gcman.patient_exists(patient_id), 'msg': None}
 
 @app.post('/del_patient')
 def delete_patient(patient_id:str, user=Depends(user_manager)) -> dict:
@@ -453,7 +467,7 @@ def export_QC_statistics(patient_id: str, user=Depends(user_manager)) -> dict:
     patient_id = '72210953309787'
     '''
     if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': gcman.api.export_QC_statistics(patient_id), 'msg': None}
+    return {'code': 200, 'data': gcman.get_qc(user, patient_id), 'msg': None}
 
 @app.get("/patient/get_logs/{patient_id}")
 def get_logs(patient_id:str, user=Depends(user_manager)) -> dict:

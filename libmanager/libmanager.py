@@ -12,7 +12,9 @@
 
 import os, sys
 import sqlite3
-import datetime, glob, uuid
+import datetime
+import glob
+import uuid
 import pathlib
 import shutil
 import time
@@ -115,7 +117,8 @@ class libmanager:
             elif self.end_type == 'Backend':
                 # Back end the space is massive. We can only backup the DBs.
                 # TODO: Add selected data from data/
-                ret = Thread(target=backup_db, args=(self, self.db_path)).start()
+                #ret = Thread(target=backup_db, args=(self, self.db_path)).start()
+                pass
 
             # Backup the database
             self.log.info(f'Backing up database on {datetime.datetime.today():%Y-%m-%d}')
@@ -560,6 +563,17 @@ class libmanager:
         if not r: return False
 
         return True
+
+    def set_analysis_complete(self, patient_id:str) -> bool:
+        '''
+        **Purpose**
+            if we have a GCM, then set the analysis to complete
+        '''
+        self.db_PID = sqlite3.connect(self.db_PID_path)
+        self.db_PID_cursor = self.db_PID.cursor()
+        self.db_PID_cursor.execute('UPDATE patients SET analysis_done=?, date_analysis=? WHERE PID=?', (1, datetime.datetime.now().isoformat(' '), patient_id, ))
+        self.db_PID.commit()
+        self.db_PID.close()
 
     def add_patient(self,
         user: str,
