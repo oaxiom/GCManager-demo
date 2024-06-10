@@ -693,10 +693,12 @@ class libmanager:
             Location of the saved HTML file
         '''
         assert mode in support.valid_genome_dbs, f'{mode} was not in {support.valid_genome_dbs.keys()}'
+        assert self.analysis_complete(patient_id), f'{patient_id} analysis is not complete, but asking for a report'
+
+        self.lang = self.settings.get_lang(self.end_type) # Pull language out of system settings DB
+        gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.data.gcm'), logger=self.log)
 
         self.log.info(f'User "{user}" asked for a {mode} report for patient_id {patient_id} for the condition {search_term}')
-
-        # TODO: Pull language out of system settings DB
 
         # Get patient data;
         self.db_PID = sqlite3.connect(self.db_PID_path)
@@ -725,7 +727,7 @@ class libmanager:
 
             self.log.info(f'Search found: {disease_code}, {descEN}, {descCN}')
 
-            rep = reporter_pharma.reporter_pharma(self.data_path, self.script_path, patient_id, patient_data, disease_code, descEN, descCN, self.log, lang)
+            rep = reporter_pharma.reporter_pharma(self.data_path, self.script_path, patient_id, patient_data, gcm, disease_code, descEN, descCN, self.log, lang)
             #html_file = rep.generate_html_file()
             html_file, html = rep.generate()
 
@@ -745,7 +747,7 @@ class libmanager:
 
             self.log.info(f'Search found: {disease_code}, {descEN}, {descCN}')
 
-            rep = reporter_risk.reporter_risk(self.data_path, self.script_path, patient_id, patient_data, disease_code, descEN, descCN, self.log, lang)
+            rep = reporter_risk.reporter_risk(self.data_path, self.script_path, patient_id, patient_data, gcm, disease_code, descEN, descCN, self.log, lang)
             #html_file = rep.generate_html_file()
             html_file, html = rep.generate()
 

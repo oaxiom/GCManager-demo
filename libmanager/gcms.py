@@ -34,27 +34,24 @@ class gcm_file:
 
     def get_pharma(self):
         decoded = gzip.decompress(self.pharma).decode().split('\n')
-        splited = [l.split('\t') for l in decoded if l]
+        splited = [l.split('\t') for l in decoded if l if 'genotype' not in l]
 
         gl = tinyglbase.genelist(log=self.logger, format=True)
-        gl.load_list([{'chrom': l[0], 'rsid': l[1], 'genotype': l[2]} for l in splited])
+        gl.load_list([{'SNP': l[1], 'patient_genotype': l[2]} for l in splited])
         return gl
 
     def get_risk(self):
+        # Risk table
         decoded = gzip.decompress(self.risk).decode().split('\n')
-        splited = [l.split('\t') for l in decoded if l]
-
-        print(splited)
+        splited = [l.split('\t') for l in decoded if l if 'genotype' not in l]
 
         gl = tinyglbase.genelist(log=self.logger, format=True)
-        gl.load_list([{'chrom': l[0], 'rsid': l[1], 'genotype': l[2]} for l in splited])
+        gl.load_list([{'SNPS': l[1], 'patient_genotype': l[2]} for l in splited]) # Don't need chrom
         return gl
 
     def get_clinvar(self):
         decoded = gzip.decompress(self.clinvar).decode().split('\n')
         splited = [l.split('\t') for l in decoded if l]
-
-        print(splited)
 
         # TODO: This is not accurate;
 

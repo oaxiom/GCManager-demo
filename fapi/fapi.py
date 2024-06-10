@@ -305,9 +305,9 @@ async def add_new_patient(
     user=Depends(user_manager)) -> dict:
     '''
 
-    Add a new patient to the database.
+    # Add a new patient to the database.
 
-    # Example data:
+    ## Example data:
     patient_id: ANEWPATIENT12345
 
     sequence_data_id: SEQID2345
@@ -330,7 +330,7 @@ async def add_new_patient(
 
     ## If Doctorend:
 
-    GCManager-demo/demo_data/gcms/
+    GCManager-demo/demo_data/gcms/SRR10286930.data.gcm
 
     '''
     assert gcman.end_type in ('Doctorend', 'Backend'), f'end_type appears not to have been set'

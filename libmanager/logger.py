@@ -12,20 +12,6 @@ import os
 import logging
 
 def logger(log_path):
-    print(log_path)
-    '''
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format='%(levelname)-8s: %(message)s',
-        datefmt='%m-%d %H:%M',
-        filename=os.path.join(log_path, 'gcman.log'),
-        filemode='a'
-        )
-
-
-    return logging.getLogger('GCmanager')
-    '''
-
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
                         datefmt='%m-%d %H:%M:%S',
@@ -41,6 +27,14 @@ def logger(log_path):
     console.setFormatter(formatter)
     # add the handler to the root logger
     logging.getLogger('').addHandler(console)
+
+    return logging.getLogger('GCmanager')
+
+def basic_logger():
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                        datefmt='%m-%d %H:%M:%S',
+        )
 
     return logging.getLogger('GCmanager')
 

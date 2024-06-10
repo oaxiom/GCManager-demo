@@ -17,6 +17,7 @@ class reporter_risk:
         script_path:str,
         patient_id:str,
         patient_data:dict,
+        gcm_data,
         disease_code: str,
         diseaseEN:str,
         diseaseCN:str,
@@ -42,6 +43,8 @@ class reporter_risk:
 
         self.search_term = diseaseEN # Hardcoded to EN, for now, should use the disease_code
 
+        self.gcm_data = gcm_data
+
         # TODO: Enable the if statment when you finished testing:
         #if not os.path.exists(os.path.join(data_path, f'PID.{patient_id}', 'simple.css')):
         # make sure the css is copied over
@@ -53,14 +56,12 @@ class reporter_risk:
         **Purpose**
             Generate a report, return the HTML filename
         """
-        annotated_data = self.__annotate_risk_snps(os.path.join(self.data_path, f'{self.patient_id}.risk.txt'))
-
-        #print(annotated_data)
+        annotated_data = self.__annotate_risk_snps(self.gcm_data.get_risk())
 
         html_filename, html = self.__report_generator_Risk(annotated_data)
         return html_filename, html
 
-    def __annotate_risk_snps(self, filename):
+    def __annotate_risk_snps(self, risk_snps):
         '''
         **Purpose**
             This annotates the SNPs with the table;
@@ -74,8 +75,6 @@ class reporter_risk:
             I expect it would be a tiny minority, and very rare but needs to be fixed
             in future versions.
         '''
-        risk_snps = tinyglbase.genelist(filename, log=self.log, format={'force_tsv': True, 'SNPS': 1, 'patient_genotype': 2})
-
         riskdb = tinyglbase.glload(os.path.join(self.script_path, 'static_data', 'Risk', 'risk_table.glb' ))
 
         # Cannot do an overlap as risk allelles don't care about het/hom.

@@ -17,6 +17,7 @@ class reporter_pharma:
         script_path:str,
         patient_id:str,
         patient_data:dict,
+        gcm_data,
         disease_code: str,
         diseaseEN:str,
         diseaseCN:str,
@@ -42,6 +43,8 @@ class reporter_pharma:
 
         self.search_term = diseaseEN # Hardcoded to EN, for now, should use the disease_code
 
+        self.gcm_data = gcm_data
+
         # TODO: Enable the if statment when you finished testing:
         #if not os.path.exists(os.path.join(data_path, f'PID.{patient_id}', 'simple.css')):
         # make sure the css is copied over
@@ -53,12 +56,12 @@ class reporter_pharma:
         **Purpose**
             Generate a report, return the HTML filename
         """
-        annotated_data, pharmagkb = self.__annotate_pharmagkb_snps(os.path.join(self.data_path, f'{self.patient_id}.pharmagkb.txt'))
+        annotated_data, pharmagkb = self.__annotate_pharmagkb_snps(self.gcm_data.get_pharma())
         html_filename, html = self.__report_generator_pharmaGKB(annotated_data, pharmagkb)
 
         return html_filename, html
 
-    def __annotate_pharmagkb_snps(self, filename):
+    def __annotate_pharmagkb_snps(self, pharmagkb_snps):
         '''
         **Purpose**
             This annotates the SNPs with the table;
@@ -72,9 +75,6 @@ class reporter_pharma:
             I expect it would be a tiny minority, and very rare but needs to be fixed
             in future versions.
         '''
-        # output.write(f'{chrom}\t{rsid}\t{genotype}\n')
-        pharmagkb_snps = tinyglbase.genelist(filename, log=self.log, format={'force_tsv': True, 'SNP': 1, 'patient_genotype': 2})
-
         pharmagkb = tinyglbase.glload(os.path.join(self.script_path, 'static_data', 'PharmaGKB', 'pharma_table.glb' ))
         over = pharmagkb.map(genelist=pharmagkb_snps, key='SNP')
 
