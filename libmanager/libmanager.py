@@ -88,7 +88,7 @@ class libmanager:
 
         return True
 
-    def check_if_its_time_to_backup_db(self):
+    def check_if_its_time_to_backup_db(self, force:bool=False):
         '''
         **Purpose**
             see if enough time delta has elapsed to make it worth

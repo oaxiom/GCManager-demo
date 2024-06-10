@@ -31,10 +31,10 @@ log = gcman.log
 if not os.path.exists(home_path):
     if 'demo' in VERSION:
         gcman.initialize('admin123', demo=True)
-        log.warning('System DB not found. Initializing a blank production DB')
+        log.warning('System DB not found. Initializing a blank DEMO DB')
     else: # Production
         gcman.initialize('admin123')
-        log.warning('System DB not found. Initializing a blank DEMO DB')
+        log.warning('System DB not found. Initializing a blank production DB')
 
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form
 from fastapi.security import OAuth2PasswordRequestForm

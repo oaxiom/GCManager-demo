@@ -23,4 +23,4 @@ if not os.path.exists(home_path):
 man = libmanager.libmanager(home_path=home_path)
 man.set_end_type('Doctorend')
 
-man.check_if_its_time_to_backup_db()
+man.check_if_its_time_to_backup_db(force=True)
