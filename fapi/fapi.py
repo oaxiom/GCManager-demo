@@ -179,17 +179,6 @@ def logout(user=Depends(user_manager)):
 async def root():
     return {"message": f"GCManager {VERSION} ; end_type={gcman.end_type}"}
 
-@app.post('/set_end_type')
-def set_end_type(end_type: str) -> dict:
-    """
-
-    Must be one of 'Doctorend', 'Backend'
-
-    """
-    if end_type not in ('Doctorend', 'Backend'):
-        raise HTTPException(status_code=500, detail=f'{end_type} must be one of Doctorend or Backend')
-    return {'code': 200, 'data': gcman.set_end_type(end_type), 'msg': None}
-
 @app.get('/populate_user_list/')
 def populate_user_list(user=Depends(user_manager)) -> dict:
     """
