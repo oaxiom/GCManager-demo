@@ -2,7 +2,7 @@
 # Initialise the databases, pack, etc, designed to be run once to setup a clean installation.
 #
 # (c) 2024 Helixiome, all rights reserved.
-# (c) 2024
+# (c) 2024 中基科生物保留所有权利
 #
 # Author(s):
 # Andrew P. Hutchins,
@@ -20,6 +20,7 @@ from . import utils
 from . import logger
 
 def initialize_system(gcmanager, end_type, log, script_path, home_path, backup_path, demo):
+    #initialise doesn't care whic end we are. It builds all the possible dbs.
     #assert end_type in ('Doctorend', 'Backend'), f'{end_type} must be one of Doctorend or Backend'
 
     if not demo:
@@ -57,6 +58,7 @@ def initialize_system(gcmanager, end_type, log, script_path, home_path, backup_p
     # I can attach the full logger now:
     log.info(f'GCManager {VERSION} initialise')
     log.info('Copyright 2024 Helixiome, all rights reserved')
+    log.info('版权所有 2024 中基科生物保留所有权利')
     log.info("###### Initialising a clean GC")
 
     if demo:

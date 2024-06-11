@@ -1,8 +1,9 @@
 #
 # (c) 2024 Helixiome, all rights reserved.
-# (c) 2024
+# (c) 2024 中基科生物保留所有权利
 #
 # Author(s):
+# Andrew P. Hutchins
 #
 # TODO:
 # 1. Use decorators for the db
