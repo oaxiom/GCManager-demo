@@ -179,7 +179,7 @@ def logout(user=Depends(user_manager)):
 async def root():
     return {"message": f"GCManager {VERSION} ; end_type={gcman.end_type}"}
 
-@app.get('/set_end_type')
+@app.post('/set_end_type')
 def set_end_type(end_type: str) -> dict:
     """
 
