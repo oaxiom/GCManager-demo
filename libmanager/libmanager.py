@@ -42,7 +42,13 @@ from . import VERSION
 
 class libmanager:
     def __init__(self, home_path):
-        self.log = logger.logger(os.path.join(home_path, 'logs'))
+        # One problem here: If it is a totally blank run, GCMData*/logs wont exist till
+        # initialise is called...
+        if not os.path.exists(os.path.join(home_path, 'logs')):
+            self.log = logger.basic_logger()
+        else: # Loos fine call the ful logger;
+            self.log = logger.logger(os.path.join(home_path, 'logs'))
+
         self.end_type = None
         self.home_path = home_path
         self.script_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], '..')
@@ -169,7 +175,7 @@ class libmanager:
 
 
         '''
-        initialise.initialize_system(self, self.end_type, self.log, self.script_path, self.home_path, self.backup_path, demo=demo)
+        self.log = initialise.initialize_system(self, self.end_type, self.log, self.script_path, self.home_path, self.backup_path, demo=demo)
         self.users.add_user(uuid.uuid4(), 'admin', adminpass, is_admin=True)
         return True
 
