@@ -37,6 +37,7 @@ from . import utils
 from . import help_text
 from . import gcms
 from . import security
+from . import VERSION
 
 class libmanager:
     def __init__(self, home_path):
@@ -766,6 +767,18 @@ class libmanager:
         self.db_disease_codes.close()
 
         return html_file, html
+
+    def get_public_key(self) -> str:
+        '''
+        **Purpose**
+            Return the public key
+
+        '''
+        self.log.info('Asked for public crypto key')
+        if 'demo' in VERSION:
+            return security.get_public_key_stream(os.path.join(self.script_path, 'keys', 'demo.public_key.pem'))
+        # Production
+        return security.get_public_key_stream(os.path.join(self.script_path, 'keys', 'production.public_key.pem'))
 
     def get_help(self) -> str:
         """

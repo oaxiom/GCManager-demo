@@ -75,6 +75,11 @@ def load_public_key(key_filename):
         )
     return public_key
 
+def get_public_key_stream(key_filename):
+    with open(key_filename, "rb") as key_file:
+        public_key = key_file.read()
+    return public_key
+
 # Encrypting and decrypting
 def encrypt(message, public_key):
     enc = public_key.encrypt(
@@ -101,21 +106,6 @@ def decrypt(msg, private_key) -> str:
 if __name__ == '__main__':
     # A small tester:
 
-    import utils
-
-    guid = utils.guid()
-
-    print(hash_password(guid))
-    print(hash_password(guid))
-    print(hash_password(guid))
-    print(hash_password(guid))
-    print(verify_password(guid, '$2b$12$1p260nUYDrZVUZwBlVk56OWMFybDEGYL.TdGrtSs3ydgdoZxoiHLG'))
-
-    guid = utils.guid()
-
-    print(verify_password(guid, '$2b$12$jWea8xyiB5zcSZ4SQJ/OJ.NJOahsiO9ZIZ853A1NxkFnVXtdbclYO'))
-
-    '''
     public_key, private_key = gen_keys()
 
     store_keys(public_key, private_key, prefix='test')
@@ -128,5 +118,4 @@ if __name__ == '__main__':
     print(enc)
 
     print(decrypt(enc, private_key))
-    '''
 

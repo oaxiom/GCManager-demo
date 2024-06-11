@@ -62,7 +62,7 @@ async def check_security(seconds):
 async def lifespan(app: FastAPI):
     # Run at startup
     asyncio.create_task(check_backups(60*60*4)) # Once every four hours
-    asyncio.create_task(check_security(10)) # 60*60)) # Once an hour
+    asyncio.create_task(check_security(60*60)) # Once an hour
     yield
 
 app = FastAPI(lifespan=lifespan)
@@ -616,6 +616,14 @@ def get_system_backend_setting(key:str, user=Depends(user_manager)) -> dict:
     key = 'lang'
     '''
     return {'code': 200, 'data': gcman.api.get_system_backend_setting(key), 'msg': None}
+
+@app.get("/security/get_public_key")
+def get_public_key() -> dict:
+    '''
+    Returns the public crypto key
+    '''
+    return {'code': 200, 'data': gcman.get_public_key(), 'msg': None}
+
 
 @app.get('/settings/get_help_text')
 def get_help_text() -> dict:
