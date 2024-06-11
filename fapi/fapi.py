@@ -13,6 +13,7 @@ import aiofiles
 import base64
 from contextlib import asynccontextmanager
 import asyncio
+import binascii
 sys.path.append('../')
 
 from libmanager import support, VERSION, libmanager
@@ -282,7 +283,7 @@ def generate_report(mode: str, patient_id: str, selected_report:str, user=Depend
     '''
     if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found')
 
-    if not gcman.analsis_complete(patient_id): raise HTTPException(status_code=500, detail=f'Analysis is not complete for {patient_id}')
+    if not gcman.analysis_complete(patient_id): raise HTTPException(status_code=500, detail=f'Analysis is not complete for {patient_id}')
 
     html_filename, html = gcman.api.generate_report(user, mode, patient_id, selected_report)
 
@@ -642,7 +643,12 @@ def register_frontend(encrypted: str) -> dict:
     """
     if gcman._already_registered():
         return {'code': 500, 'data': False, 'msg': 'System already registered'}
-    return {'code': 200, 'data': gcman.register_frontend(encrypted), 'msg': None}
+    try:
+        ret = gcman.register_frontend(encrypted)
+    except binascii.Error:
+        raise HTTPException(status_code=500, detail='Validation encryption failure')
+
+    return {'code': 200, 'data': ret, 'msg': None}
 
 @app.post('/security/validate/')
 def validate(encrypted: str) -> dict:
