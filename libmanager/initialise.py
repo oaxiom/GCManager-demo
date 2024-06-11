@@ -20,7 +20,7 @@ from . import utils
 from . import logger
 
 def initialize_system(gcmanager, end_type, log, script_path, home_path, backup_path, demo):
-    assert end_type in ('Doctorend', 'Backend'), f'{end_type} must be one of Doctorend or Backend'
+    #assert end_type in ('Doctorend', 'Backend'), f'{end_type} must be one of Doctorend or Backend'
 
     if not demo:
         #log.info('Check for existing data directory')
