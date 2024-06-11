@@ -255,6 +255,15 @@ def export_cram(patient_id: str, user=Depends(user_manager)) -> dict:
     if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': gcman.api.export_cram(patient_id), 'msg': None}
 
+@app.get("/patient/export_gcm/{patient_id}")
+def export_gcm(patient_id: str, user=Depends(user_manager)) -> dict:
+    '''
+    Example value:
+    patient_id = '72210953309787'
+    '''
+    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
+    return {'code': 200, 'data': gcman.get_gcm_path(user, patient_id), 'msg': None}
+
 @app.get("/patient/generate_report/{mode}/{patient_id}")
 def generate_report(mode: str, patient_id: str, selected_report:str, user=Depends(user_manager)) -> dict:
     '''

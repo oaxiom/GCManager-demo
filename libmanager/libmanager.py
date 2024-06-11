@@ -470,6 +470,27 @@ class libmanager:
                 return '质量控制数据不详'
         return ''
 
+    def get_gcm_path(self, user: str, patient_id: str) -> str:
+        '''
+        **Purpose**
+            Return the VCF filename;
+        '''
+        assert self.patient_exists(patient_id), f'{patient_id} not found'
+
+        if not self._check_analysis_is_complete(patient_id):
+            self.log.info(f'Asked for {patient_id} VCF file, but GCM file is not available, analysis is incomplete')
+            return False
+
+        gcm_path = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.data.gcm')
+
+        if not os.path.exists(gcm_path):
+            self.log.error(f'Asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
+            return False
+
+        self.log.info(f'{user} asked to export GCM data file for {patient_id}')
+
+        return gcm_path
+
     def get_vcf_path(self, patient_id: str) -> str:
         '''
         **Purpose**
