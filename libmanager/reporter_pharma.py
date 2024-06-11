@@ -245,6 +245,8 @@ class reporter_pharma:
         # convert the summary_table to HTML:
         summary_table = self.__generate_summary_table(no_reccomendation, summary_table_dict)
 
+        html = ''
+
         # TODO: Fix hacky language support
         if self.lang == 'EN':
             html = html_pharma.html('EN', self.patient_id, self.disease_name, self.patient_data, rest_of_table, no_reccomendation_table, summary_table)

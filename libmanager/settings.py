@@ -8,6 +8,9 @@ class settings:
     def __get_cursor(self, end):
         assert end in ('Doctorend', 'Backend'), f'{end} not recognised'
 
+        db = None
+        db_cur = None
+
         if end == 'Doctorend':
             db = sqlite3.connect(os.path.join(self.home_path, "dbs/", "settings_doctor.db"))
             db_cur = db.cursor()

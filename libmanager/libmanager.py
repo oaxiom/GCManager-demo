@@ -109,6 +109,8 @@ class libmanager:
             last_backup_time = int(self.settings.get_doctor_setting('last_backup'))
         elif self.end_type == 'Backend':
             last_backup_time = int(self.settings.get_doctor_setting('last_backup'))
+        else:
+            return None
 
         if time.time() - last_backup_time > 86400:  # 24 hours = 86400; time.time() reports seconds;
             def backup_db(self, path_to_copy):
@@ -120,7 +122,7 @@ class libmanager:
 
             if self.end_type == 'Doctorend':
                 # Doctor end can be a full backup as space is reasonable
-                ret = Thread(target=backup_db, args=(self, self.home_path)).start()
+                Thread(target=backup_db, args=(self, self.home_path)).start()
             elif self.end_type == 'Backend':
                 # Back end the space is massive. We can only backup the DBs.
                 # TODO: Add selected data from data/
@@ -194,7 +196,7 @@ class libmanager:
         self.db_PID = sqlite3.connect(self.db_PID_path)
         self.db_PID_cursor = self.db_PID.cursor()
         self.db_PID_cursor.execute('SELECT PID, name, age, sex, analysis_done, institution_sending FROM patients WHERE PID=?', (patient_id,))
-        results = self.db_PID_cursor.fetchone()
+        row = self.db_PID_cursor.fetchone()
         self.db_PID.close()
 
         row = {
@@ -719,6 +721,9 @@ class libmanager:
 
         self.db_disease_codes = sqlite3.connect(self.db_disease_codes_path)
         self.db_disease_codes_cursor = self.db_disease_codes.cursor()
+
+        html = ''
+        html_file = ''
 
         # Select the proper report generator:
         if mode == 'Pharma':

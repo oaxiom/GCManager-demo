@@ -42,7 +42,7 @@ class analysis_progress:
 
         # simulate ongoing analysis;
         if self.current_stage[patient_id] == 10:
-            return self.stage
+            return self.patients[patient_id]
 
         now_timestamp = time.time()
 
@@ -62,7 +62,7 @@ class analysis_progress:
 
         return self.patients[patient_id]
 
-    def _report():
+    def _report(self, patient_id:str) -> dict:
         '''
 
         The real version can load a text file in the analysis directory.
