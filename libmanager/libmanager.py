@@ -21,6 +21,7 @@ import time
 import asyncio
 import tarfile
 import gzip
+import base64
 from threading import Thread
 
 from . import analysis_progress
@@ -779,6 +780,60 @@ class libmanager:
             return security.get_public_key_stream(os.path.join(self.script_path, 'keys', 'demo.public_key.pem'))
         # Production
         return security.get_public_key_stream(os.path.join(self.script_path, 'keys', 'production.public_key.pem'))
+
+    def _already_registered(self) -> bool:
+        if os.path.exists(os.path.join(self.data_path, '.mac')):
+            return True
+        return False
+
+    def register_frontend(self, encrypted:str) -> bool:
+        """
+
+        register front end for the first time
+
+        """
+        if self._already_registered():
+            return False # Tried to register twice.
+
+        encrypted = base64.b64decode(encrypted) # reverse of base64.b64encode(encrypted).decode("utf-8")
+
+        if 'demo' in VERSION:
+            private_key = security.load_private_key(os.path.join(self.script_path, 'keys', 'demo.private_key.pem'))
+        else: # Production
+            private_key = security.load_private_key(os.path.join(self.script_path, 'keys', 'production.private_key.pem'))
+
+        m = security.decrypt(encrypted, private_key)
+
+        with open(os.path.join(self.data_path, '.mac'), "w") as f:
+            f.write(security.hash_password(m))
+
+        self.log.info('Registered front end for the first time')
+
+        return True
+
+    def check_frontend_registration(self, encrypted:str) -> bool:
+        """
+        **Purpose**
+            Check the front end is registered
+
+        """
+        if not self._already_registered():
+            return False # Tried to register twice.
+
+        encrypted = base64.b64decode(encrypted) # reverse of base64.b64encode(encrypted).decode("utf-8")
+
+        if 'demo' in VERSION:
+            private_key = security.load_private_key(os.path.join(self.script_path, 'keys', 'demo.private_key.pem'))
+        else: # Production
+            private_key = security.load_private_key(os.path.join(self.script_path, 'keys', 'production.private_key.pem'))
+
+        m = security.decrypt(encrypted, private_key)
+        with open(os.path.join(self.data_path, '.mac'), "r") as f:
+            p = f.read()
+
+        self.log.info('Checked the front end registration')
+
+        return security.verify_password(m, p)
 
     def get_help(self) -> str:
         """

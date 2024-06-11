@@ -10,6 +10,7 @@ import sys, os, uuid, datetime
 import logging
 import shutil
 import aiofiles
+import base64
 from contextlib import asynccontextmanager
 import asyncio
 sys.path.append('../')
@@ -624,6 +625,47 @@ def get_public_key() -> dict:
     '''
     return {'code': 200, 'data': gcman.get_public_key(), 'msg': None}
 
+@app.post('/security/register_frontend/')
+def register_frontend(encrypted: str) -> dict:
+    """
+    ## Register the front end for the first time
+
+    Note that  encrypted should be a base64 encoded UTF-8 string of bytes:
+    base64.b64encode(encrypted).decode("utf-8")
+
+    ## For example, if the ID == 'ABCDEFGHIJKLMMO'
+
+    then encrypted is:
+
+    Om7nQI7LG/RG8LvyC5fjzCEM981LAjyhiSrqQUkQ0f4P7PnYsgEbX6uYriO3Hox0AFfsSPM/FoWO4PMSMZUWCxE2EDSMHMCfBlIHuLC08p0bxZKghZUehXKsJMi3kAqSv49Gk/KiG5fE2rAkHhRo797TRfLHiFDyzbxtnTKEZFLMFMOd35+1q7WJ92vZ5jlXNB/SAGJvgVPgRfaT4AaWOYPllol82NGxFaZsRaSmVsjyaHb26ZdCxqMhS1Uo6u1mPdYYL2vXIYpB0l/X4S30CGSpVcbifjTLfeWI1FlAF5WQQsnFenXWmDl6xCGjzlTVOdZ0bF35q3GK0mt66EgQaA==
+
+    """
+    if gcman._already_registered():
+        return {'code': 500, 'data': False, 'msg': 'System already registered'}
+    return {'code': 200, 'data': gcman.register_frontend(encrypted), 'msg': None}
+
+@app.post('/security/validate/')
+def validate(encrypted: str) -> dict:
+    '''
+    ## Validate the encrypted string
+
+    Note that  encrypted should be a base64 encoded UTF-8 string of bytes:
+    base64.b64encode(encrypted).decode("utf-8")
+
+    ## For example, if the ID == 'ABCDEFGHIJKLMMO'
+
+    then encrypted is:
+
+    Om7nQI7LG/RG8LvyC5fjzCEM981LAjyhiSrqQUkQ0f4P7PnYsgEbX6uYriO3Hox0AFfsSPM/FoWO4PMSMZUWCxE2EDSMHMCfBlIHuLC08p0bxZKghZUehXKsJMi3kAqSv49Gk/KiG5fE2rAkHhRo797TRfLHiFDyzbxtnTKEZFLMFMOd35+1q7WJ92vZ5jlXNB/SAGJvgVPgRfaT4AaWOYPllol82NGxFaZsRaSmVsjyaHb26ZdCxqMhS1Uo6u1mPdYYL2vXIYpB0l/X4S30CGSpVcbifjTLfeWI1FlAF5WQQsnFenXWmDl6xCGjzlTVOdZ0bF35q3GK0mt66EgQaA==
+
+
+    '''
+    try:
+        ret = gcman.check_frontend_registration(encrypted)
+    except ValueError:
+        raise HTTPException(status_code=500, detail='Validation encryption failure')
+
+    return {'code': 200, 'data': ret, 'msg': None}
 
 @app.get('/settings/get_help_text')
 def get_help_text() -> dict:

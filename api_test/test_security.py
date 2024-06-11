@@ -6,7 +6,7 @@
 # Andrew P. Hutchins,
 #
 
-import sys, os, shutil, uuid
+import sys, os, shutil, uuid, base64
 sys.path.append('../')
 from libmanager import libmanager, support, VERSION, security
 
@@ -31,26 +31,51 @@ def cmd_process(cmd):
             return
     print(res)
 
-os.remove(os.path.join(man.data_path, '.mac'))
+try:
+    os.remove(os.path.join(man.data_path, '.mac'))
+except FileNotFoundError:
+    pass
 
-cmd_process('man._already_registered()')
+def b64e(s):
+    return base64.b64encode(s).decode("utf-8")
+
+def b64d(s):
+    return base64.b64decode(s)
 
 # Simulate registering for the first time;
 ID = 'ABCDEFGHIJKLMMO'
+'''
+# First test GCManager works fine:
+cmd_process('man._already_registered()')
+pubk = security.load_public_key(os.path.join(man.script_path, 'keys', 'demo.public_key.pem')) # emulate by getting the key directly
+enc = security.encrypt(ID.encode(), pubk)
+cmd_process('man.register_frontend(enc)')
+cmd_process('man.check_frontend_registration(enc)')
+cmd_process('man._already_registered()')
+'''
+try:
+    os.remove(os.path.join(man.data_path, '.mac'))
+except FileNotFoundError:
+    pass
 
-# On the front end;
-#k = man.get_public_key() # front end will deal with this
+print()
+# Now emulate the same process, but using base64 encoded strings:
+cmd_process('man._already_registered()')
+
+# On front end, they send as base64 encoded string
 pubk = security.load_public_key(os.path.join(man.script_path, 'keys', 'demo.public_key.pem')) # emulate by getting the key directly
 enc = security.encrypt(ID.encode(), pubk)
 
-# Done in GCMan
+print('Original encoding')
+print(enc)
+print()
+
+print('b64 encoding')
+enc = b64e(enc)
+print(isinstance(enc, str))
+print(enc)
+print()
+
 cmd_process('man.register_frontend(enc)')
 
-# Now check on start up
-# Done on front end:
-k = security.load_public_key(os.path.join(man.script_path, 'keys', 'demo.public_key.pem'))
-enc = security.encrypt(ID.encode(), k)
-
-# Done in GCMan
 cmd_process('man.check_frontend_registration(enc)')
-cmd_process('man._already_registered()')
