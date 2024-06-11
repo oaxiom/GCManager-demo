@@ -44,7 +44,12 @@ def initialize_system(gcmanager, end_type, log, script_path, home_path, backup_p
     except FileExistsError:
         pass # Never overwrite the backup_path
 
+    # Rebuild the log system to save to a file
     file_handler = logging.FileHandler(os.path.join(home_path, 'logs', 'gcman.log'))
+    formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+                        datefmt='%m-%d %H:%M:%S',)
+    file_handler.setFormatter(formatter)
+
     log.addHandler(file_handler)
 
     #log = logger.logger(os.path.join(home_path, 'logs'))
@@ -71,10 +76,6 @@ def initialize_system(gcmanager, end_type, log, script_path, home_path, backup_p
     # set the machine id:
     with open(os.path.join(home_path, 'dbs', '.mchne'), "w") as f:
         v = security.hash_password(utils.guid())
-        print(security.hash_password(utils.guid()))
-        print(utils.guid())
-
-        print(security.verify_password(utils.guid(), v))
         f.write(v)
 
     if demo:
