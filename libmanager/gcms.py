@@ -11,10 +11,22 @@ from . import tinyglbase
 
 # TODO: Store the analysis date in the gcm file
 
+safe_builtins = {
+    }
+
+class RestrictedUnpickler(pickle.Unpickler):
+    def find_class(self, module, name):
+        # Only allow safe classes from builtins.
+        if module == "builtins" and name in safe_builtins:
+            return getattr(builtins, name)
+        # Forbid everything else.
+        raise pickle.UnpicklingError("global '%s.%s' is forbidden" %
+                                     (module, name))
+
 class gcm_file:
     def __init__(self, filename, logger):
         with open(filename, 'rb') as oh:
-            gcm = pickle.load(oh)
+            gcm = RestrictedUnpickler(oh).load()
 
         self.logger = logger
 
