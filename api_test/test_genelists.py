@@ -1,7 +1,9 @@
 
 import sys, os
 sys.path.append('../')
-from libmanager import tinyglbase
+from libmanager import tinyglbase, logger
+
+log = logger.basic_logger()
 
 # These functions are confirmed to have a use somewhere in GCmanager
 
@@ -20,8 +22,8 @@ blist = [
 
 
 # genelist()
-a = tinyglbase.genelist(format=True)
-b = tinyglbase.genelist(format=True)
+a = tinyglbase.genelist(format=True, log=log)
+b = tinyglbase.genelist(format=True, log=log)
 
 # load_list()
 a.load_list(alist)

@@ -61,7 +61,7 @@ def glload(
         newl = pickle.load(oh)
         oh.close()
     except pickle.UnpicklingError:
-        raise BadBinaryFileFormatError(filename)
+        raise AssertionError(f'File "{filename}" bad binary file format')
     except FileNotFoundError:
         raise AssertionError(f'File "{filename}" changed whilst trying to read it')
 
@@ -1210,27 +1210,6 @@ class Genelist(): # gets a special uppercase for some dodgy code in map() I don'
                     for r in results:
                         new_entry = qdeepcopy(r) # inherit from the right
                         new_entry.update(item) # Key items inherit from the right hand side
-
-                        # add a special case for expression objects:
-                        # test that both objects are actually expression objects with _conditions and ["conditions"]:
-                        # Funky syntax in case I ever derive a descendent of expression:
-                        if "conditions" in item and "conditions" in r: # See if conditions in both genelists:
-                            # The below line will escape the rare occasions a genelist is sent that has "conditions" but no _conditions
-                            if hasattr(self, '_conditions') and hasattr(gene_list, '_conditions'): # I think we can safely assume both are bonafide expression
-                                if self._conditions != gene_list._conditions: # DONT do this if the conditions are identical.
-                                    new_entry["conditions"] = item["conditions"] + r["conditions"]
-                                    newl._conditions = gene_list._conditions + self._conditions # will update multiple times, whoops.
-
-                                    # only look at the err keys if I am merging the conditions
-                                    if "err" in item and "err" in r:
-                                        if self._conditions != gene_list._conditions: # DONT do this if the conditions are identical.
-                                            new_entry["err"] = item["err"] + r["err"]
-                                    elif "err" in new_entry: # Only one list has an err key, output a warning and kill it.
-                                        if not __warning_assymetric_errs:
-                                            __warning_assymetric_errs = True
-                                            self.log.warning("map: Only one of the two lists has an 'err' key, deleting it")
-                                        del new_entry["err"]
-
                         newl.linearData.append(new_entry)
             elif logic == "notright":
                 newl.linearData.append(qdeepcopy(item)) # only inherit from the right, can't inheret from the left, as no matching map
