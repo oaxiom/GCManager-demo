@@ -28,3 +28,5 @@ man = libmanager.libmanager(home_path=home_path)
 man.set_end_type('Doctorend')
 
 man.initialize('admin123', demo=True)
+
+print('Security:', man.check_security())

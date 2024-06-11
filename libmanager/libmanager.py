@@ -36,6 +36,7 @@ from . import initialise
 from . import utils
 from . import help_text
 from . import gcms
+from . import security
 
 class libmanager:
     def __init__(self, home_path):
@@ -66,7 +67,7 @@ class libmanager:
 
         self.log.info(f"Started libmanager")
 
-    def _security_check(self):
+    def check_security(self):
         '''
         **Purpose**
             Perform sanity and purity check on the system.
@@ -85,6 +86,12 @@ class libmanager:
         # Copy protection method 1: Check this machine is correct
         with open(os.path.join(self.db_path, ".mchne"), "r") as f:
             mchne = f.read()
+
+        if not security.verify_password(utils.guid(), mchne):
+            self.log.info('Failed Machine security check')
+            return False
+
+        self.log.info('Security check passed')
 
         return True
 

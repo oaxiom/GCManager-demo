@@ -51,10 +51,18 @@ async def check_backups(seconds):
         gcman.check_if_its_time_to_backup_db()
         await asyncio.sleep(seconds)
 
+async def check_security(seconds):
+    while True:
+        ret = gcman.check_security()
+        if not ret:
+            raise HTTPException(status_code=400, detail="Failed security check (Machine)")
+        await asyncio.sleep(seconds)
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Run at startup
     asyncio.create_task(check_backups(60*60*4)) # Once every four hours
+    asyncio.create_task(check_security(10)) # 60*60)) # Once an hour
     yield
 
 app = FastAPI(lifespan=lifespan)

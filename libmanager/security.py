@@ -101,6 +101,21 @@ def decrypt(msg, private_key) -> str:
 if __name__ == '__main__':
     # A small tester:
 
+    import utils
+
+    guid = utils.guid()
+
+    print(hash_password(guid))
+    print(hash_password(guid))
+    print(hash_password(guid))
+    print(hash_password(guid))
+    print(verify_password(guid, '$2b$12$1p260nUYDrZVUZwBlVk56OWMFybDEGYL.TdGrtSs3ydgdoZxoiHLG'))
+
+    guid = utils.guid()
+
+    print(verify_password(guid, '$2b$12$jWea8xyiB5zcSZ4SQJ/OJ.NJOahsiO9ZIZ853A1NxkFnVXtdbclYO'))
+
+    '''
     public_key, private_key = gen_keys()
 
     store_keys(public_key, private_key, prefix='test')
@@ -113,4 +128,5 @@ if __name__ == '__main__':
     print(enc)
 
     print(decrypt(enc, private_key))
+    '''
 

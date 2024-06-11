@@ -15,20 +15,7 @@ sys.path.append('../')
 from . import VERSION
 from . import initialise_dbs
 from . import security
-
-def guid():
-    def run(cmd):
-        try:
-            return subprocess.run(cmd, shell=True, capture_output=True, check=True, encoding="utf-8").stdout.strip()
-        except:
-            return None
-
-    if sys.platform == 'darwin':
-        return run("ioreg -d2 -c IOPlatformExpertDevice | awk -F\\\" '/IOPlatformUUID/{print $(NF-1)}'",)
-    if sys.platform == 'win32' or sys.platform == 'cygwin' or sys.platform == 'msys':
-        return run('wmic csproduct get uuid').split('\n')[2].strip()
-    if sys.platform.startswith('linux'):
-        return run('cat /var/lib/dbus/machine-id') or run('cat /etc/machine-id')
+from . import utils
 
 def initialize_system(gcmanager, end_type, log, script_path, home_path, backup_path, demo):
     assert end_type in ('Doctorend', 'Backend'), f'{end_type} must be one of Doctorend or Backend'
@@ -68,13 +55,12 @@ def initialize_system(gcmanager, end_type, log, script_path, home_path, backup_p
     initialise_dbs.init_dbs(home_path, script_path, log)
 
     # set the machine id:
-    # Simple to bypass I guess.
-    with open(os.path.join(home_path, 'dbs', ".env"), "r") as f:
-        gcs = f.read()
-
     with open(os.path.join(home_path, 'dbs', '.mchne'), "w") as f:
-        # combine env and guid() then hash;
-        v = security.hash_password(f'{guid()}{gcs}')
+        v = security.hash_password(utils.guid())
+        print(security.hash_password(utils.guid()))
+        print(utils.guid())
+
+        print(security.verify_password(utils.guid(), v))
         f.write(v)
 
     if demo:

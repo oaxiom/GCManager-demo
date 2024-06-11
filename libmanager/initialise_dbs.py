@@ -129,7 +129,7 @@ def build_demo_data(man, home_path, script_path, log):
             'data_dir': os.path.join(home_path, 'data', 'PID.NA12878'),
             'aligned_reads': 2000000,
             'space_used': '12.0Gb',
-            'data_packed': 0,
+            'data_packed': datetime.datetime.now().isoformat(' '),
             'cram_available': 0,
             'vcf_available': 1,
             'institution_sending': 'HOSPITAL2',
