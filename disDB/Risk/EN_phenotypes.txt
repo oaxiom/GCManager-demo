@@ -2,7 +2,6 @@ Alzheimer disease
 Amyotrophic lateral sclerosis
 Arthritis
 Atherosclerosis
-Azoospermia
 Barrett's esophagus
 Cardiovascular disease
 Chronic obstructive pulmonary disease
@@ -11,7 +10,6 @@ Coronary artery disease
 Coronary atherosclerosis
 Crohn's disease
 Endometriosis
-Fatty liver disease
 Graves disease
 Hashimoto's thyroiditis
 Heart failure
@@ -32,13 +30,10 @@ Osteoporosis
 Otosclerosis
 Parkinson disease
 Polycystic ovary syndrome
-Pulmonary alveolar proteinosis
 Rheumatoid arthritis
 Sjogren syndrome
-Somnambulism
 Spondylolisthesis
 Spondylosis
-Stevens-johnson syndrome
 Stroke
 Systemic lupus erythematosus
 Thrombocytopenia
