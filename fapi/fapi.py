@@ -552,21 +552,6 @@ def clean_up_analysis(patient_id: str, user=Depends(user_manager)) -> dict:
     if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': gcman.api.clean_up_analysis(patient_id), 'msg': None}
 
-@app.get("/patient/convert_bam_to_cram/{patient_id}")
-def convert_bam_to_cram(patient_id: str, user=Depends(user_manager)) -> dict:
-    '''
-    Convert a BAM file to CRAM
-    转换所选BAM 成 CRAM
-
-    NOTE: Does nothing in DEMO
-    不删除演示版本中的患者
-
-    Example value:
-    patient_id = '72210953309787'
-    '''
-    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': gcman.convert_bam_to_cram(user, patient_id), 'msg': None}
-
 class Setting(BaseModel):
     key: str = Field(examples=["lang"])
     setting: str = Field(examples=["EN", "CN"])

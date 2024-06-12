@@ -537,30 +537,6 @@ class libmanager:
 
         return cram_path
 
-    def convert_bam_to_cram(self, user: str, patient_id: str) -> str:
-        """
-        Convert a BAM file to CRAM
-
-        """
-        assert self.patient_exists(patient_id), f'{patient_id} not found'
-
-        # Touch the CRAM file.
-        cram_filename = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.sorted.dedupe.recal.cram')
-
-        # touch the CRAM
-        with open(cram_filename, 'w') as oh:
-            oh.write('Dummy CRAM file')
-
-        self.db_PID = sqlite3.connect(self.db_PID_path)
-        self.db_PID_cursor = self.db_PID.cursor()
-        self.db_PID_cursor.execute('UPDATE patient_data SET cram_available=1 WHERE PID=:patient_id', (patient_id,))
-        self.db_PID.commit()
-        self.db_PID.close()
-
-        self.log.info(f'{user} converted a BAM to CRAM for {patient_id}')
-
-        return cram_filename
-
     def patient_exists(self, patient_id:str):
         '''
         **Purpose**
