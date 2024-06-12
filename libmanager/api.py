@@ -159,19 +159,6 @@ class api:
 
         return True
 
-    def export_QC_statistics(self, patient_id: str) -> str:
-        """
-        Returns the analysis summary as a string.
-        Used on the Analysis summary page.
-
-        以字符串形式返回分析摘要。
-        用于分析摘要页面。 "分析总结".
-
-        """
-        # Backend: Analysis summary
-
-        return "QC data summary will go here.\nAs a long text.\nIt's relatively short."
-
     def populate_patient_data_list(self) -> str:
         """
 

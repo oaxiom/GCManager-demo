@@ -49,7 +49,6 @@ cmd_process('man.api.populate_patient_list("andrew")')
 cmd_process("man.patient_exists('ANEWPATIENT')")
 cmd_process("man.patient_exists('72210953309787')")
 
-# This will only work once. If run a second time it will produce a 'patient already exists' error:
 #try:
 cmd_process('man.api.add_new_patient("tester", "ANEWPATIENT", "SEQIDNEW", "张XX", "女", 50, "INSTITUTION")')
 #except Exception:
@@ -60,6 +59,7 @@ cmd_process('man.api.populate_patient_list("andrew")')
 #  ('NA12878', '王XX', 22, '男', '1'),
 #  ('PATIENTNOTSTARTED', '李XX', 24, '女', '0')
 #  ('ANEWPATIENT', '张XX', 50, '女', '0')]
+cmd_process('man.delete_patient("tester", "ANEWPATIENT")')
 
 cmd_process("man.analysis_complete('ANEWPATIENT')")
 cmd_process("man.analysis_complete('72210953309787')")
@@ -73,6 +73,8 @@ cmd_process("man.api.export_vcf('NA12878')")
 #cmd_process("man.api.export_vcf('PATIENTNOTSTARTED')")
 # Expected Result:
 # False
+
+cmd_process("man.get_gcm_path('tester', 'NA12878')")
 
 cmd_process("man.api.export_cram('72210953309787')")
 # Expected Result: (This returns the absolute PATH)
