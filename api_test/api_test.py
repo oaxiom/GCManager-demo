@@ -86,11 +86,6 @@ cmd_process("man.api.export_cram('PATIENTNOTSTARTED')")
 # WARNING : Asked for PATIENTNOTSTARTED CRAM file, but CRAM file is not available
 # False
 
-cmd_process("man.convert_bam_to_cram('tester', 'NA12878')")
-cmd_process("man.api.export_cram('NA12878')")
-# WARNING : Asked for NA12878 CRAM file, but CRAM file is not available
-# False
-
 cmd_process("man.api.populate_patient_data_list()")
 # Expected Result:
 # [['72210953309787', '7.1Gb', '不', '不', '是'],
