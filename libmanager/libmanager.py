@@ -478,13 +478,13 @@ class libmanager:
         assert self.patient_exists(patient_id), f'{patient_id} not found'
 
         if not self._check_analysis_is_complete(patient_id):
-            self.log.info(f'Asked for {patient_id} VCF file, but GCM file is not available, analysis is incomplete')
+            self.log.info(f'Asked for {patient_id} GCM file, but GCM file is not available, analysis is incomplete')
             return False
 
         gcm_path = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.data.gcm')
 
         if not os.path.exists(gcm_path):
-            self.log.error(f'Asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
+            self.log.error(f'Asked for {patient_id} GCM file, but GCM file does not exist (although it was reported to exist)')
             return False
 
         self.log.info(f'{user} asked to export GCM data file for {patient_id}')
