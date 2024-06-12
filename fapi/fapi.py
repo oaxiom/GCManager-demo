@@ -659,3 +659,7 @@ def validate(encrypted: str) -> dict:
 @app.get('/settings/get_help_text')
 def get_help_text() -> dict:
     return {'code': 200, 'data': gcman.get_help(), 'msg': None}
+
+@app.get('/settings/get_version')
+def get_help_text() -> dict:
+    return {'code': 200, 'data': gcman.get_version(), 'msg': None}

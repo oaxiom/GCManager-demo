@@ -38,7 +38,7 @@ from . import utils
 from . import help_text
 from . import gcms
 from . import security
-from . import VERSION
+from . import VERSION, DBVERSION
 
 class libmanager:
     def __init__(self, home_path):
@@ -844,3 +844,6 @@ class libmanager:
             Return the help text.
         """
         return help_text.get_help(self.end_type, 'CN')
+
+    def get_version(self) -> str:
+        return f'System Version: {VERSION}. Database Version: {DBVERSION}'
