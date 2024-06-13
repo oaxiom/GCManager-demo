@@ -6,6 +6,7 @@
 # Andrew P. Hutchins
 #
 
+import utils
 from . import html_data
 
 def html(
@@ -51,30 +52,29 @@ def html_en(
 </head>
 <body>
 
-<h1>Pharmacogenomics report</h1>
+<div style="display: flex; justify-content: space-between;">
+  <img src='{html_data.helix_logo}'>
+  <h1 style="text-align: right;">Pharmacogenomics report</h1>
+</div>
 
 <h1>Patient data</h2>
 
-<table style="width:50%">
+<table style="width:70%">
     <tr>
-        <td>Patient ID</td>
-        <td>{patient_id}</td>
+        <td style="background-color: var(--tab-grey-bg);">Patient ID</td>
+        <td colspan="5">{patient_id}</td>
     </tr>
     <tr>
-        <td>Name</td>
-        <td>{patient_data['name']}</td>
-    </tr>
-    <tr>
-        <td>Age</td>
+        <td style="background-color: var(--tab-grey-bg);">Name</td>
+        <td>{utils.obfuscate_name(patient_data['name'])}</td>
+        <td style="background-color: var(--tab-grey-bg);">Age</td>
         <td>{patient_data['age']}</td>
-    </tr>
-    <tr>
-        <td>Sex</td>
+        <td style="background-color: var(--tab-grey-bg);">Sex</td>
         <td>{patient_data['sex']}</td>
     </tr>
     <tr>
-        <td>Search Term</td>
-        <td>{search_term}</td>
+        <td style="background-color: var(--tab-grey-bg);">Search Term<</td>
+        <td colspan="5">{search_term}</td>
     </tr>
 </table>
 
@@ -172,7 +172,7 @@ def html_cn(
     </tr>
     <tr>
         <td style="background-color: var(--tab-grey-bg);">姓名</td>
-        <td>{patient_data['name']}</td>
+        <td>{utils.obfuscate_name(patient_data['name'])}</td>
         <td style="background-color: var(--tab-grey-bg);">年龄</td>
         <td>{patient_data['age']}</td>
         <td style="background-color: var(--tab-grey-bg);">性别</td>
@@ -191,7 +191,7 @@ def html_cn(
 {search_term}。该表列出了药物、患者的特定SNP和基因型，以及
 为治疗提供了潜在的指导。此处的数据构成了最佳建议和
 在解释这些结果时应小心谨慎。
-并应遵循最佳临床实践。</p>
+并应遵循临床实践。</p>
 
 <h2>汇总表</h2>
 
