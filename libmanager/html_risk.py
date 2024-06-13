@@ -6,6 +6,8 @@
 # Andrew P. Hutchins
 #
 
+import math
+from . import utils
 from . import html_data
 
 def html(
@@ -14,19 +16,17 @@ def html(
     search_term:str,
     patient_data:dict,
     main_table:str,
-    judgement:str,
-    factor:str,
+    OR_score:float,
     ):
 
     # TODO: check patient data
     # TODO: check valid language
     if lang == 'EN':
-        1/0 # Not implemented;
-        #if not no_reccomendation_table: no_reccomendation_table = '<td>None</td><td>None</td>'
-        #return html_en(patient_id=patient_id, search_term=search_term, patient_data=patient_data, main_table=main_table)
+        return html_en(patient_id=patient_id, search_term=search_term, patient_data=patient_data, main_table=main_table,
+            OR_score=OR_score)
     elif lang == 'CN':
         return html_cn(patient_id=patient_id, search_term=search_term, patient_data=patient_data, main_table=main_table,
-            judgement=judgement, factor=factor)
+            OR_score=OR_score)
 
 
 def html_en(
@@ -34,12 +34,83 @@ def html_en(
     search_term:str,
     patient_data:dict,
     main_table:str,
-    judgement:str,
-    factor:str,
+    OR_score:float,
     ):
     # English version;
 
     html = f'''
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+{html_data.style_sheet}
+{html_data.rounded_rects_styles}
+</style>
+</head>
+<body>
+
+<div style="display: flex; justify-content: space-between;">
+  <img src='{html_data.helix_logo}'>
+  <h1 style="text-align: right;">Disease Risk</h1>
+</div>
+
+<hr>
+
+<h1>Patient data</h2>
+
+<table style="width:70%">
+    <tr>
+        <td style="background-color: var(--tab-grey-bg);">Patient ID</td>
+        <td colspan="5">{patient_id}</td>
+    </tr>
+    <tr>
+        <td style="background-color: var(--tab-grey-bg);">Name</td>
+        <td>{utils.obfuscate_name(patient_data['name'])}</td>
+        <td style="background-color: var(--tab-grey-bg);">Age</td>
+        <td>{patient_data['age']}</td>
+        <td style="background-color: var(--tab-grey-bg);">Sex</td>
+        <td>{patient_data['sex']}</td>
+    </tr>
+    <tr>
+        <td style="background-color: var(--tab-grey-bg);">Search Term</td>
+        <td colspan="5">{search_term}</td>
+    </tr>
+</table>
+
+<hr>
+
+<h2>Guidance</h2>
+
+<table style="width:40%">
+    <tr>
+        <td style="background-color: var(--tab-grey-bg);">Odds Ratio score</td>
+        <td colspan="5">{OR_score:.2f}</td>
+    </tr>
+</table>
+
+<p>The Odds Ratio (OR) indicates the level of risk compared to the average population. Scores greater
+than 1 indicate increased risk, whilst scores less than 1 indicate a decreased risk. The magnitude of the number
+represents the probability of the incidence of {search_term}, where the average incidence rate equals 1.
+
+<hr>
+
+<h3>Risk Alleles</h3>
+<table style="width:100%">
+    <tr>
+        <th style="background-color: var(--tab-grey-bg);">SNP-genotype</th>
+        <th style="background-color: var(--tab-grey-bg);">Gene</th>
+        <th style="background-color: var(--tab-grey-bg);">Effect</th>
+        <th style="background-color: var(--tab-grey-bg);" colspan="2">Risk Classification</th>
+    </tr>
+    {main_table}
+</table>
+
+<hr>
+
+<h6 style='text-align:right'>Helixiome</h6>
+
+</body>
 
 
     '''
@@ -52,8 +123,7 @@ def html_cn(
     search_term:str,
     patient_data:dict,
     main_table:str,
-    judgement:str,
-    factor:str,
+    OR_score:float,
     ):
     # Chinese version;
 
@@ -71,7 +141,7 @@ def html_cn(
 
 <div style="display: flex; justify-content: space-between;">
   <img src='{html_data.helix_logo}'>
-  <h1 style="text-align: right;">药物基因组学报告</h1>
+  <h1 style="text-align: right;">疾病风险提示</h1>
 </div>
 
 <hr>
@@ -85,17 +155,34 @@ def html_cn(
     </tr>
     <tr>
         <td style="background-color: var(--tab-grey-bg);">姓名</td>
-        <td>{patient_data['name']}</td>
+        <td>{utils.obfuscate_name(patient_data['name'])}</td>
         <td style="background-color: var(--tab-grey-bg);">年龄</td>
         <td>{patient_data['age']}</td>
         <td style="background-color: var(--tab-grey-bg);">性别</td>
         <td>{patient_data['sex']}</td>
     </tr>
     <tr>
-        <td style="background-color: var(--tab-grey-bg);">疾病</td>
+        <td style="background-color: var(--tab-grey-bg);">搜索术语</td>
         <td colspan="5">{search_term}</td>
     </tr>
 </table>
+
+<hr>
+
+<h2>指导</h2>
+
+<table style="width:40%">
+    <tr>
+        <td style="background-color: var(--tab-grey-bg);">Odds Ratio score</td>
+        <td colspan="5">{OR_score:.2f}</td>
+    </tr>
+</table>
+
+<p>The Odds Ratio (OR) indicates the level of risk compared to the average population. Scores greater
+than 1 indicate increased risk, whilst scores less than 1 indicate a decreased risk. The magnitude of the number
+represents the probability of the incidence of {search_term}, where the average incidence rate equals 1.
+
+<hr>
 
 <h3>精准用药汇总</h3>
 <table style="width:100%">

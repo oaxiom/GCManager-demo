@@ -39,6 +39,9 @@ def cmd_process(cmd):
 
 ########
 # Testing;
+
+man.settings.set_doctor_setting('lang', 'CN')
+
 risk_reps = man.api.populate_report_generator('Risk', 'CN')
 print(risk_reps)
 for rep in risk_reps:

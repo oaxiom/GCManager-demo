@@ -7,6 +7,9 @@
 #
 
 import os, sys, shutil
+import math
+import statistics
+from functools import reduce
 from . import tinyglbase
 from . import support
 from . import html_risk
@@ -106,30 +109,18 @@ class reporter_risk:
         This is a very simple, high, low, med.
 
         '''
+        # TODO: Fix the BETA's
 
-        # I just sum all the + and -, then add/subtract.
+        scores = [math.log((f+1e-6)) for f in risky['OR'] if isinstance(f, float)]
+        if len(scores) == 0:
+            return 1.0 # No scores.
 
-        plus = 0
-        mins = 0
-        for r in risky:
-            if '-' in r: mins += len(r)
-            if '+' in r: plus += len(r)
+        # average;
+        OR_score = statistics.mean(scores)
 
-        print(plus, mins)
+        OR_score = math.exp(OR_score)
 
-        factor = plus - mins
-
-        #print(risky)
-
-        print(factor)
-
-        judgement = '不会增加风险' # No increased risk
-        if factor > 50:
-            judgement = '中度增加风险'  # Moderate increased risk
-        if factor > 200:
-            judgement = '高风险' # High risk
-
-        return judgement, factor
+        return OR_score
 
     def __report_generator_Risk(self, annotated_data):
 
@@ -139,17 +130,25 @@ class reporter_risk:
         if not search_results:
             raise AssertionError(f'No associations matching {self.search_term} were found')
 
-        print(search_results)
-
         search_results.sort('sorter')
         search_results.reverse()
         rest_of_table = []
 
-        judgement, fact = self.__calc_overall_risk_factor(search_results['risky'])
+        OR_score = self.__calc_overall_risk_factor(search_results)
+
+        if self.lang == 'EN':
+            protective = 'Protective'
+            deleterious = 'Deleterious'
+        else:
+            protective = '防护的'
+            deleterious = '有害的'
 
         if not search_results:
             # TODO: Check this works: Deal with no advice situations;
-            rest_of_table = '<tr><td>无相关建议</td><td></td><td></td><td></td></tr>'
+            if self.lang == 'EN':
+                rest_of_table = '<tr><td>No relevant genotypes</td><td></td><td></td><td></td></tr>'
+            else:
+                rest_of_table = '<tr><td>无相关建议</td><td></td><td></td><td></td></tr>'
         else:
             for gene in search_results:
                 # Get the bar width from OR or BETA
@@ -159,10 +158,10 @@ class reporter_risk:
                 wid = 20 * len(gene['risky'])
                 # TODO: Make this more sensitive
                 if '-' in gene['risky']:
-                    effect = '防护的' # Protective
+                    effect = protective # Protective
                     minus_row = f'<div class="rounded-rectangleL" style="width:{wid}px; background-color: #00aa00; float:right;"></div>'
                 elif '+' in gene['risky']:
-                    effect = '有害的' # Deleterious
+                    effect = deleterious# Deleterious
                     plus_row = f'<div class="rounded-rectangleR" style="width:{wid}px; background-color: #0000aa;"></div>'
 
                 tab_row = f'''
@@ -181,9 +180,9 @@ class reporter_risk:
 
         # TODO: Fix hacky language support
         if self.lang == 'EN':
-            html = html_risk.html('EN', self.patient_id, self.disease_name, self.patient_data, rest_of_table, judgement, fact)
+            html = html_risk.html('EN', self.patient_id, self.disease_name, self.patient_data, rest_of_table, OR_score)
         elif self.lang == 'CN':
-            html = html_risk.html('CN', self.patient_id, self.disease_name, self.patient_data, rest_of_table, judgement, fact)
+            html = html_risk.html('CN', self.patient_id, self.disease_name, self.patient_data, rest_of_table, OR_score)
         else:
             html = 'No lang' # Error!
 
