@@ -6,7 +6,7 @@
 # Andrew P. Hutchins
 #
 
-import utils
+from . import utils
 from . import html_data
 
 def html(
