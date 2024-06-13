@@ -696,7 +696,7 @@ class libmanager:
             return {1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100, 7: 100, 8: 100, 9: 100}
         return self.analysis_progress.report(patient_id)
 
-    def generate_report(self, user:str, mode:str, patient_id:str, search_term:str, lang='CN'):
+    def generate_report(self, user:str, mode:str, patient_id:str, search_term:str):
         '''
         **Purpose**
             Generate a HTML report for patient_id and search_term
@@ -744,7 +744,7 @@ class libmanager:
 
             self.log.info(f'Search found: {disease_code}, {descEN}, {descCN}')
 
-            rep = reporter_pharma.reporter_pharma(self.data_path, self.script_path, patient_id, patient_data, gcm, disease_code, descEN, descCN, self.log, lang)
+            rep = reporter_pharma.reporter_pharma(self.data_path, self.script_path, patient_id, patient_data, gcm, disease_code, descEN, descCN, self.log, self.lang)
             #html_file = rep.generate_html_file()
             html_file, html = rep.generate()
 
@@ -764,7 +764,7 @@ class libmanager:
 
             self.log.info(f'Search found: {disease_code}, {descEN}, {descCN}')
 
-            rep = reporter_risk.reporter_risk(self.data_path, self.script_path, patient_id, patient_data, gcm, disease_code, descEN, descCN, self.log, lang)
+            rep = reporter_risk.reporter_risk(self.data_path, self.script_path, patient_id, patient_data, gcm, disease_code, descEN, descCN, self.log, self.lang)
             #html_file = rep.generate_html_file()
             html_file, html = rep.generate()
 

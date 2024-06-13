@@ -195,17 +195,29 @@ class reporter_pharma:
         no_reccomendation_table = []
 
         if not search_results:
-            rest_of_table = '<tr><td>无</td><td>无</td><td>无</td><td>无</td><td>无</td><td>无</td></tr>'
+            if self.lang == 'EN':
+                rest_of_table = '<tr><td>None</td><td>None</td><td>None</td><td>None</td><td>None</td><td>None</td></tr>'
+            else:
+                rest_of_table = '<tr><td>无</td><td>无</td><td>无</td><td>无</td><td>无</td><td>无</td></tr>'
         else:
             if search_results:
                 for drug in search_results:
+                    if self.lang == 'EN':
+                        SNP_impact = drug['SNP_impact_EN']
+                        description = drug['description_EN']
+                        no_rec = 'No guidance'
+                    else:
+                        SNP_impact = drug['SNP_impact_CN']
+                        description = drug['description_CN']
+                        no_rec = '常规用药'
+
                     tab_row = f'''
                 <tr>
                     <td>{drug['drug_CN']}<br>({drug['drug_EN']})</td>
                     <td>{drug['gene']}</td>
                     <td>{drug['SNP']}-{drug['patient_genotype']}</td>
-                    <td>{drug['SNP_impact_CN']}</td>
-                    <td>{drug['description_CN']}</td>
+                    <td>{SNP_impact}</td>
+                    <td>{description}</td>
                     <td>{drug['evidence_level']}</td>
                 </tr>
                         '''
@@ -217,7 +229,7 @@ class reporter_pharma:
                     tab_row_no_rec = f'''
                         <tr>
                         <td>{drug['drug_CN']} ({drug['drug_EN']})</td>
-                        <td>常规用药</td>
+                        <td>{no_rec}</td>
                         </tr>
                     '''
                     no_reccomendation_table.append(tab_row_no_rec.replace('  ', ''))
