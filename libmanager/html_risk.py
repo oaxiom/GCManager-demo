@@ -178,9 +178,7 @@ def html_cn(
     </tr>
 </table>
 
-<p>The Odds Ratio (OR) indicates the level of risk compared to the average population. Scores greater
-than 1 indicate increased risk, whilst scores less than 1 indicate a decreased risk. The magnitude of the number
-represents the probability of the incidence of {search_term}, where the average incidence rate equals 1.
+<p>OR值分数提示了与人群相比较的患病风险。分数大于1表示与人群相比，患病风险升高；分数小于1表示与人群相比，患病风险降低。OR值分数数值大小提示了患病风险的高低。
 
 <hr>
 
