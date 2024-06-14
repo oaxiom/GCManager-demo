@@ -122,3 +122,7 @@ cmd_process("man.settings.set_backend_setting('lang', 'EN')")
 cmd_process("man.settings.get_backend_setting('lang')")
 # Expected Result
 # 'EN'
+
+cmd_process("man.settings.set_backend_setting('lang', 'CN')")
+cmd_process("man.get_help()")
+cmd_process("man.get_version()")

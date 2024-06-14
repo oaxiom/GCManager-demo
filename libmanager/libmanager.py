@@ -200,7 +200,6 @@ class libmanager:
             get patient data for one row.
 
         '''
-        # TODO: Enable fuzzy searching?
         self.db_PID = sqlite3.connect(self.db_PID_path)
         self.db_PID_cursor = self.db_PID.cursor()
         self.db_PID_cursor.execute('SELECT PID, name, age, sex, analysis_done, institution_sending FROM patients WHERE PID=?', (patient_id,))
@@ -227,7 +226,6 @@ class libmanager:
             PatientID | analysis_complete
 
         '''
-        # TODO: Enable fuzzy searching?
         self.db_PID = sqlite3.connect(self.db_PID_path)
         self.db_PID_cursor = self.db_PID.cursor()
         self.db_PID_cursor.execute('SELECT PID, name, age, sex, analysis_done, institution_sending FROM patients')
@@ -843,7 +841,11 @@ class libmanager:
         **Purpose**
             Return the help text.
         """
-        return help_text.get_help(self.end_type, 'CN')
+        self.lang = self.settings.get_lang(self.end_type)
+        return help_text.get_help(self.end_type, self.lang)
 
     def get_version(self) -> str:
-        return f'System Version: {VERSION}. Database Version: {DBVERSION}'
+        self.lang = self.settings.get_lang(self.end_type) # Pull language out of system settings DB
+        if self.lang == 'EN':
+            return f'System Version: {VERSION}. Database Version: {DBVERSION}'
+        return f'系统版本: {VERSION}. 数据库版本: {DBVERSION}'
