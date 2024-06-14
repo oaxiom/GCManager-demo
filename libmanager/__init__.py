@@ -1,3 +1,3 @@
 
-VERSION = '0.6.0 demo'
+VERSION = '1.0.0 demo'
 DBVERSION = '2024-05-05'
