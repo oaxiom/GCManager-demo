@@ -41,9 +41,9 @@ def cmd_process(cmd):
 
 ########
 # Testing;
-#cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
-#cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Hypertension')")
-#cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', '心房颤动')")
+cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
+cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Hypertension')")
+cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', '心房颤动')")
 '''
 cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
 cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Hypertension')")
@@ -51,8 +51,6 @@ cmd_process("man.generate_report('andrew', 'Pharma', 'NA12878', '肌萎缩性脊
 '''
 # Risk:
 
-cmd_process("man.generate_report('andrew', 'Risk', '72210953309787', 'Fatty liver disease')")
-cmd_process("man.generate_report('andrew', 'Risk', 'NA12878', 'Fatty liver disease')")
 '''
 cmd_process("man.generate_report('andrew', 'Risk', '72210953309787', 'Amyotrophic lateral sclerosis')")
 cmd_process("man.generate_report('andrew', 'Risk', '72210953309787', 'Rheumatoid arthritis')")
