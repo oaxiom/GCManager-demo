@@ -285,15 +285,18 @@ class libmanager:
 
         return clean_results
 
-    def get_pharma_table(self, lang='CN') -> list:
+    def get_pharma_table(self) -> list:
         '''
         **Purpose**
             Return the Pharma DB table;
         '''
+        
+        self.lang = self.settings.get_lang(self.end_type)
+        
         self.db_disease_codes = sqlite3.connect(self.db_disease_codes_path)
         self.db_disease_codes_cursor = self.db_disease_codes.cursor()
 
-        if lang == 'CN':
+        if self.lang == 'CN':
             self.db_disease_codes_cursor.execute('SELECT desc_cn FROM diseasecodes_pharma')
         else:
             self.db_disease_codes_cursor.execute('SELECT desc_en FROM diseasecodes_pharma')
@@ -306,15 +309,17 @@ class libmanager:
 
         return results
 
-    def get_risk_table(self, lang='CN') -> list:
+    def get_risk_table(self) -> list:
         '''
         **Purpose**
             Return all of the Risk DB table;
         '''
+        self.lang = self.settings.get_lang(self.end_type)
+        
         self.db_disease_codes = sqlite3.connect(self.db_disease_codes_path)
         self.db_disease_codes_cursor = self.db_disease_codes.cursor()
 
-        if lang == 'CN':
+        if self.lang == 'CN':
             self.db_disease_codes_cursor.execute('SELECT desc_cn FROM diseasecodes_risk')
         else:
             self.db_disease_codes_cursor.execute('SELECT desc_en FROM diseasecodes_risk')

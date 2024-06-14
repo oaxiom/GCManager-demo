@@ -229,7 +229,7 @@ def populate_report_generator(mode: str, lang: str, user=Depends(user_manager)) 
     lang = CN
 
     """
-    return {'code': 200, 'data': gcman.api.populate_report_generator(mode, lang), 'msg': None}
+    return {'code': 200, 'data': gcman.api.populate_report_generator(mode), 'msg': None}
 
 @app.get("/patient/export_vcf/{patient_id:str}")
 def export_vcf(patient_id: str, user=Depends(user_manager)) -> dict:

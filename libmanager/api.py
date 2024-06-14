@@ -32,7 +32,7 @@ class api:
         table = self.manager.get_patients_table(user)
         return table
 
-    def populate_report_generator(self, mode:str, lang:str) -> list:
+    def populate_report_generator(self, mode:str) -> list:
         """
 
         Returns the list of diseases or conditions for three modes:
@@ -50,13 +50,13 @@ class api:
         assert mode in support.valid_genome_dbs, f'{mode} not found'
 
         if mode == 'Pharma': # 疾病与用药指导
-            return self.manager.get_pharma_table(lang)
+            return self.manager.get_pharma_table()
 
         elif mode == 'ClinVAR': # 临床表型相关变异
             return [] # An empty list is a valid return
 
         elif mode == 'Risk': # 疾病风险提示
-            return self.manager.get_risk_table(lang)
+            return self.manager.get_risk_table()
 
     def export_vcf(self, patient_id: str) -> str:
         """
