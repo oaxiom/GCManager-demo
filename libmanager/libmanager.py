@@ -848,4 +848,4 @@ class libmanager:
         self.lang = self.settings.get_lang(self.end_type) # Pull language out of system settings DB
         if self.lang == 'EN':
             return f'System Version: {VERSION}. Database Version: {DBVERSION}'
-        return f'系统版本: {VERSION}. 数据库版本: {DBVERSION}'
+        return f'当前分析系统版本: {VERSION}. 数据库版本: {DBVERSION}'
