@@ -42,7 +42,7 @@ def cmd_process(cmd):
 
 man.settings.set_doctor_setting('lang', 'CN')
 
-pharma_reps = man.api.populate_report_generator('Pharma', 'EN')
+pharma_reps = man.api.populate_report_generator('Pharma')
 print(pharma_reps)
 for rep in pharma_reps:
     cmd_process(f"man.generate_report('andrew', 'Pharma', '72210953309787', '{rep}')")

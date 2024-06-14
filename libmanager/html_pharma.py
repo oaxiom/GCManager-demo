@@ -80,6 +80,8 @@ def html_en(
     </tr>
 </table>
 
+<hr>
+
 <h2>Guidance</h2>
 
 <p>The following report was generated based upon sequencing data for the whole genome.
@@ -88,6 +90,8 @@ The report provides guidance on the efficacy of particular drugs, used in the tr
 provides potential guidance for treatment. The data here constitutes the best advice and
 care should be taken in interpreting these results.
 and best clinical practice should be followed.</p>
+
+<hr>
 
 <h2>Summary Table</h2>
 
@@ -105,6 +109,8 @@ and best clinical practice should be followed.</p>
     {summary_table}
 </table>
 
+<hr>
+
 <h3>Data</h3>
 <table>
     <tr>
@@ -117,6 +123,8 @@ and best clinical practice should be followed.</p>
     </tr>
     {main_table}
 </table>
+
+<hr>
 
 <h3>No guidance available, treat normally</h3>
 <table style="width:60%">
@@ -192,6 +200,8 @@ def html_cn(
     </tr>
 </table>
 
+<hr>
+
 <h2>声明</h2>
 
 <p>以下报告是根据整个基因组的测序数据生成的。
@@ -217,6 +227,8 @@ def html_cn(
     {summary_table}
 </table>
 
+<hr>
+
 <h3>精准用药汇总</h3>
 <table>
     <tr>
@@ -230,6 +242,8 @@ def html_cn(
     {main_table}
 </table>
 
+<hr>
+
 <h3>常规用药</h3>
 <table style="width:60%">
     <tr>
@@ -242,7 +256,6 @@ def html_cn(
 <h2>注意</h2>
 
 <p>注意：证据水平等级，表明支持遗传药物的证据 协会，1A、1B级表示得到很好的支持，2A、2B级可能得到支持，3级有一些支持关联的证据。</p>
-
 
 <hr>
 
