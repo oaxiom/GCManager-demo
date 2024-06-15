@@ -162,7 +162,7 @@ class reporter_risk:
                     minus_row = f'<div class="rounded-rectangleL" style="width:{wid}px; background-color: #00aa00; float:right;"></div>'
                 elif '+' in gene['risky']:
                     effect = deleterious# Deleterious
-                    plus_row = f'<div class="rounded-rectangleR" style="width:{wid}px; background-color: #0000aa;"></div>'
+                    plus_row = f'<div class="rounded-rectangleR" style="width:{wid}px; background-color: #aa0000;"></div>'
 
                 tab_row = f'''
                     <tr>
