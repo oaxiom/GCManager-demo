@@ -173,7 +173,7 @@ def html_cn(
 
 <table style="width:40%">
     <tr>
-        <td style="background-color: var(--tab-grey-bg);">Odds Ratio score</td>
+        <td style="background-color: var(--tab-grey-bg);">OR值分 (Odds Ratio)</td>
         <td colspan="5">{OR_score:.2f}</td>
     </tr>
 </table>
