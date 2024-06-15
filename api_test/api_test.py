@@ -61,6 +61,9 @@ cmd_process('man.api.populate_patient_list("andrew")')
 #  ('ANEWPATIENT', '张XX', 50, '女', '0')]
 cmd_process('man.delete_patient("tester", "ANEWPATIENT")')
 
+cmd_process('man.api.add_new_patient("tester", "$f$$FffffFF_/<><>()", "SEQIDNEW", "张XX", "女", 50, "INSTITUTION")')
+cmd_process('man.delete_patient("tester", "_f__FffffFF________")')
+
 cmd_process("man.analysis_complete('ANEWPATIENT')")
 cmd_process("man.analysis_complete('72210953309787')")
 

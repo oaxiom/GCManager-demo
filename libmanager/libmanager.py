@@ -22,6 +22,8 @@ import asyncio
 import tarfile
 import gzip
 import base64
+import unicodedata
+import re
 from threading import Thread
 
 from . import analysis_progress
@@ -606,6 +608,14 @@ class libmanager:
             Setup new patient id, with a seq id, and validate all initial QC.
 
         '''
+        def safe_filename(s):
+            # Normalize string to remove accents and special characters
+            s = unicodedata.normalize('NFKD', s).encode('ASCII', 'ignore').decode()
+            # Replace unsafe characters with underscores
+            return re.sub(r'[^a-zA-Z0-9_.-]', '_', s)
+        
+        patient_id = safe_filename(patient_id)
+        
         # Should be impossible, but just in case
         if self.patient_exists(patient_id):
             raise Exception(f'{user} is trying to add {patient_id} but it already exists')
