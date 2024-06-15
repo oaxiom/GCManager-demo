@@ -182,7 +182,7 @@ def html_cn(
 
 <hr>
 
-<h3>精准用药汇总</h3>
+<h3>风险基因分析</h3>
 <table style="width:100%">
     <tr>
         <th style="background-color: var(--tab-grey-bg);">单核苷酸多态性 (SNP) 基因型</th>
