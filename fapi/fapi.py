@@ -432,7 +432,7 @@ async def add_new_patient(
 
     # TODO: Check that the FASTQ data makes sense?
 
-    self.update_patient_space_used(patient_id)
+    gcman.update_patient_space_used(patient_id)
 
     return {'code': 200, 'data': gcman.patient_exists(patient_id), 'msg': None}
 
