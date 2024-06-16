@@ -22,6 +22,8 @@ help_text_cn = f'''
   <h1 style="text-align: right;">Help</h1>
 </div>
 
+<hr>
+
 NA
 
 <hr>
