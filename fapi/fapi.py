@@ -607,7 +607,7 @@ def set_system_backend_setting(setting: Setting, user=Depends(user_manager)) -> 
     return {'code': 200, 'data': gcman.api.get_system_backend_setting(setting.key), 'msg': None}
 
 @app.get("/settings/get_doctorend/{key}")
-def get_system_doctor_setting(key:str, user=Depends(user_manager)) -> dict:
+def get_system_doctor_setting(key:str) -> dict:
     '''
     Get a system setting on: 系统设置 page
     Example value:
@@ -616,7 +616,7 @@ def get_system_doctor_setting(key:str, user=Depends(user_manager)) -> dict:
     return {'code': 200, 'data': gcman.api.get_system_doctor_setting(key), 'msg': None}
 
 @app.get("/settings/get_backend/{key}")
-def get_system_backend_setting(key:str, user=Depends(user_manager)) -> dict:
+def get_system_backend_setting(key:str) -> dict:
     '''
     Get a system setting on: 系统设置 page
     Example value:
