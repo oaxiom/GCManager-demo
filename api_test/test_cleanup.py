@@ -41,4 +41,6 @@ def cmd_process(cmd):
 ########
 # Testing;
 
-cmd_process("man.api.clean_free_space('tester')")
+cmd_process("man.api.clean_up_analysis('tester', 'NA12878')")
+
+#cmd_process("man.api.clean_free_space('tester')")

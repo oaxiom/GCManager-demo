@@ -40,16 +40,6 @@ def cmd_process(cmd):
 ########
 # Testing;
 
-cmd_process("man.api.export_vcf('72210953309787')")
-# Expected Result: (This returns the absolute PATH)
-# ../GC_demo/data/PID.72210953309787/72210953309787.recalibrated_snps_recalibrated_indels.vcf.gz
-cmd_process("man.api.export_vcf('NA12878')")
-# Expected Result: (This returns the absolute PATH)
-# ../GC_demo/data/PID.NA12878/NA12878.recalibrated_snps_recalibrated_indels.vcf.gz
-#cmd_process("man.api.export_vcf('PATIENTNOTSTARTED')")
-# Expected Result:
-# False
-
 cmd_process("man.settings.set_doctor_setting('lang', 'EN')")
 cmd_process("man.settings.get_doctor_setting('lang')")
 # Expected Result

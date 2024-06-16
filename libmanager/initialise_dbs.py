@@ -140,6 +140,9 @@ def build_demo_data(man, home_path, script_path, log):
     db_PID.commit()
     db_PID.close()
 
+    man.update_patient_space_used('NA12878')
+    man.update_patient_space_used('72210953309787')
+
     # Add some users;
     man.users.add_user(uuid.uuid4(), 'anormaluser', 'user123', is_admin=False)
 

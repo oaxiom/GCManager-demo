@@ -63,7 +63,7 @@ async def check_security(seconds):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Run at startup
-    asyncio.create_task(check_backups(60*60*4)) # Once every four hours
+    asyncio.create_task(check_backups(15)) # 60*60*2)) # Once every two hours, this does not force a DB backup, it only checks if one is required
     asyncio.create_task(check_security(60*60)) # Once an hour
     yield
 
@@ -428,8 +428,11 @@ async def add_new_patient(
         gcman.get_qc(user, patient_id) # See if we can load the gcm
         # Set the analysis as complete;
         gcman.set_analysis_complete(patient_id)
+    
 
     # TODO: Check that the FASTQ data makes sense?
+
+    self.update_patient_space_used(patient_id)
 
     return {'code': 200, 'data': gcman.patient_exists(patient_id), 'msg': None}
 
@@ -540,14 +543,15 @@ def clean_free_space(user=Depends(user_manager)) -> dict:
 
     The button: 清除缓存 on the 患者数据管理 page.
 
-    NOTE: Does nothing in DEMO
-    不删除演示版本中的患者
-
     """
     if not gcman.users.is_admin(user):
         raise InvalidCredentialsException
 
     return {'code': 200, 'data': gcman.api.clean_free_space(), 'msg': None}
+
+@app.get("/system/get_disk_space/")
+def get_disk_space() -> dict:
+    return {'code': 200, 'data': gcman.api.get_disk_space(), 'msg': None}
 
 @app.get("/patient/clean_up_analysis/{patient_id}")
 def clean_up_analysis(patient_id: str, user=Depends(user_manager)) -> dict:

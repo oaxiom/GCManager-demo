@@ -85,9 +85,6 @@ cmd_process("man.api.export_cram('72210953309787')")
 cmd_process("man.api.export_cram('NA12878')")
 # WARNING : Asked for NA12878 CRAM file, but CRAM file is not available
 # False
-cmd_process("man.api.export_cram('PATIENTNOTSTARTED')")
-# WARNING : Asked for PATIENTNOTSTARTED CRAM file, but CRAM file is not available
-# False
 
 cmd_process("man.api.populate_patient_data_list()")
 # Expected Result:
@@ -95,7 +92,7 @@ cmd_process("man.api.populate_patient_data_list()")
 #  ['NA12878', '12.0Gb', '不', '不', '是'],
 #  ['PATIENTNOTSTARTED', '0Gb', '不', '不', '不']]
 
-cmd_process("man.api.clean_free_space()")
+cmd_process("man.api.clean_free_space('tester')")
 # Expected Result:
 # True
 

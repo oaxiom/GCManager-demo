@@ -6,26 +6,21 @@
 # Andrew P. Hutchins
 #
 
-'''
-
-Questions:
-TODO: Deprecate
-
-'''
-
 import os
+import glob
 from . import support
 
 class api:
     """
     **Purpose**
-        Exposed API for web front end
+        These days its more of an adjunct to libmanager
+        
+        TODO: Deprecate the simple generic functions
 
     """
     def __init__(self, manager, log, home_path):
         self.log = log
         self.home_path = home_path
-        self.log.info("Started API")
         self.manager = manager
 
     def populate_patient_list(self, user:str) -> list:
@@ -44,8 +39,6 @@ class api:
         返回三种模式的疾病或状况列表：
 
         """
-        # Backend: Report Generator
-        # Doctorend: Report Generator
 
         assert mode in support.valid_genome_dbs, f'{mode} not found'
 
@@ -66,11 +59,6 @@ class api:
         The 保存所选VCF button.
 
         """
-        ###### Used in:
-        # Backend: Report Generator
-        # Backend: Patient Data Manager
-        # Doctorend: Report Generator
-
         return self.manager.get_vcf_path(patient_id)
 
     def export_cram(self, patient_id: str) -> str:
@@ -81,10 +69,6 @@ class api:
         The 保存所选CRAM button.
 
         """
-        ###### Used in:
-        # Backend: Report Generator
-        # Backend: Patient Data Manager
-
         return self.manager.get_cram_path(patient_id)
 
     def generate_report(self, user: str, mode: str, patient_id: str, selected_report:str) -> str:
@@ -102,10 +86,6 @@ class api:
         'Risk': 疾病风险提示
 
         '''
-        ###### Used in:
-        # Backend: Report Generator
-        # Doctorend: Report Generator
-
         assert mode in support.valid_genome_dbs, f'{mode} was not in {support.valid_genome_dbs.keys()}'
 
         return self.manager.generate_report(user, mode, patient_id, selected_report)
@@ -126,8 +106,6 @@ class api:
         添加新患者数据
 
         """
-        # Backend: Add New Patient
-
         # Sanitise input;
         age = int(age)
 
@@ -145,20 +123,6 @@ class api:
 
         return ret, sequence_data_path
 
-    def delete_patient(self, patient_id:str) -> bool:
-        """
-        Delete patient.
-        删除患者
-
-        NOTE: Does nothing in DEMO
-        不删除演示版本中的患者
-
-        """
-        # Backend: Analysis State
-        # Backend: Patient Data Manager
-
-        return True
-
     def populate_patient_data_list(self) -> str:
         """
 
@@ -175,61 +139,62 @@ class api:
         在页面上使用：患者数据管理
         """
 
-        # Backend: Patient Data Manager
         table = self.manager.get_patients_data_table()
         return table
 
-    def clean_free_space(self) -> bool:
+    def clean_free_space(self, user:str) -> bool:
         """
 
         The button: 清除缓存 on the 患者数据管理 page.
 
-        NOTE: Does nothing in DEMO
-        不删除演示版本中的患者
-
         """
-        # Backend: Patient Data Manager
-
-        # TODO: Clean up miscellaneous non-patient data files
+        for f in glob.glob(os.path.join(self.manager.data_path, '*/*.out')):
+            os.remove(f)
+            self.log.info(f'{user} deleted file {f}')
+        
+        # Remove backups > 10
+        
+        for idx, f in enumerate(reversed(sorted(list(glob.glob(os.path.join(self.manager.backup_path, f'db_backup-{self.manager.end_type}-*.tar.gz')))))):
+            if idx > 10:
+                os.remove(f)
+                self.log.info(f'{user} deleted old backup {f}')
+        
+        self.log.info(f'{user} cleaned up all free space using clean cache')
+        
         return True
 
-    def clean_up_analysis(self, patient_id: str) -> str:
-        # Backend: Patient Data Manager
-
-        # Does nothing in the DEMO version.
-        # TODO: Clean up patient data files
+    def clean_up_analysis(self, user:str, patient_id: str) -> str:
+        # This is more for the backend;
+        
+        for f in glob.glob(os.path.join(self.manager.data_path, f'PID.{patient_id}', '*.out')):
+            os.remove(f)
+            self.log.info(f'{user} deleted file {f}')
+        
+        # Clean up unneeded BAMS; VCFs; etc.
+        
+        
         return 'Clean up is complete'
 
     def set_system_doctor_setting(self, key:str, value:str) -> bool:
         """
         Set a system setting on: 系统设置 page
         """
-
-        # Doctorend: System Settings
-
         return self.manager.settings.set_doctor_setting(key, value)
 
     def get_system_doctor_setting(self, key:str) -> str:
         """
         Get a system setting on: 系统设置 page
         """
-        # Doctorend: System Settings
-
         return self.manager.settings.get_doctor_setting(key)
 
     def set_system_backend_setting(self, key:str, value:str) -> bool:
         """
         Set a system setting on: 系统设置 page
         """
-
-        # Doctorend: System Settings
-
         return self.manager.settings.set_backend_setting(key, value)
 
     def get_system_backend_setting(self, key:str) -> str:
         """
         Get a system setting on: 系统设置 page
         """
-        # Doctorend: System Settings
-
         return self.manager.settings.get_backend_setting(key)

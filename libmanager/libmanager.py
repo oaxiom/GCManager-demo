@@ -118,11 +118,11 @@ class libmanager:
         if self.end_type == 'Doctorend':
             last_backup_time = int(self.settings.get_doctor_setting('last_backup'))
         elif self.end_type == 'Backend':
-            last_backup_time = int(self.settings.get_doctor_setting('last_backup'))
+            last_backup_time = int(self.settings.get_backend_setting('last_backup'))
         else:
             return None
 
-        if time.time() - last_backup_time > 86400:  # 24 hours = 86400; time.time() reports seconds;
+        if time.time() - last_backup_time > 20: #86400:  # 24 hours = 86400; time.time() reports seconds;
             def backup_db(self, path_to_copy):
                 shutil.make_archive(os.path.join(self.backup_path, f'db_backup-{self.end_type}-{int(time.time())}'),
                     'gztar',
@@ -133,6 +133,7 @@ class libmanager:
             if self.end_type == 'Doctorend':
                 # Doctor end can be a full backup as space is reasonable
                 Thread(target=backup_db, args=(self, self.home_path)).start()
+                
             elif self.end_type == 'Backend':
                 # Back end the space is massive. We can only backup the DBs.
                 # TODO: Add selected data from data/
@@ -149,10 +150,10 @@ class libmanager:
             if self.end_type == 'Doctorend':
                 self.settings.set_doctor_setting('last_backup', int(time.time()))
             elif self.end_type == 'Backend':
-                self.settings.set_doctor_setting('last_backup', int(time.time()))
+                self.settings.set_backend_setting('last_backup', int(time.time()))
 
         else:
-            self.log.info("Checked if it's time to do a DB backup")
+            self.log.info("Checked if it's time to do a DB backup, not needed")
 
         return None
 
@@ -267,14 +268,9 @@ class libmanager:
             # For hundreds of patients?
             patient_path = os.path.join(self.data_path, f'PID.{row[0]}')
 
-            k, m, g = utils.measure_disk_space(patient_path)
-
-            # update the db;
-            self.db_PID_cursor.execute('UPDATE patient_data SET space_used = ? WHERE PID = ?', (g, row[0]))
-
             row = {
                 'patient_id': row[0],
-                'space_used': m,
+                'space_used': row[1],
                 'data_packed': self._sql_yesno(row[2]),
                 'cram_available': self._sql_yesno(row[3]),
                 'vcf_available': self._sql_yesno(row[4]),
@@ -282,10 +278,23 @@ class libmanager:
 
             clean_results.append(row)
 
-        self.db_PID.commit()
         self.db_PID.close()
 
         return clean_results
+
+    def update_patient_space_used(self, patient_id:str) -> bool:
+        self.db_PID = sqlite3.connect(self.db_PID_path)
+        self.db_PID_cursor = self.db_PID.cursor()
+        patient_path = os.path.join(self.data_path, f'PID.{patient_id}')
+        k, m, g = utils.measure_disk_space(patient_path)
+        # update the db;
+        if self.end_type == 'Doctorend':
+            self.db_PID_cursor.execute('UPDATE patient_data SET space_used = ? WHERE PID = ?', (m, patient_id))
+        else:
+            self.db_PID_cursor.execute('UPDATE patient_data SET space_used = ? WHERE PID = ?', (g, patient_id))
+        self.db_PID.commit()
+        self.db_PID.close()
+        return True
 
     def get_pharma_table(self) -> list:
         '''
@@ -593,6 +602,9 @@ class libmanager:
         self.db_PID_cursor.execute('UPDATE patients SET analysis_done=?, date_analysis=? WHERE PID=?', (1, datetime.datetime.now().isoformat(' '), patient_id, ))
         self.db_PID.commit()
         self.db_PID.close()
+        
+        self.update_patient_space_used(patient_id)
+        return True
 
     def add_patient(self,
         user: str,
