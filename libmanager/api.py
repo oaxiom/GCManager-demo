@@ -152,6 +152,11 @@ class api:
         for f in glob.glob(os.path.join(self.manager.data_path, '*/*.out')):
             os.remove(f)
             self.log.info(f'{user} deleted file {f}')
+
+        # Clean cached reports
+        for f in glob.glob(os.path.join(self.manager.data_path, '*/*.html')):
+            os.remove(f)
+            self.log.info(f'{user} deleted file {f}') 
         
         # Remove backups > 10
         
