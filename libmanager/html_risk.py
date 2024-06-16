@@ -107,7 +107,6 @@ represents the probability of the incidence of {search_term}, where the average 
 </table>
 
 <hr>
-
 <h6 style='text-align:right'>Helixiome</h6>
 
 </body>
