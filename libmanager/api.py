@@ -8,6 +8,7 @@
 
 import os
 import glob
+import shutil
 from . import support
 
 class api:
@@ -173,7 +174,12 @@ class api:
         # Clean up unneeded BAMS; VCFs; etc.
         
         
-        return 'Clean up is complete'
+        return True
+
+    def get_disk_space(self) -> int:
+        disk_space = shutil.disk_usage(self.manager.data_path)
+        percent = int((disk_space.used / disk_space.total) * 100) 
+        return percent # percentage
 
     def set_system_doctor_setting(self, key:str, value:str) -> bool:
         """

@@ -63,7 +63,7 @@ async def check_security(seconds):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Run at startup
-    asyncio.create_task(check_backups(15)) # 60*60*2)) # Once every two hours, this does not force a DB backup, it only checks if one is required
+    asyncio.create_task(check_backups(60*60*2)) # Once every two hours, this does not force a DB backup, it only checks if one is required
     asyncio.create_task(check_security(60*60)) # Once an hour
     yield
 
@@ -547,7 +547,7 @@ def clean_free_space(user=Depends(user_manager)) -> dict:
     if not gcman.users.is_admin(user):
         raise InvalidCredentialsException
 
-    return {'code': 200, 'data': gcman.api.clean_free_space(), 'msg': None}
+    return {'code': 200, 'data': gcman.api.clean_free_space(user), 'msg': None}
 
 @app.get("/system/get_disk_space/")
 def get_disk_space() -> dict:
@@ -563,7 +563,7 @@ def clean_up_analysis(patient_id: str, user=Depends(user_manager)) -> dict:
         raise InvalidCredentialsException
 
     if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': gcman.api.clean_up_analysis(patient_id), 'msg': None}
+    return {'code': 200, 'data': gcman.api.clean_up_analysis(user, patient_id), 'msg': 'Cleanup completed'}
 
 class Setting(BaseModel):
     key: str = Field(examples=["lang"])
