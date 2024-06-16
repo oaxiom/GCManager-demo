@@ -363,25 +363,25 @@ async def add_new_patient(
 
     # Check it doesn't exist already
     if gcman.patient_exists(patient_id):
-        raise HTTPException(status_code=500, detail=f'{patient_id} already exists!')
+        raise HTTPException(status_code=512, detail=f'{patient_id} already exists!')
 
     # Validate the files for the specific end;
     if gcman.end_type == 'Doctorend':
         # expects one file only, consisting of the intermediate file;
         if len(files) != 1:
-            raise HTTPException(status_code=500, detail='Doctor end expects only one file')
+            raise HTTPException(status_code=513, detail='Doctor end expects only one file')
         # expects the file to have the extension .int.gz
         if not files[0].filename.lower().endswith('.gcm'):
-            raise HTTPException(status_code=500, detail='Doctor end expects a file in the format .gcm')
+            raise HTTPException(status_code=514, detail='Doctor end expects a file in the format .gcm')
 
     else: # Backend
         # expected an even number of files.
         if len(files) % 2 != 0:
-            raise HTTPException(status_code=500, detail='Analysis end expects an even number of files, one for each read pair')
+            raise HTTPException(status_code=515, detail='Analysis end expects an even number of files, one for each read pair')
         # Expects all files to have the form _1.fastq.gz
         for f in files:
             if not f.filename.lower().endswith('.fastq.gz'):
-                raise HTTPException(status_code=500, detail=f'File format appears incorrect, ".fastq.gz" is missing in file {f}')
+                raise HTTPException(status_code=516, detail=f'File format appears incorrect, ".fastq.gz" is missing in file {f}')
 
     # copy the data to a temporary location
     temp_data_path = os.path.join(gcman.home_path, 'tmp')
@@ -399,7 +399,7 @@ async def add_new_patient(
             f = await run_in_threadpool(open, os.path.join(temp_data_path, destination_filename), 'wb')
             await run_in_threadpool(shutil.copyfileobj, file.file, f)
         except Exception:
-            return {'code': 500, 'data': None, 'msg': 'Upload file error'}
+            return {'code': 517, 'data': None, 'msg': 'Upload file error'}
         finally:
             if 'f' in locals(): await run_in_threadpool(f.close)
             await file.close()
