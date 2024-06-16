@@ -57,7 +57,6 @@ body {
   font-size: 0.9rem;
   line-height: 1.4;
 
-  margin: 1%;
 }
 body > * {
   grid-column: 2;
