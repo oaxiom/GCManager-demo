@@ -119,16 +119,17 @@ def login(data: OAuth2PasswordRequestForm = Depends()) -> dict:
 
 @app.post('/auth/change')
 def change_password(username:str, newpassword:str, user=Depends(user_manager)) -> dict:
-
     # old password must be valid because of the logintoken. Ask again anyway?
 
     if not get_user(username):
+        # The user trying to change password does not exist.
+        # Something strange is going on. Panic and log out
         raise InvalidCredentialsException
 
     ret = gcman.users.change_password(username, newpassword)
 
     if not ret: # probably old == new
-        raise InvalidCredentialsException
+        raise HTTPException(status_code=400, detail="Password is the same as old password")
 
     # TODO: invalidate the old token
     # Logout needs to go on the server side if using JWTs.
@@ -142,12 +143,15 @@ def delete(username_to_delete:str, requesting_user=Depends(user_manager)) -> dic
     Delete a User
     """
     # Check we are admin, and valid
-    if not get_user(requesting_user): # I guess impossible to get here, but check anyway
-        raise InvalidCredentialsException
     if not gcman.users.is_admin(requesting_user):
         raise HTTPException(status_code=400, detail="The current user is not an admin")
-
-    # Check user_to_delete is valid and not and andin
+    
+    if not get_user(requesting_user): # I guess impossible to get here, but check anyway
+        # If a non-admin user gets here, something strange going on. 
+        # Invalid Credentials will also force log off that user.
+        raise InvalidCredentialsException
+        
+    # Check user_to_delete is valid and not and admin
     if not get_user(username_to_delete):
         raise HTTPException(status_code=400, detail=f"A user with this username {username_to_delete} does not exist")
     if gcman.users.is_admin(username_to_delete):
@@ -446,6 +450,8 @@ def delete_patient(patient_id:str, user=Depends(user_manager)) -> dict:
 
     """
     if not gcman.users.is_admin(user):
+        # This is not a safe operation, non-admin users shouldn't even be able to get
+        # here. In which case, issue Invalid Credentials and force logoff.
         raise InvalidCredentialsException
 
     if not gcman.patient_exists(patient_id):
@@ -472,7 +478,8 @@ def report_current_anaylsis_stage(patient_id:str, user=Depends(user_manager)) ->
     Example value:
     patient_id = '72210953309787'
     '''
-    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
+    if not gcman.patient_exists(patient_id): 
+        raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': gcman.report_current_analysis_stage(patient_id), 'msg': None}
 
 @app.get("/patient/export_QC_statistics/{patient_id}")
@@ -544,8 +551,9 @@ def clean_free_space(user=Depends(user_manager)) -> dict:
     The button: 清除缓存 on the 患者数据管理 page.
 
     """
-    if not gcman.users.is_admin(user):
-        raise InvalidCredentialsException
+    # This is a safe operation and non-admins can do.
+    #if not gcman.users.is_admin(user):
+    #    raise InvalidCredentialsException
 
     return {'code': 200, 'data': gcman.api.clean_free_space(user), 'msg': None}
 
@@ -559,8 +567,9 @@ def clean_up_analysis(patient_id: str, user=Depends(user_manager)) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
-    if not gcman.users.is_admin(user):
-        raise InvalidCredentialsException
+    # This is a safe operation and non-admins can do.
+    #if not gcman.users.is_admin(user):
+    #    raise InvalidCredentialsException
 
     if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': gcman.api.clean_up_analysis(user, patient_id), 'msg': 'Cleanup completed'}
