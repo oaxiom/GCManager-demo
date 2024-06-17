@@ -133,7 +133,7 @@ class libmanager:
             if self.end_type == 'Doctorend':
                 # Doctor end can be a full backup as space is reasonable
                 Thread(target=backup_db, args=(self, self.home_path)).start()
-                
+
             elif self.end_type == 'Backend':
                 # Back end the space is massive. We can only backup the DBs.
                 # TODO: Add selected data from data/
@@ -301,9 +301,9 @@ class libmanager:
         **Purpose**
             Return the Pharma DB table;
         '''
-        
+
         self.lang = self.settings.get_lang(self.end_type)
-        
+
         self.db_disease_codes = sqlite3.connect(self.db_disease_codes_path)
         self.db_disease_codes_cursor = self.db_disease_codes.cursor()
 
@@ -326,7 +326,7 @@ class libmanager:
             Return all of the Risk DB table;
         '''
         self.lang = self.settings.get_lang(self.end_type)
-        
+
         self.db_disease_codes = sqlite3.connect(self.db_disease_codes_path)
         self.db_disease_codes_cursor = self.db_disease_codes.cursor()
 
@@ -602,7 +602,7 @@ class libmanager:
         self.db_PID_cursor.execute('UPDATE patients SET analysis_done=?, date_analysis=? WHERE PID=?', (1, datetime.datetime.now().isoformat(' '), patient_id, ))
         self.db_PID.commit()
         self.db_PID.close()
-        
+
         self.update_patient_space_used(patient_id)
         return True
 
@@ -625,9 +625,9 @@ class libmanager:
             s = unicodedata.normalize('NFKD', s).encode('ASCII', 'ignore').decode()
             # Replace unsafe characters with underscores
             return re.sub(r'[^a-zA-Z0-9_.-]', '_', s)
-        
+
         patient_id = safe_filename(patient_id)
-        
+
         # Should be impossible, but just in case
         if self.patient_exists(patient_id):
             raise Exception(f'{user} is trying to add {patient_id} but it already exists')
@@ -876,3 +876,10 @@ class libmanager:
         if self.lang == 'EN':
             return f'System Version: {VERSION}. Database Version: {DBVERSION}'
         return f'当前分析系统版本: {VERSION}. 数据库版本: {DBVERSION}'
+
+    def process_analysis_queue(self) -> bool:
+        """
+        **Process the current analysis queue.**
+
+        """
+        pass

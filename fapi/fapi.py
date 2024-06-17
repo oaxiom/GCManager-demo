@@ -60,11 +60,17 @@ async def check_security(seconds):
             raise HTTPException(status_code=400, detail="Failed security check (Machine)")
         await asyncio.sleep(seconds)
 
+async def process_analysis_queue(seconds):
+    if gcman.end_type != 'Backend':
+        return
+    gcman.process_analysis_queue()
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Run at startup
     asyncio.create_task(check_backups(60*60*2)) # Once every two hours, this does not force a DB backup, it only checks if one is required
     asyncio.create_task(check_security(60*60)) # Once an hour
+    asyncio.create_task(process_analysis_queue(60*10)) # Every 10 minutes;
     yield
 
 app = FastAPI(lifespan=lifespan)
@@ -145,12 +151,12 @@ def delete(username_to_delete:str, requesting_user=Depends(user_manager)) -> dic
     # Check we are admin, and valid
     if not gcman.users.is_admin(requesting_user):
         raise HTTPException(status_code=400, detail="The current user is not an admin")
-    
+
     if not get_user(requesting_user): # I guess impossible to get here, but check anyway
-        # If a non-admin user gets here, something strange going on. 
+        # If a non-admin user gets here, something strange going on.
         # Invalid Credentials will also force log off that user.
         raise InvalidCredentialsException
-        
+
     # Check user_to_delete is valid and not and admin
     if not get_user(username_to_delete):
         raise HTTPException(status_code=400, detail=f"A user with this username {username_to_delete} does not exist")
@@ -432,7 +438,7 @@ async def add_new_patient(
         gcman.get_qc(user, patient_id) # See if we can load the gcm
         # Set the analysis as complete;
         gcman.set_analysis_complete(patient_id)
-    
+
 
     # TODO: Check that the FASTQ data makes sense?
 
@@ -478,7 +484,7 @@ def report_current_anaylsis_stage(patient_id:str, user=Depends(user_manager)) ->
     Example value:
     patient_id = '72210953309787'
     '''
-    if not gcman.patient_exists(patient_id): 
+    if not gcman.patient_exists(patient_id):
         raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
     return {'code': 200, 'data': gcman.report_current_analysis_stage(patient_id), 'msg': None}
 

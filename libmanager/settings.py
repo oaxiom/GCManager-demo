@@ -33,7 +33,6 @@ class settings:
         **Purpose**
             Build the settings databases
         '''
-
         settings_doctor, settings_doctor_cur = self.__get_cursor('Doctorend')
         settings_doctor_cur.execute('CREATE TABLE settings (setting_name TEXT, value TEXT)')
 
