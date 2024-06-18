@@ -58,6 +58,7 @@ body {
   line-height: 1.4;
 
 }
+
 body > * {
   grid-column: 2;
 }
@@ -65,7 +66,7 @@ body > * {
 /* override styles when printing */
 @media print {
   body {
-    font-size: 0.2rem;
+    font-size: 0.9rem;
   }
 }
 
@@ -160,6 +161,16 @@ hr {
   background: var(--blue);
   color: var(--blue);
   margin: 1rem auto;
+}
+
+@media print {
+    hr {
+      border: 2px solid;
+      height: 2px;
+      background: var(--blue);
+      color: var(--blue);
+      margin: 1rem auto;
+    }
 }
 
 div[style*="flex"] {

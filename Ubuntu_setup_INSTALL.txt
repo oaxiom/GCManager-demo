@@ -5,12 +5,12 @@ Instructions to set up Ubuntu:
 
 1. Install Ubuntu 24.04 LTS
 2. Add a new user gcm, password of your choice.
-3. Download/copy the 'tools.tar.gz' package. Unpack in ~
-4. Download/copy the 'static_data.tar.gz' package. Unpack in ~
-5. (Optional) Download the test_data.tar.gz package. Unpack in ~
+3. Download/copy the 'tools.tar.gz' package. Unpack in ~/
+4. Download/copy the 'static_data.tar.gz' package. Unpack in ~/
+5. (Optional) Download the 'test_data.tar.gz' package. Unpack in ~/
 
 6. Install critical Ubuntu packages:
-    a. $ sudo apt install libbz2-dev liblzma-dev
+    a. $ sudo apt install libbz2-dev liblzma-dev libncurses5-dev default-jre
 
 6. Setup the python venv:
     a. $ sudo apt install python3-venv
@@ -72,4 +72,5 @@ PartitionName=batch Nodes=ALL Default=YES MaxTime=INFINITE State=UP
     f. sudo systemctl start slurmctld
     g. sudo systemctl start slurmd
     h. sudo scontrol update nodename=localhost state=idle
+
 8. 
