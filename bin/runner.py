@@ -1,11 +1,11 @@
 #
 # runner
-# 
+#
 # To be folded into GCManager later
-# This script essentially can be run in the folder, and 
+# This script essentially can be run in the folder, and
 # it will work out the stage of the run, report the current completion state
 # and then run subsequent scripts if needed.
-# 
+#
 # Known bugs:
 # 1. If the number of FASTQs is large, and the computer resources are low
 #    I guess it's possible to get a 'genuine finish' (would be rare, but possible)
@@ -44,7 +44,7 @@ class runner:
         self.path = os.path.dirname(os.path.realpath(__file__))
         self.PID = patient_id
         self.log = log
-        
+
         self.stage1 = 0
         self.stage2 = 0
         self.stage3 = 0
@@ -61,7 +61,7 @@ class runner:
 
         if os.path.exists('full_logs.out.gz'):
             # Stage 8 has been completed
-            return 
+            return
 
         # Step 1: Determine minimum requirements
         assert len(glob.glob('*_1.fastq.gz')) >= 1, 'No FASTQ files found'
@@ -70,15 +70,24 @@ class runner:
         if not os.path.islink('1b.batch.sh'): self.setup_scripts()
 
         # Do we have the count_reads completed?
-        if not os.path.exists('read_count.txt'): self.count_reads()
+        if not os.path.exists('read_count.txt'):
+            self.count_reads()
+            # This might seem weird, why not just go straight through?
+            # But it could cause a race condition, where you spend >5 mins counting reads (very possible)
+            # and in the meantime another runner gets started.
+            # This would make a huge mess.
+            # At least this way read_count.txt is made, and we don't get into a loop counting reads
+            # constantly.
+            return None
+
         self.get_total_read_count()
-        
-        # TODO: Abstract away trhe functions below. 
+
+        # TODO: Abstract away trhe functions below.
         # It's basically two types
-        
+
         # Is Stage 1 (alignment) copmplete?
         align_outs = list(glob.glob('*.align.out'))
-        if len(align_outs) == 0:  
+        if len(align_outs) == 0:
             # Too early, we haven't started yet
             # start stage 1
             log.info('Submitting Stage 1: Align')
@@ -93,7 +102,7 @@ class runner:
                 self.final_results(1)
                 return None
 
-        # Is Stage 2 complete 
+        # Is Stage 2 complete
         bqsr_outs = list(glob.glob('*.bqsr.out'))
         if len(bqsr_outs) == 0: # We havne't started yet
             log.info('Submitting Stage 2: BQSR')
@@ -115,16 +124,16 @@ class runner:
             subprocess.run('sbatch 3.merge_bams.slurm', shell=True)
             self.final_results(3)
             return None
-        else: 
+        else:
             # Started, are we finished?
             oh = open('merge_bams.out', 'rt')
-            for line in oh: 
+            for line in oh:
                 if 'Stage 3: Done Merging' in line:
                     self.stage3 = 100
                     break
             else: # Not finished
                 self.final_results(3)
-                return None          
+                return None
 
         # Stage 4: Haplotype the BAM
         call_outs = list(glob.glob('called.*.out'))
@@ -192,7 +201,7 @@ class runner:
             else:
                 self.final_results(7)
                 return None
-  
+
         if not os.path.exists('annotate_snps.out'):
             # Stage 8 not started
             self.touch_all_outs(8)
@@ -237,7 +246,7 @@ class runner:
     def touch_all_outs(self, stage):
         """
         **Purpose**
-            Touch all the outs, so that runner doesn't 
+            Touch all the outs, so that runner doesn't
             start up the jobs a second time
         """
         if stage == 1:
@@ -259,7 +268,7 @@ class runner:
         elif stage == 8:
             pathlib.Path('annotate_snps.out').touch()
 
-        return 
+        return
 
     def estimate_genotype_completion(self, outs):
         completion_status = {a: 0 for a in outs}
@@ -288,7 +297,7 @@ class runner:
             for line in oh:
                 if 'Stage 4: Completed chrom' in line:
                     completion_status[file] = 100
-                    really_finished[file] = True 
+                    really_finished[file] = True
             oh.close()
 
         if False not in really_finished.values():
@@ -308,13 +317,13 @@ class runner:
             for line in oh:
                 if 'Stage 2: Done BQSR for' in line:
                     completion_status[file] = 100
-                    really_finished[file] = True 
+                    really_finished[file] = True
                 elif 'ProgressMeter' in line:
                     if 'chr' in line:
                         reads_processed = int(line.split()[6]) // 2 # Reports as PE
                         completion_status[file] = reads_processed / self.mapped_reads[file.split('.')[0]] * 100
             oh.close()
-    
+
         if False not in really_finished.values():
             return 100, True # 100% and really finsihed all samples
         return int(statistics.mean(completion_status.values())), False # At least one sample not finished
@@ -352,7 +361,7 @@ class runner:
             percent_done = estimated_number_of_done_reads / num_reads * 100
             completion_status[file] = int(percent_done)
 
-        if False not in really_finished.values(): 
+        if False not in really_finished.values():
             return 100, True # 100% and really finsihed all samples
 
         return int(statistics.mean(completion_status.values())), False # At least one sample not finished, or samtools still working
@@ -360,7 +369,7 @@ class runner:
     def setup_scripts(self):
         """
         **Purpose**
-            We are empty, but have some FASTQ files, so symbolic link all the 
+            We are empty, but have some FASTQ files, so symbolic link all the
             pipeline scripts
         """
         self.log.info('Setting up scripts')
@@ -375,7 +384,12 @@ class runner:
         # Load in the total number of unmapped reads
 
         oh = open('read_count.txt', 'rt')
-        self.unmapped_reads_count = int(oh.readline().strip())
+        try:
+            self.unmapped_reads_count = int(oh.readline().strip())
+        except ValueError:
+            # Probably counting reads hasn't finished yet.
+            self.unmapped_reads_count = 1000000000000000 # Add a crazy high number temporarily
+            return # Don't let the crazy number enter the logs;
 
         log.info(f'Total number of reads = {self.unmapped_reads_count:,}')
 
@@ -387,15 +401,17 @@ class runner:
         self.log.info('Counting number of unmapped reads')
         counts = []
 
+        # I touch the file so that runner will not accidentally start
+        oh = open('read_count.txt', 'wt')
+
         for p1 in glob.glob('*_1.fastq.gz'):
-            self.log.info(f'Counting {p1}')	
+            self.log.info(f'Counting {p1}')
             res = subprocess.run(f'zcat {p1} | wc', shell=True, capture_output=True)
             counts.append(int(res.stdout.split()[0]) // 4)
 
         # merge the wc read counts
         reads = sum(counts)
-    
-        oh = open('read_count.txt', 'wt')
+
         oh.write(f'{reads}\n')
         oh.close()
 

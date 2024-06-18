@@ -27,6 +27,7 @@ import re
 from threading import Thread
 
 from . import analysis_progress
+from . import analysis_queue
 from . import api
 from . import stagedata
 from . import logger
@@ -74,6 +75,8 @@ class libmanager:
         self.users = user.users(self.home_path, self.log)
 
         self.settings = settings.settings(self.home_path)
+
+        self.analysis_queue = analysis_queue.analysis_queue(self.script_path, self.db_path, self.data_path, self.log)
 
         self.log.info(f"Started libmanager")
 
@@ -879,7 +882,10 @@ class libmanager:
 
     def process_analysis_queue(self) -> bool:
         """
-        **Process the current analysis queue.**
+        Process the current analysis queue
 
         """
-        pass
+        if self.end_type != 'Backend':
+            return
+
+        return self.analysis_queue.run()
