@@ -124,14 +124,17 @@ def login(data: OAuth2PasswordRequestForm = Depends()) -> dict:
     return {'access_token': access_token, 'token_type': 'bearer'}
 
 @app.post('/auth/change')
-def change_password(username:str, newpassword:str, user=Depends(user_manager)) -> dict:
-    # old password must be valid because of the logintoken. Ask again anyway?
+def change_password(username:str, newpassword:str, oldpassword:str = None, requesting_user=Depends(user_manager)) -> dict:
+    # old password must be valid because of the logintoken.
 
-    if not get_user(username):
-        # The user trying to change password does not exist.
-        # Something strange is going on. Panic and log out
-        raise InvalidCredentialsException
+    if not gcman.users.is_admin(requesting_user):
+        # Check the old password;
+        if not oldpassword:
+            raise HTTPException(status_code=400, detail="Old password is required")
+        if not gcman.users.check_password(username, oldpassword):
+            raise HTTPException(status_code=400, detail="Incorrect old password")
 
+    # If an admin, we don't need the oldpassword.
     ret = gcman.users.change_password(username, newpassword)
 
     if not ret: # probably old == new
@@ -438,9 +441,13 @@ async def add_new_patient(
         gcman.get_qc(user, patient_id) # See if we can load the gcm
         # Set the analysis as complete;
         gcman.set_analysis_complete(patient_id)
+    else: # Backend/Analysisend/small platform
+        # everything should be valid. I can add it to the queue.
+        pass
+        #gcman.
+        #gcman.process_analysis_queue()
 
 
-    # TODO: Check that the FASTQ data makes sense?
 
     gcman.update_patient_space_used(patient_id)
 
