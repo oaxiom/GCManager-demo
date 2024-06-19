@@ -58,7 +58,7 @@ man.add_task('ANALYSISTEST')
 
 seconds = 60
 
-while True:
+while not man.analysis_complete('ANALYSISTEST'):
     man.process_analysis_queue()
     print(man.analysis_queue.currently_processing)
     print(f'Sleeping for {seconds} seconds')

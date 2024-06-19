@@ -901,6 +901,6 @@ class libmanager:
         completed_patient_id = self.analysis_queue.run()
 
         if completed_patient_id:
-            pass
+            self.set_analysis_complete(completed_patient_id)
 
         return True
