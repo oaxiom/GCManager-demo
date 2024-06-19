@@ -47,7 +47,7 @@ ret_code, sequence_data_path = man.api.add_new_patient(
     institution_sending='Hospital',
     )
 
-allfiles = glob.glob(os.path.join(man.script_path, 'demo_data', 'fastqs', '*.gz'))
+allfiles = glob.glob(os.path.join(man.script_path, 'demo_data', 'fastqs', '*_minimal_*.gz'))
 for f in allfiles:
     src_path = os.path.join(man.script_path, 'demo_data', 'fastqs', f)
     dst_path = os.path.join(sequence_data_path, os.path.split(f)[1])
