@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=2
 #SBATCH --partition=batch
 #SBATCH -N 1
 
@@ -23,7 +23,7 @@ gatk --java-options "-Xmx40G -XX:+UseParallelGC -XX:ParallelGCThreads=1" \
                 -O $gvcffile \
                 -G StandardAnnotation -G StandardHCAnnotation \
                 -GQB 10 -GQB 20 -GQB 30 -GQB 40 -GQB 50 -GQB 60 -GQB 70 -GQB 80 -GQB 90 \
-                --native-pair-hmm-threads 1 \
+                --native-pair-hmm-threads 2 \
                 -ERC GVCF
                 #-stand-call-conf 10 # default is 30.0, as used by wdl pipeline;
 
