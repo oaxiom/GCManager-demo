@@ -125,12 +125,8 @@ class analysis_queue:
             subprocess.Popen(f'python {self.currently_processing["runner_path"]}',
                 cwd=self.currently_processing["analysis_path"],
                 shell=True)
-            self.currently_processing['started_analysis'] = time.time()
 
             if self._analysis_complete(self.currently_processing):
-
-                # TODO: I need to message back to gcman that it's done.
-
                 # there is ~5 mins between when run() will get called again.
                 # I think it's reasonable to wait till we go around again.
                 # This makes certain all buffers are flushed, etc.
