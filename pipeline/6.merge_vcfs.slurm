@@ -3,7 +3,9 @@
 #SBATCH -J gathervcfs
 #SBATCH -o gathervcfs.out
 
-java -jar /export/unstable/picard-3.1.0/picard.jar \
+
+
+java -jar $HOME/gcmtools/picard.jar \
 	GatherVcfs \
 	-O genotype.raw.vcf.gz \
 	-I genotype.chr1.vcf.gz -I genotype.chr2.vcf.gz -I genotype.chr3.vcf.gz \
