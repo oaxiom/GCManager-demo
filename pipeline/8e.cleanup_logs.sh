@@ -2,7 +2,8 @@
 #
 # Clean up all the logs, put them in order and preserve them.
 
-echo '#########' > full_logs.out
+echo 'GCManager Analysis Logs' > full_logs.out
+echo '#########' >> full_logs.out
 echo '# Stage 1' >> full_logs.out
 echo '#########' >> full_logs.out
 

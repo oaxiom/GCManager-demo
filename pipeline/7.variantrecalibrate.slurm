@@ -6,13 +6,13 @@
 
 HOME=$(echo ~)
 
-hg38_ref_fasta=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta')
-known_dbsnp=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf')
-known_indel=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.known_indels.vcf.gz')
-known_1000g=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz')
-known_hapmap=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/hapmap_3.3.hg38.vcf.gz')
-known_omni=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/1000G_omni2.5.hg38.vcf.gz')
-known_1000g_snps=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/1000G_phase1.snps.high_confidence.hg38.vcf.gz')
+hg38_ref_fasta=$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta
+known_dbsnp=$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf
+known_indel=$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.known_indels.vcf.gz
+known_1000g=$HOME/gcmtools/static_data/hg38_v0_20231023/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
+known_hapmap=$HOME/gcmtools/static_data/hg38_v0_20231023/hapmap_3.3.hg38.vcf.gz
+known_omni=$HOME/gcmtools/static_data/hg38_v0_20231023/1000G_omni2.5.hg38.vcf.gz
+known_1000g_snps=$HOME/gcmtools/static_data/hg38_v0_20231023/1000G_phase1.snps.high_confidence.hg38.vcf.gz
 
 pwd=$(pwd)
 PID=$(basename $pwd)
