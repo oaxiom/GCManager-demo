@@ -76,6 +76,8 @@ def build_demo_data(man, home_path, script_path, log):
     # Setup two patients, and copy the data
     man.add_patient('demo_user', '72210953309787', 'SEQ72210953309787', '何XX', '男', 43, 'HOSPITAL1') # Complete
     man.add_patient('demo_user', 'NA12878', 'SEQNA12878', '王XX', '男', 22, 'HOSPITAL1') # Complete
+    man.add_patient('demo_user', 'RESTRICTED1', 'SEQRESTRICTED1', '李XX', '女', 24, 'HOSPITAL2') # Not started
+
     #man.add_patient('demo_user', 'PATIENTNOTSTARTED', 'SEQNOTSTARTED', '李XX', '女', 24, 'HOSPITAL1') # Not started
 
     user_home_path = os.path.expanduser('~')
@@ -96,7 +98,7 @@ def build_demo_data(man, home_path, script_path, log):
     #shutil.copy(os.path.join(script_path, 'demo_data', 'PID.NA12878', 'NA12878.pharmagkb.txt'), os.path.join(home_path, 'data', 'PID.NA12878'))
     #shutil.copy(os.path.join(script_path, 'demo_data', 'PID.NA12878', 'NA12878.risk.txt'), os.path.join(home_path, 'data', 'PID.NA12878'))
 
-    # Add fake details of the analysis to the database;
+    # Add details of the analysis to the database;
 
     db_PID = sqlite3.connect(os.path.join(home_path, 'dbs', "PID.db"))
     db_PID_cursor = db_PID.cursor()
@@ -137,11 +139,34 @@ def build_demo_data(man, home_path, script_path, log):
     db_PID_cursor.execute('UPDATE summary_statistics SET aligned_reads = :aligned_reads WHERE PID = :patient_id', newpid_row)
     db_PID_cursor.execute('UPDATE patient_data SET space_used = :space_used, data_packed = :data_packed, cram_available = :cram_available, vcf_available =:vcf_available WHERE PID = :patient_id', newpid_row)
 
+    ########## RESTRICTED patient:
+
+    shutil.copy(os.path.join(script_path, 'demo_data', 'PID.RESTRICTED1', 'PID.RESTRICTED1.restricted1.data.gcm'), os.path.join(home_path, 'data', 'PID.RESTRICTED1'))
+    newpid_row = {
+            'patient_id': 'RESTRICTED1',
+            'seq_id': 'SEQRESTRICTED1',
+            'analysis_done': 1,
+            'date_added': datetime.datetime.now().isoformat(' '),
+            'date_analysis': datetime.datetime.now().isoformat(' '),
+            'data_dir': os.path.join(home_path, 'data', 'PID.RESTRICTED1'),
+            'aligned_reads': 2000000,
+            'space_used': '1.0Gb',
+            'data_packed': datetime.datetime.now().isoformat(' '),
+            'cram_available': 0,
+            'vcf_available': 1,
+            'institution_sending': 'HOSPITAL2',
+        }
+    db_PID_cursor.execute('UPDATE patients SET analysis_done = :analysis_done, date_added= :date_added, date_analysis = :date_analysis, data_dir = :data_dir, institution_sending= :institution_sending WHERE PID = :patient_id', newpid_row)
+    db_PID_cursor.execute('UPDATE summary_statistics SET aligned_reads = :aligned_reads WHERE PID = :patient_id', newpid_row)
+    db_PID_cursor.execute('UPDATE patient_data SET space_used = :space_used, data_packed = :data_packed, cram_available = :cram_available, vcf_available =:vcf_available WHERE PID = :patient_id', newpid_row)
+
+
     db_PID.commit()
     db_PID.close()
 
     man.update_patient_space_used('NA12878')
     man.update_patient_space_used('72210953309787')
+    man.update_patient_space_used('RESTRICTED1')
 
     # Add some users;
     man.users.add_user(uuid.uuid4(), 'anormaluser', 'user123', is_admin=False)

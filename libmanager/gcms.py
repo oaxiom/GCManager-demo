@@ -11,8 +11,7 @@ from . import tinyglbase
 
 # TODO: Store the analysis date in the gcm file
 
-safe_builtins = {
-    }
+safe_builtins = {} # i.e. None.
 
 class RestrictedUnpickler(pickle.Unpickler):
     def find_class(self, module, name):
@@ -20,8 +19,7 @@ class RestrictedUnpickler(pickle.Unpickler):
         if module == "builtins" and name in safe_builtins:
             return getattr(builtins, name)
         # Forbid everything else.
-        raise pickle.UnpicklingError("global '%s.%s' is forbidden" %
-                                     (module, name))
+        raise pickle.UnpicklingError("global '%s.%s' is forbidden" % (module, name))
 
 class gcm_file:
     def __init__(self, filename, logger):
@@ -35,8 +33,15 @@ class gcm_file:
         self.pharma = gcm['pharma']
         self.risk = gcm['risk']
         self.clinvar = gcm['clinvar']
+        if 'rest' in gcm:
+            self.rest = gcm['rest'] # TODO: deprecate as more gcms are upgraded.
+        else:
+            self.rest = None
 
         # Repack as tinyglbase objects on demand
+
+    def get_rest(self):
+        return self.rest
 
     def get_logs(self):
         return gzip.decompress(self.logs).decode()
@@ -71,3 +76,17 @@ class gcm_file:
         gl.load_list([{'chrom': l[0], 'rsid': l[1], 'genotype': l[2]} for l in splited])
         return gl
 
+    def save(self, filename):
+        # Pack the gcm back out to a normal gcm file;
+
+        gcm_data = {
+            'qc': self.qc,
+            'full_logs': self.logs,
+            'pharma': self.pharma,
+            'risk': self.risk,
+            'clinvar': self.clinvar, # Not currently used.
+            'rest': self.rest,
+            }
+
+        with open(filename, "wb") as oh:
+            pickle.dump(gcm_data, oh, -1)

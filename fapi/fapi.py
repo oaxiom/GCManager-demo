@@ -231,7 +231,7 @@ def populate_patient_list(user=Depends(user_manager)) -> dict:
     return {'code': 200, 'data': gcman.api.populate_patient_list(user), 'msg': None}
 
 @app.get('/populate_report_generator/{mode}')
-def populate_report_generator(mode: str, lang: str, user=Depends(user_manager)) -> dict:
+def populate_report_generator(mode: str, lang: str, patient_id:str, user=Depends(user_manager)) -> dict:
     """
     Mode can be one of:
 
@@ -249,7 +249,7 @@ def populate_report_generator(mode: str, lang: str, user=Depends(user_manager)) 
     lang = CN
 
     """
-    return {'code': 200, 'data': gcman.api.populate_report_generator(mode), 'msg': None}
+    return {'code': 200, 'data': gcman.api.populate_report_generator(mode, patient_id), 'msg': None}
 
 @app.get("/patient/export_vcf/{patient_id:str}")
 def export_vcf(patient_id: str, user=Depends(user_manager)) -> dict:

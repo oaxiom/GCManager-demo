@@ -12,7 +12,7 @@ gcm_data = {
     'full_logs': None,
     'pharma': None,
     'risk': None,
-    'clinvar': None,
+    'clinvar': None, # Not currently used.
     'rest': None,
     }
 

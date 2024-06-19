@@ -300,7 +300,7 @@ class libmanager:
         self.db_PID.close()
         return True
 
-    def get_pharma_table(self) -> list:
+    def get_pharma_table(self, patient_id: str) -> list:
         '''
         **Purpose**
             Return the Pharma DB table;
@@ -318,6 +318,10 @@ class libmanager:
 
         results = self.db_disease_codes_cursor.fetchall()
         self.db_disease_codes.close()
+
+        # Now see if there are restrictions for this patient_id.
+        if patient_id:
+            pass
 
         if results:
             results = [i[0] for i in results]

@@ -15,7 +15,7 @@ class api:
     """
     **Purpose**
         These days its more of an adjunct to libmanager
-        
+
         TODO: Deprecate the simple generic functions
 
     """
@@ -28,7 +28,7 @@ class api:
         table = self.manager.get_patients_table(user)
         return table
 
-    def populate_report_generator(self, mode:str) -> list:
+    def populate_report_generator(self, mode:str, patient_id:str) -> list:
         """
 
         Returns the list of diseases or conditions for three modes:
@@ -40,7 +40,6 @@ class api:
         返回三种模式的疾病或状况列表：
 
         """
-
         assert mode in support.valid_genome_dbs, f'{mode} not found'
 
         if mode == 'Pharma': # 疾病与用药指导
@@ -156,34 +155,34 @@ class api:
         # Clean cached reports
         for f in glob.glob(os.path.join(self.manager.data_path, '*/*.html')):
             os.remove(f)
-            self.log.info(f'{user} deleted file {f}') 
-        
+            self.log.info(f'{user} deleted file {f}')
+
         # Remove backups > 10
-        
+
         for idx, f in enumerate(reversed(sorted(list(glob.glob(os.path.join(self.manager.backup_path, f'db_backup-{self.manager.end_type}-*.tar.gz')))))):
             if idx > 10:
                 os.remove(f)
                 self.log.info(f'{user} deleted old backup {f}')
-        
+
         self.log.info(f'{user} cleaned up all free space using clean cache')
-        
+
         return True
 
     def clean_up_analysis(self, user:str, patient_id: str) -> str:
         # This is more for the backend;
-        
+
         for f in glob.glob(os.path.join(self.manager.data_path, f'PID.{patient_id}', '*.out')):
             os.remove(f)
             self.log.info(f'{user} deleted file {f}')
-        
+
         # Clean up unneeded BAMS; VCFs; etc.
-        
-        
+
+
         return True
 
     def get_disk_space(self) -> int:
         disk_space = shutil.disk_usage(self.manager.data_path)
-        percent = int((disk_space.used / disk_space.total) * 100) 
+        percent = int((disk_space.used / disk_space.total) * 100)
         return percent # percentage
 
     def set_system_doctor_setting(self, key:str, value:str) -> bool:
