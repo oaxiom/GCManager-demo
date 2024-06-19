@@ -28,16 +28,31 @@ class analysis_queue:
 
         self.currently_processing = None
 
+    def _load_progress_txt_file(self, patient_id:str):
+        with open(os.path.join(self.db_path, f'PID.{patient_id}', 'progress.txt')) as f:
+            prog = f.read()
+
+        res = {}
+        for line in prog.split('\n'):
+            if 'Stage' in line:
+                line = line.split(' ')
+            res[int(line[1].strip(':'))] = int(line[2].strip('%'))
+
+        return res
+
     def analysis_progress(self, patient_id:str) -> dict:
         '''
+        Get the analysis progress for this patient ID, I assume you checked it exists.
         '''
-        # Are we currently processing?
+        # Do the simple case;
+        if self._analysis_complete(patient_id):
+            return {1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100, 7: 100, 8: 100, 9: 100}
 
-        # Are we on the queue?
+        # See if we can get it from the progress file left by runner.py
+        if os.path.exists(os.path.join(self.db_path, f'PID.{patient_id}', 'progress.txt')):
+            return self._load_progress_txt_file(patient_id)
 
-        # Are we already complete?
-
-        return
+        return # What to do?!?!
 
     def _analysis_complete(self, task: dict) -> bool:
         '''
@@ -94,6 +109,7 @@ class analysis_queue:
                 # there is ~5 mins between when run() will get called again.
                 # I think it's reasonable to wait till we go around again.
                 # This makes certain all buffers are flushed, etc.
+                # Gives a chance for some background tasks to complete
 
         if self.currently_processing:
             self.log.info('Processed the analysis queue. There are {len(self.q)} items queuing, and {self.currently_processing["patient_id"]} is procesing')

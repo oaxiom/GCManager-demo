@@ -1,20 +1,11 @@
-#
 # runner
 #
-# To be folded into GCManager later
 # This script essentially can be run in the folder, and
 # it will work out the stage of the run, report the current completion state
 # and then run subsequent scripts if needed.
 #
 # Known bugs:
-# 1. If the number of FASTQs is large, and the computer resources are low
-#    I guess it's possible to get a 'genuine finish' (would be rare, but possible)
-#    But not all the BAMs are processed.
-#    Fix, add an extra test that knows the number of expected files
-#    Or, touch all the *.out files just before launching the script
-# 2. If a stage starts, and jobs are launched, but they all sit on the compute queu
-#    then if you run runner again then it just submits the jobs again.
-#    solution is the same as above. touch the *.outs
+
 
 import sys, os, glob, subprocess, logging, statistics, pathlib
 

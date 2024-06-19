@@ -473,12 +473,12 @@ def report_current_anaylsis_stage(patient_id:str, user=Depends(user_manager)) ->
     '''
     Returns the current analysis stage for the indicated data,
     in the form:
-    (100, 100, 100, 100, 25, 0, 0, 0)
+    {1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100, 7: 100, 8: 100, 9: 100}
     Used on the Analysis state page
 
     返回指示数据的当前分析阶段，
     形式为：
-    (100, 100, 100, 100, 25, 0, 0, 0)
+    {1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100, 7: 100, 8: 100, 9: 100}
     任务分析状态
 
     Example value:
