@@ -10,7 +10,8 @@
 # 1. Fix up the exceptions
 # 2. Use decorators for the db open closing
 
-import os, sys
+import os
+import sys
 import sqlite3
 import datetime
 import glob
