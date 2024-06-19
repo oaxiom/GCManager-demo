@@ -58,7 +58,8 @@ class runner:
         assert len(glob.glob('*_1.fastq.gz')) >= 1, 'No FASTQ files found'
 
         # Step 2: Are we completely empty?
-        if not os.path.islink('1b.batch.sh'): self.setup_scripts()
+        # libmanager deals with this now
+        #if not os.path.exists('1b.batch.sh'): self.setup_scripts()
 
         # Do we have the count_reads completed?
         if not os.path.exists('read_count.txt'):
@@ -67,8 +68,10 @@ class runner:
             # But it could cause a race condition, where you spend >5 mins counting reads (very possible)
             # and in the meantime another runner gets started.
             # This would make a huge mess.
-            # At least this way read_count.txt is made, and we don't get into a loop counting reads
-            # constantly.
+            # At least this way read_count.txt is made (by count_reads(), and we don't get into a loop counting reads
+            # constantly. Another possible problem is if count_reads is empty
+            # the next time the runner is started, but we get around that by
+            # filling in an artificially huge number until the real number becomes avaialble.
             return None
 
         self.get_total_read_count()
@@ -395,9 +398,9 @@ class runner:
         # I touch the file so that runner will not accidentally start
         oh = open('read_count.txt', 'wt')
 
-        for p1 in glob.glob('*_1.fastq.gz'):
+        for p1 in glob.glob('*1.fastq.gz'):
             self.log.info(f'Counting {p1}')
-            res = subprocess.run(f'zcat {p1} | wc', shell=True, capture_output=True)
+            res = subprocess.run(f'gunzip -c {p1} | wc', shell=True, capture_output=True)
             counts.append(int(res.stdout.split()[0]) // 4)
 
         # merge the wc read counts

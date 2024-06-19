@@ -125,10 +125,8 @@ def login(data: OAuth2PasswordRequestForm = Depends()) -> dict:
 
 @app.post('/auth/change')
 def change_password(username:str, newpassword:str, oldpassword:str = None, requesting_user=Depends(user_manager)) -> dict:
-    # old password must be valid because of the logintoken.
-
     if not gcman.users.is_admin(requesting_user):
-        # Check the old password;
+        # We are not an admin. Check the old password;
         if not oldpassword:
             raise HTTPException(status_code=400, detail="Old password is required")
         if not gcman.users.check_password(username, oldpassword):
@@ -140,10 +138,10 @@ def change_password(username:str, newpassword:str, oldpassword:str = None, reque
     if not ret: # probably old == new
         raise HTTPException(status_code=400, detail="Password is the same as old password")
 
-    # TODO: invalidate the old token
     # Logout needs to go on the server side if using JWTs.
     # See: https://github.com/MushroomMaula/fastapi_login/issues/82
 
+    gcman.log.info(f'{requesting_user} changed password for {username}')
     return {'code': 200, 'data': True, 'msg': f'Succesfully changed password for user {username}'}
 
 @app.post("/auth/delete")
@@ -441,13 +439,11 @@ async def add_new_patient(
         gcman.get_qc(user, patient_id) # See if we can load the gcm
         # Set the analysis as complete;
         gcman.set_analysis_complete(patient_id)
+
     else: # Backend/Analysisend/small platform
         # everything should be valid. I can add it to the queue.
-        pass
-        #gcman.
-        #gcman.process_analysis_queue()
-
-
+        gcman.add_task(patient_id)
+        gcman.process_analysis_queue()
 
     gcman.update_patient_space_used(patient_id)
 

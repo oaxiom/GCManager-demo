@@ -11,6 +11,7 @@ import os
 import shutil
 import datetime
 import time
+import subprocess
 
 class analysis_queue:
     def __init__(self, script_path, db_path, data_path, log):
@@ -71,22 +72,40 @@ class analysis_queue:
         Add a patient_id to the queue.
 
         """
+        # Check that the patient_id is not already on the queue:
+        for task in self.q:
+            if task['PID'] == patient_id:
+                # We are already on the queue, don't add twice!
+                self.log.info(f"Tried to add {patient_id} but it's already on the queue")
+                return True
+
         # copy runner to the correct location.
         shutil.copy(os.path.join(self.script_path, 'bin', 'runner.py'),
-            os.path.join(self.db_path, f'PID.{patient_id}'))
+            os.path.join(self.data_path, f'PID.{patient_id}'))
+
+        self._copy_all_pipeline_scripts(os.path.join(self.data_path, f'PID.{patient_id}'))
 
         task = {
             'PID': patient_id,
-            'added_to_q_time': time,
-            'started_analysis': None,
-            'analysis_path': os.path.join(self.db_path, f'PID.{patient_id}'),
-            'gcm_path': os.path.join(self.db_path, f'PID.{patient_id}', f'PID.{patient_id}.data.gcm'),
-            'runner_path': os.path.join(self.db_path, f'PID.{patient_id}', 'runner.py')
+            'time_on_q': time.time(),
+            'time_started_analysis': None,
+            'analysis_path': os.path.join(self.data_path, f'PID.{patient_id}'),
+            'gcm_path': os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.data.gcm'),
+            'runner_path': os.path.join(self.data_path, f'PID.{patient_id}', 'runner.py')
             }
 
         self.q.append(task)
         self.log.info(f'Added {patient_id} to the analysis queue')
 
+        return True
+
+    def _copy_all_pipeline_scripts(self, path):
+        all_files = os.listdir(os.path.join(self.script_path, 'pipeline/'))
+        for f in all_files:
+            src_path = os.path.join(self.script_path, 'pipeline', f)
+            if os.path.isfile(src_path):
+                dst_path = os.path.join(path, f)
+                shutil.copy(src_path, dst_path)
 
     def run(self):
         """
@@ -98,20 +117,37 @@ class analysis_queue:
             # Nothing running,
             if self.q:
                 self.currently_processing = self.q.pop(0)
+                self.currently_processing['time_started_analysis'] = time.time()
+                self.log.info(f'Started analysing {self.currently_processing["PID"]}')
 
         if self.currently_processing:
             # Should run without waiting.
-            subprocess.Popen(f'python {self.currently_processing["runner_path"]}', shell=True)
+            subprocess.Popen(f'python {self.currently_processing["runner_path"]}',
+                cwd=self.currently_processing["analysis_path"],
+                shell=True)
             self.currently_processing['started_analysis'] = time.time()
 
-            if self.analysis_complete(self.currently_processing):
-                self.currently_processing = None
+            if self._analysis_complete(self.currently_processing):
+
+                # TODO: I need to message back to gcman that it's done.
+
                 # there is ~5 mins between when run() will get called again.
                 # I think it's reasonable to wait till we go around again.
                 # This makes certain all buffers are flushed, etc.
                 # Gives a chance for some background tasks to complete
+                finished_PID = self.currently_processing['PID']
+                time_taken = time.time() - self.currently_processing['time_started_analysis']
+                time_on_q = self.currently_processing['time_started_analysis'] - self.currently_processing['time_on_q']
+                self.log.info(f'{finished_PID}, analysis is complete, took {time_taken//60:,} minutes and spent {time_on_q//60:,} minutes on the queue.')
+                self.currently_processing = None # blank so a new task can be grabbed
+                return finished_PID # message back that PID is done;
+            else:
+                # This would be the place to check and see if the analysis has stalled.
+                pass
 
         if self.currently_processing:
-            self.log.info('Processed the analysis queue. There are {len(self.q)} items queuing, and {self.currently_processing["patient_id"]} is procesing')
+            self.log.info(f'Processed the analysis queue. There are {len(self.q)} items queuing, and {self.currently_processing["PID"]} is procesing')
         else:
-            self.log.info('Processed the analysis queue. There are {len(self.q)} items queuing.')
+            self.log.info(f'Processed the analysis queue. There are {len(self.q)} items queuing.')
+
+        return True

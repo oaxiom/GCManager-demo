@@ -880,6 +880,16 @@ class libmanager:
             return f'System Version: {VERSION}. Database Version: {DBVERSION}'
         return f'当前分析系统版本: {VERSION}. 数据库版本: {DBVERSION}'
 
+    def add_task(self, patient_id:str) -> bool:
+        """
+        Process the current analysis queue
+
+        """
+        if self.end_type != 'Backend':
+            return
+
+        return self.analysis_queue.add_task(patient_id)
+
     def process_analysis_queue(self) -> bool:
         """
         Process the current analysis queue
@@ -888,4 +898,9 @@ class libmanager:
         if self.end_type != 'Backend':
             return
 
-        return self.analysis_queue.run()
+        completed_patient_id = self.analysis_queue.run()
+
+        if completed_patient_id:
+            pass
+
+        return True
