@@ -5,11 +5,11 @@
 
 HOME=$(echo ~)
 
-bash_ref_fasta=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta')
-interval_list=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/wgs_coverage_regions.hg38.interval_list')
-knwon_dbsnp=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf')
-known_indel=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.known_indels.vcf.gz')
-known_1000g=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz')
+bash_ref_fasta=$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta
+interval_list=$HOME/gcmtools/static_data/hg38_v0_20231023/wgs_coverage_regions.hg38.interval_list
+knwon_dbsnp=$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf
+known_indel=$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.known_indels.vcf.gz
+known_1000g=$HOME/gcmtools/static_data/hg38_v0_20231023/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
 
 bqfile=${bamfile%.bam}.recal_data.table
 recalfile=${bamfile%.bam}.recal.bam
@@ -24,8 +24,8 @@ gatk --java-options "-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=4" \
                 -R $bash_ref_fasta \
                 -I $bamfile \
                 --known-sites $knwon_dbsnp \
-		--known-sites $known_indel \
-		--known-sites $known_1000g \
+		        --known-sites $known_indel \
+		        --known-sites $known_1000g \
                 -O $bqfile
 
 gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" \
@@ -34,7 +34,7 @@ gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" \
                 -L $interval_list \
                 -bqsr $bqfile \
                 --static-quantized-quals 10 --static-quantized-quals 20 --static-quantized-quals 30 \
-	       	-O $recalfile
+	       	    -O $recalfile
 
 #rm $bamfile
 
