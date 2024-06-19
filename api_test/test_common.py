@@ -1,6 +1,6 @@
 
 
-def cmd_process(cmd):
+def cmd_process(man, cmd):
     print(f'\n>>> {cmd}')
     res = eval(cmd)
 

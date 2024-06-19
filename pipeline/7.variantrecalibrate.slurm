@@ -22,6 +22,7 @@ gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" \
 	-R $hg38_ref_fasta \
 	-V genotype.raw.vcf.gz \
 	-O recalibrate_SNP.recal \
+	--dont-run-rscript \
 	--max-gaussians 6 \
 	--tranches-file recalibrate_SNP.tranches \
 	--rscript-file vqsr_snp_plots.R \
@@ -42,6 +43,7 @@ gatk --java-options '-Xmx8g -XX:+UseParallelGC -XX:ParallelGCThreads=4' VariantR
 	-R $hg38_ref_fasta \
    	-V genotype.raw.vcf.gz \
    	-O recalibrate_INDEL.recal \
+    --dont-run-rscript \
 	--max-gaussians 4 \
 	--tranches-file recalibrate_INDEL.tranches \
 	--rscript-file vqsr_indel_plots.R \

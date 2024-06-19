@@ -312,23 +312,30 @@ class libmanager:
         self.db_disease_codes_cursor = self.db_disease_codes.cursor()
 
         if self.lang == 'CN':
-            self.db_disease_codes_cursor.execute('SELECT desc_cn FROM diseasecodes_pharma')
+            self.db_disease_codes_cursor.execute('SELECT dis_code, desc_cn FROM diseasecodes_pharma')
         else:
-            self.db_disease_codes_cursor.execute('SELECT desc_en FROM diseasecodes_pharma')
+            self.db_disease_codes_cursor.execute('SELECT dis_code, desc_en FROM diseasecodes_pharma')
 
         results = self.db_disease_codes_cursor.fetchall()
         self.db_disease_codes.close()
 
         # Now see if there are restrictions for this patient_id.
         if patient_id:
-            pass
+            gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.data.gcm'), logger=self.log)
+            if 'rest' in gcm:
+                res = []
+                restricted_reports = gcm.get_rest()
+                for r in results:
+                    if r[0] in restricted_reports:
+                        res.append(r)
+            results = res
 
         if results:
-            results = [i[0] for i in results]
+            results = [i[1] for i in results]
 
         return results
 
-    def get_risk_table(self) -> list:
+    def get_risk_table(self, patient_id: str) -> list:
         '''
         **Purpose**
             Return all of the Risk DB table;
@@ -348,6 +355,10 @@ class libmanager:
 
         if results:
             results = [i[0] for i in results]
+
+        # Now see if there are restrictions for this patient_id.
+        if patient_id:
+            pass
 
         return results
 

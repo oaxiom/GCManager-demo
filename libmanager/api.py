@@ -43,13 +43,13 @@ class api:
         assert mode in support.valid_genome_dbs, f'{mode} not found'
 
         if mode == 'Pharma': # 疾病与用药指导
-            return self.manager.get_pharma_table()
+            return self.manager.get_pharma_table(patient_id)
 
         elif mode == 'ClinVAR': # 临床表型相关变异
             return [] # An empty list is a valid return
 
         elif mode == 'Risk': # 疾病风险提示
-            return self.manager.get_risk_table()
+            return self.manager.get_risk_table(patient_id)
 
     def export_vcf(self, patient_id: str) -> str:
         """

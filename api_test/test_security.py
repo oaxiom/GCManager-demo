@@ -10,12 +10,26 @@ import sys, os, shutil, uuid, base64
 sys.path.append('../')
 from libmanager import libmanager, support, VERSION, security
 
-from test_common import *
-
 home_path = os.path.join(os.path.expanduser('~'), 'GCMDataDEMO/')
 
 man = libmanager.libmanager(home_path=home_path)
 man.set_end_type('Doctorend')
+
+def cmd_process(cmd):
+    print(f'\n>>> {cmd}')
+    res = eval(cmd)
+
+    if isinstance(res, str):
+        lines = res.split('\n')
+        if len(lines) > 10:
+            print('\n'.join(lines[0:9]))
+            print(f'{len(lines):,} in total')
+            return
+    elif isinstance(res, list):
+        if len(res) > 10:
+            print(res[0:9])
+            return
+    print(res)
 
 try:
     os.remove(os.path.join(man.data_path, '.mac'))

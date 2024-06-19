@@ -10,6 +10,8 @@ import sys, os, shutil, time, glob
 sys.path.append('../')
 from libmanager import libmanager, support, VERSION
 
+from test_common import *
+
 if 'demo' in VERSION:
     home_path = os.path.join(os.path.expanduser('~'), 'GCMDataDEMO/') # Pre-initialised demo data
 else:
@@ -20,16 +22,14 @@ if not os.path.exists(home_path):
     print(f"Panic! Data path {home_path} is missing")
     sys.exit(-1)
 
+global man
+
 man = libmanager.libmanager(home_path=home_path)
-man.set_end_type('Backend')
+man.set_end_type('Doctorend')
 
 ########
 # Testing;
 
-# We need to emulate add_patient parts of FastAPI
+cmd_process(man, 'man.api.populate_report_generator("Pharma", "RESTRICTED1")')
 
-# This should be the same logical order as add_new_patient() in FASTAPI
-# FASTAPI copies the FASTQs to a temporary location, validates them, and then adds a patient.
-
-# delete the patient if it's already there;
-
+cmd_process(man, 'man.api.populate_report_generator("Risk", "RESTRICTED1")')

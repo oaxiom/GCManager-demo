@@ -248,6 +248,8 @@ def populate_report_generator(mode: str, lang: str, patient_id:str, user=Depends
     mode = Pharma
     lang = CN
 
+    TODO: Deprecate lang;
+
     """
     return {'code': 200, 'data': gcman.api.populate_report_generator(mode, patient_id), 'msg': None}
 

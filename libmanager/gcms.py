@@ -33,15 +33,17 @@ class gcm_file:
         self.pharma = gcm['pharma']
         self.risk = gcm['risk']
         self.clinvar = gcm['clinvar']
-        if 'rest' in gcm:
-            self.rest = gcm['rest'] # TODO: deprecate as more gcms are upgraded.
+        if 'rest' in gcm: # TODO: deprecate as more gcms are upgraded.
+            self.rest = gcm['rest']
         else:
             self.rest = None
 
         # Repack as tinyglbase objects on demand
 
     def get_rest(self):
-        return self.rest
+        if self.rest:
+            return set(self.rest)
+        return None
 
     def get_logs(self):
         return gzip.decompress(self.logs).decode()
