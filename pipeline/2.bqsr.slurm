@@ -5,11 +5,11 @@
 
 HOME=$(echo ~)
 
-bash_ref_fasta='$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta'
-interval_list='$HOME/gcmtools/static_data/hg38_v0_20231023/wgs_coverage_regions.hg38.interval_list'
-knwon_dbsnp='$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf'
-known_indel='$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.known_indels.vcf.gz'
-known_1000g='$HOME/gcmtools/static_data/hg38_v0_20231023/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz'
+bash_ref_fasta=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta')
+interval_list=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/wgs_coverage_regions.hg38.interval_list')
+knwon_dbsnp=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf')
+known_indel=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.known_indels.vcf.gz')
+known_1000g=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz')
 
 bqfile=${bamfile%.bam}.recal_data.table
 recalfile=${bamfile%.bam}.recal.bam

@@ -5,7 +5,7 @@
 
 HOME=$(echo ~)
 
-bash_ref_fasta='$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta'
+bash_ref_fasta=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta')
 
 gatk --java-options "-Xmx30G -XX:ParallelGCThreads=1" \
 	GenotypeGVCFs \
