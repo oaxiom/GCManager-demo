@@ -13,11 +13,12 @@ gcm_data = {
     'pharma': None,
     'risk': None,
     'clinvar': None,
+    'rest': None,
     }
 
 # reverse is gzip.decompress(bytes_obj).decode()
 
-# QC 
+# QC
 with open(f'{PID}.qc', 'rt') as f:
     gcm_data['qc'] = f.read()
 
