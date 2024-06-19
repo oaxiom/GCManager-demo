@@ -1,9 +1,7 @@
 #!/bin/sh
-#SPATCH --cpus-per-task=2
+#SPATCH --cpus-per-task=1
 #SBATCH -J gathervcfs
 #SBATCH -o gathervcfs.out
-
-# genotype.chr2.vcf.gz
 
 java -jar /export/unstable/picard-3.1.0/picard.jar \
 	GatherVcfs \

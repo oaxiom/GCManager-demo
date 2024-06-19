@@ -1,10 +1,11 @@
 #!/bin/sh
-#SBATCH --cpus-per-task=2
+#SBATCH --cpus-per-task=1
 #SBATCH -o annotate_snps.out
 
 pwd=$(pwd)
 PID=$(basename $pwd)
 vcf=$PID.recalibrated_snps_recalibrated_indels.vcf.gz
+HOME=$(echo ~)
 
 echo Started Stage 8 with PID = $PID vcf = $vcf
 

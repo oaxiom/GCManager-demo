@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
-#SBATCH --cpus-per-task=8
+#SBATCH --cpus-per-task=4
 #SBATCH --partition=batch
 #SBATCH -o variant_racalibrate.out
 #SBATCH -N 1
 
-hg38_ref_fasta='/export/home/andrew/genome/hg38_v0_20231023/Homo_sapiens_assembly38.fasta'
-known_dbsnp='/export/home/andrew/genome/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf'
-known_indel='/export/home/andrew/genome/hg38_v0_20231023/Homo_sapiens_assembly38.known_indels.vcf.gz'
-known_1000g='/export/home/andrew/genome/hg38_v0_20231023/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz'
-known_hapmap='/export/home/andrew/genome/hg38_v0_20231023/hapmap_3.3.hg38.vcf.gz'
-known_omni='/export/home/andrew/genome/hg38_v0_20231023/1000G_omni2.5.hg38.vcf.gz'
-known_1000g_snps='/export/home/andrew/genome/hg38_v0_20231023/1000G_phase1.snps.high_confidence.hg38.vcf.gz'
+HOME=$(echo ~)
+
+hg38_ref_fasta='$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta'
+known_dbsnp='$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf'
+known_indel='$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.known_indels.vcf.gz'
+known_1000g='$HOME/gcmtools/static_data/hg38_v0_20231023/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz'
+known_hapmap='$HOME/gcmtools/static_data/hg38_v0_20231023/hapmap_3.3.hg38.vcf.gz'
+known_omni='$HOME/gcmtools/static_data/hg38_v0_20231023/1000G_omni2.5.hg38.vcf.gz'
+known_1000g_snps='$HOME/gcmtools/static_data/hg38_v0_20231023/1000G_phase1.snps.high_confidence.hg38.vcf.gz'
 
 pwd=$(pwd)
 PID=$(basename $pwd)
@@ -29,7 +31,7 @@ gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" \
 	-resource:1000G,known=false,training=true,truth=false,prior=10.0 $known_1000g_snps \
 	-resource:dbsnp,known=true,training=false,truth=false,prior=7.0 $known_dbsnp \
 	-tranche 100.0 -tranche 99.95 -tranche 99.9 -tranche 99.8 -tranche 99.6 -tranche 99.5 -tranche 99.4 -tranche 99.3 -tranche 99.0 -tranche 98.0 -tranche 97.0 -tranche 90.0 \
-    	-an QD -an MQRankSum -an ReadPosRankSum -an FS -an MQ -an SOR -an DP \
+    -an QD -an MQRankSum -an ReadPosRankSum -an FS -an MQ -an SOR -an DP \
 	-mode SNP
 
 # Above is from https://gatk.broadinstitute.org/hc/en-us/articles/360035531112--How-to-Filter-variants-either-with-VQSR-or-by-hard-filtering

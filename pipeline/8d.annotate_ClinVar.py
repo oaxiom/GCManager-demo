@@ -10,7 +10,7 @@ vcf = f'{PID}.recalibrated_snps_recalibrated_indels.vcf.gz'
 
 # I do this through python, as I can't think of a way to fix the path correctly in BASH:
 # output the toml file
-clinvar_path=os.path.expanduser('~/static_data/ClinVar/clinvar_20240301.vcf.gz')
+clinvar_path=os.path.expanduser('~/gcmtools/static_data/ClinVar/clinvar_20240301.vcf.gz')
 
 toml = f'''
 [[annotation]]

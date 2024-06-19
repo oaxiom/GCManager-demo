@@ -1,5 +1,5 @@
 #!/bin/sh
-#SBATCH --cpus-per-task=6
+#SBATCH --cpus-per-task=4
 #SBATCH --partition=batch
 #SBATCH -N 1
 #SBATCH --output merge_bams.out 

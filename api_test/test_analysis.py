@@ -56,7 +56,10 @@ for f in allfiles:
 man.add_task('ANALYSISTEST')
 #man.add_task('NEWPATIENT')
 
+seconds = 60
+
 while True:
     man.process_analysis_queue()
     print(man.analysis_queue.currently_processing)
-    time.sleep(60)
+    print(f'Sleeping for {seconds} seconds')
+    time.sleep(seconds)
