@@ -177,7 +177,6 @@ div[style*="flex"] {
   align-items: baseline;
 }
 
-
 '''
 
 

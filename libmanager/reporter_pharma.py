@@ -95,13 +95,15 @@ class reporter_pharma:
 
         '''
         def plus_conv(i):
-            return '+' * i
+            i = i.replace('+', '<div style="color: #0000aa;">⬆</div>')
+            i = i.replace('-', '<div style="color: #00aa00;">⬇</div>')
+            #i = i.replace(' ', '~') # if we need a ~ symbol;
+            return i
 
         no_reccomendation_drug_names = []
         if no_reccomendation:
             no_reccomendation_drug_names = set([f"{drug['drug_CN']} ({drug['drug_EN']})" for drug in no_reccomendation])
 
-        # work out the rowspans:
         rowspans = {}
         for drug in sorted(list(summary_table_dict.keys()) + list(no_reccomendation_drug_names)):
             if drug in no_reccomendation_drug_names:
@@ -111,7 +113,6 @@ class reporter_pharma:
 
         summary_table = []
         for drug in sorted(list(summary_table_dict.keys()) + list(no_reccomendation_drug_names)):
-
             if drug in no_reccomendation_drug_names:
                 tab_row = f'''
                 <tr>
@@ -121,13 +122,14 @@ class reporter_pharma:
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td>+</td> <!-- normal medication -->
+                    <td>✔</td> <!-- normal medication -->
                 </tr>
                 '''
                 summary_table.append(tab_row.replace('  ', ''))
 
             else: # In the summary_table_dict:
                 for rid, gene in enumerate(sorted(list(summary_table_dict[drug].keys()))):
+
                     advice_data = summary_table_dict[drug][gene]
                     advice_row = f'''
                         <td>{plus_conv(advice_data["疗效"])}</td>
@@ -243,14 +245,15 @@ class reporter_pharma:
                 if drug_name not in summary_table_dict:
                     summary_table_dict[drug_name] = {}
                 if drug['gene'] not in summary_table_dict[drug_name]:
-                    summary_table_dict[drug_name][drug['gene']] = {'疗效': 0, '代谢': 0, '风险': 0, '毒性': 0, '剂量': 0}
+                    summary_table_dict[drug_name][drug['gene']] = {'疗效': '', '代谢': '', '风险': '', '毒性': '', '剂量': ''}
 
                 for impacts in drug['SNP_impact_CN'].replace('/', ';').split(';'):
                     if impacts == '其他':
                         continue
                     elif impacts == '药物动力学': # Pharmacokinetics;
                         continue
-                    summary_table_dict[drug_name][drug['gene']][impacts] += 1
+                    #inc_dec = drug['inc_dec']
+                    summary_table_dict[drug_name][drug['gene']][impacts] += '+'
 
         # convert the summary_table to HTML:
         summary_table = self.__generate_summary_table(no_reccomendation, summary_table_dict)
