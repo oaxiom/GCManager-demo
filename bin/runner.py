@@ -75,7 +75,7 @@ class runner:
             return None
 
         self.get_total_read_count()
-        if self.unmapped_reads_count < 4e6:
+        if self.unmapped_reads_count < 5e6:
             # It is very unliukely the data will produce anything useful.
             # Kill the analysis.
             [self.touch_all_outs(i) for i in [1,2,3,4,5,6,7,8]]
