@@ -75,6 +75,16 @@ class runner:
             return None
 
         self.get_total_read_count()
+        if self.unmapped_reads_count < 4e6:
+            # It is very unliukely the data will produce anything useful.
+            # Kill the analysis.
+            [self.touch_all_outs(i) for i in [1,2,3,4,5,6,7,8]]
+            with open(''annotate_snps.out'', 'a') as f:
+                f.write('####################################')
+                f.write(f'Fatal Error, too few reads {self.unmapped_reads_count:,}')
+                f.write('####################################')
+                subprocess.run('sh 8e.cleanup_logs.sh', shell=True)
+            return None
 
         # TODO: Abstract away trhe functions below.
         # It's basically two types

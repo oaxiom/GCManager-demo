@@ -34,8 +34,29 @@ man.set_end_type('Backend')
 # delete the patient if it's already there;
 try:
     man.delete_patient('tester', 'ANALYSISTEST')
+    man.delete_patient('tester', 'TOOFEWREADS')
 except AssertionError:
     pass
+
+###### A minimal succesful sample;
+
+ret_code, sequence_data_path = man.api.add_new_patient(
+    user='tester',
+    patient_id='TOOFEWREADS',
+    sequence_data_id='SQEQID2',
+    name='WXY',
+    sex='nan',
+    age=35,
+    institution_sending='Hospital',
+    )
+
+allfiles = glob.glob(os.path.join(man.script_path, 'demo_data', 'fastqs', '*_tiny_*.gz'))
+for f in allfiles:
+    src_path = os.path.join(man.script_path, 'demo_data', 'fastqs', f)
+    dst_path = os.path.join(sequence_data_path, os.path.split(f)[1])
+    shutil.copy(src_path, dst_path)
+
+###### A minimal succesful sample;
 
 ret_code, sequence_data_path = man.api.add_new_patient(
     user='tester',
@@ -53,8 +74,8 @@ for f in allfiles:
     dst_path = os.path.join(sequence_data_path, os.path.split(f)[1])
     shutil.copy(src_path, dst_path)
 
+man.add_task('TOOFEWREADS')
 man.add_task('ANALYSISTEST')
-#man.add_task('NEWPATIENT')
 
 seconds = 60
 
