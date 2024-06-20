@@ -187,7 +187,8 @@ def html_cn(
         <th style="background-color: var(--tab-grey-bg);">单核苷酸多态性 (SNP) 基因型</th>
         <th style="background-color: var(--tab-grey-bg);">基因</th>
         <th style="background-color: var(--tab-grey-bg);">效应</th>
-        <th style="background-color: var(--tab-grey-bg);" colspan="2">风险分类</th>
+        <th style="background-color: var(--tab-grey-bg);">OR值分</th>
+        <th style="background-color: var(--tab-grey-bg); text-align: center" colspan="2">风险分类</th>
     </tr>
     {main_table}
 </table>

@@ -117,7 +117,6 @@ class reporter_risk:
 
         # average;
         OR_score = statistics.mean(scores)
-
         OR_score = math.exp(OR_score)
 
         return OR_score
@@ -169,6 +168,7 @@ class reporter_risk:
                         <td>{gene['STRONGEST SNP-RISK ALLELE']}</td>
                         <td>{gene['mapped_gene']}</td>
                         <td>{effect}</td>
+                        <td>{gene['OR']:.2f}</td>
                         <td style="text-align:right; padding: 0; margin: 0;">{minus_row}</td> <!-- minus risk bar -->
                         <td style="padding: 0; margin: 0;">{plus_row}</td> <!-- plus risk bar -->
                     </tr>
