@@ -233,7 +233,7 @@ def populate_patient_list(user=Depends(user_manager)) -> dict:
 @app.get('/populate_report_generator/{mode}')
 def populate_report_generator(mode: str, lang: str, patient_id:str, user=Depends(user_manager)) -> dict:
     """
-    Mode can be one of:
+    ## Mode can be one of:
 
     Pharma = 疾病与用药指导
     ClinVAR = 临床表型相关变异
@@ -243,10 +243,11 @@ def populate_report_generator(mode: str, lang: str, patient_id:str, user=Depends
     'EN' English
     'CN' Chinese
 
-    Example request:
+    ## Example request:
 
     mode = Pharma
     lang = CN
+    patient_id = '72210953309787'
 
     TODO: Deprecate lang;
 

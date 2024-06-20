@@ -64,6 +64,7 @@ class settings:
             return self.get_doctor_setting('lang')
         elif end_type == 'Backend':
             return self.get_backend_setting('lang')
+        return 'CN' # Default to CN
 
     def get_doctor_setting(self, key):
         '''
