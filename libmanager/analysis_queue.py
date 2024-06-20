@@ -64,6 +64,8 @@ class analysis_queue:
         # Probably best to check for the existence of the .data.gcm file
         if os.path.exists(task['gcm_path']):
             return True
+        if os.path.exists(os.path.join(task['analysis_path'], 'FATALERROR.out'): # This is a tag left by runner to say we failed.
+            return True
         return False
 
     def add_task(self, patient_id:str):

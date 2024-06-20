@@ -54,6 +54,9 @@ cat annotate_snps.out >>full_logs.out
 echo "Stage 8: Completed annotation and selection of SNPs" >>full_logs.out
 echo 'All stages completed' >> full_logs.out
 
+# In case there is a FATALERROR
+cat FATALERROR.out >>full_logs.out
+
 gzip -f full_logs.out
 
 #### Now remove all the logs
