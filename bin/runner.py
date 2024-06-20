@@ -79,7 +79,7 @@ class runner:
             # It is very unliukely the data will produce anything useful.
             # Kill the analysis.
             [self.touch_all_outs(i) for i in [1,2,3,4,5,6,7,8]]
-            with open(''annotate_snps.out'', 'a') as f:
+            with open('annotate_snps.out', 'a') as f:
                 f.write('####################################')
                 f.write(f'Fatal Error, too few reads {self.unmapped_reads_count:,}')
                 f.write('####################################')
