@@ -400,7 +400,7 @@ async def add_new_patient(
     for file in files:
         # Need to rename the files:
         if gcman.end_type == 'Doctorend':
-            destination_filename = f'{patient_id}.data.gcm' # Easy case
+            destination_filename = f'PID.{patient_id}.data.gcm' # Easy case
         elif gcman.end_type == 'Backend':
             # TODO: Difficult case...
             destination_filename = file.filename
