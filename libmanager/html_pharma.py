@@ -103,7 +103,7 @@ and best clinical practice should be followed.</p>
         <th>Metabolism</th>
         <th>Risk</th>
         <th>Toxicity</th>
-        <th>Dosage</th>
+        <th>Medication</th>
         <th>No guidance</th>
     </tr>
     {summary_table}

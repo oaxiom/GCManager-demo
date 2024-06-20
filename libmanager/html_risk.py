@@ -168,7 +168,7 @@ def html_cn(
 
 <hr>
 
-<h2>指导</h2>
+<h2>患病风险评估</h2>
 
 <table style="width:40%">
     <tr>
@@ -188,7 +188,7 @@ def html_cn(
         <th style="background-color: var(--tab-grey-bg);">基因</th>
         <th style="background-color: var(--tab-grey-bg);">效应</th>
         <th style="background-color: var(--tab-grey-bg);">OR值分</th>
-        <th style="background-color: var(--tab-grey-bg); text-align: center" colspan="2">风险分类</th>
+        <th style="background-color: var(--tab-grey-bg); text-align: center" colspan="2">风险分数</th>
     </tr>
     {main_table}
 </table>

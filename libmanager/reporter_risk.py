@@ -139,7 +139,7 @@ class reporter_risk:
             protective = 'Protective'
             deleterious = 'Deleterious'
         else:
-            protective = '防护的'
+            protective = '有益的'
             deleterious = '有害的'
 
         if not search_results:
