@@ -42,7 +42,7 @@ from . import utils
 from . import help_text
 from . import gcms
 from . import security
-from . import VERSION, DBVERSION
+from . import VERSION, DBVERSION, RELEASEVERSION
 
 class libmanager:
     def __init__(self, home_path):

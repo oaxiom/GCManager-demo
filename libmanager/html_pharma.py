@@ -101,7 +101,6 @@ and best clinical practice should be followed.</p>
         <th>Genes</th>
         <th>Efficacy</th>
         <th>Metabolism</th>
-        <th>Risk</th>
         <th>Toxicity</th>
         <th>Medication</th>
         <th>No guidance</th>
@@ -204,12 +203,9 @@ def html_cn(
 
 <h2>声明</h2>
 
-<p>以下报告是根据整个基因组的测序数据生成的。
-该报告为用于治疗的特定药物的疗效提供了指导
-{search_term}。该表列出了药物、患者的特定SNP和基因型，以及
-为治疗提供了潜在的指导。此处的数据构成了最佳建议和
-在解释这些结果时应小心谨慎。
-并应遵循临床实践。</p>
+<p>注意以下报告是根据全基因组的测序数据生成的。该报告对用于治疗溃疡性结肠炎的特定药物的疗效提供了参考
+{search_term}的特定药物的疗效提供了参考。表中列出了药物、患者的特定SNP和基因型，并提供了潜在的治疗指导。
+值得注意的是，这是根据数据分析形成的参考建议，在解释这些结果时应小心谨慎，并应遵循临床实践经验。</p>
 
 <hr>
 
@@ -221,7 +217,6 @@ def html_cn(
         <th>基因</th>
         <th>疗效</th>
         <th>代谢</th>
-        <th>风险</th>
         <th>毒性</th>
         <th>剂量</th>
         <th>常规用药</th>

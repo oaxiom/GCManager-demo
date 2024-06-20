@@ -161,7 +161,7 @@ def html_cn(
         <td>{patient_data['sex']}</td>
     </tr>
     <tr>
-        <td style="background-color: var(--tab-grey-bg);">搜索术语</td>
+        <td style="background-color: var(--tab-grey-bg);">疾病</td>
         <td colspan="5">{search_term}</td>
     </tr>
 </table>
@@ -172,12 +172,12 @@ def html_cn(
 
 <table style="width:40%">
     <tr>
-        <td style="background-color: var(--tab-grey-bg);">OR值分 (Odds Ratio)</td>
+        <td style="background-color: var(--tab-grey-bg);">OR值分数 (Odds Ratio)</td>
         <td colspan="5">{OR_score:.2f}</td>
     </tr>
 </table>
 
-<p>OR值分数提示了与人群相比较的患病风险。分数大于1表示与人群相比，患病风险升高；分数小于1表示与人群相比，患病风险降低。OR值分数数值大小提示了患病风险的高低。
+<p>OR值分数提示了患者与人群相比较下的患病风险。分数大于1表示与人群相比，患者的患病风险升高；分数小于1表示与人群相比，患者的患病风险降低。OR值分数数值大小提示了患病风险的高低。
 
 <hr>
 
@@ -187,7 +187,7 @@ def html_cn(
         <th style="background-color: var(--tab-grey-bg);">单核苷酸多态性 (SNP) 基因型</th>
         <th style="background-color: var(--tab-grey-bg);">基因</th>
         <th style="background-color: var(--tab-grey-bg);">效应</th>
-        <th style="background-color: var(--tab-grey-bg);">OR值分</th>
+        <th style="background-color: var(--tab-grey-bg);">OR值</th>
         <th style="background-color: var(--tab-grey-bg); text-align: center" colspan="2">风险分数</th>
     </tr>
     {main_table}

@@ -121,7 +121,6 @@ class reporter_pharma:
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td></td>
                     <td>+</td> <!-- normal medication -->
                 </tr>
                 '''
@@ -133,7 +132,6 @@ class reporter_pharma:
                     advice_row = f'''
                         <td>{plus_conv(advice_data["疗效"])}</td>
                         <td>{plus_conv(advice_data["代谢"])}</td>
-                        <td>{plus_conv(advice_data["风险"])}</td>
                         <td>{plus_conv(advice_data["毒性"])}</td>
                         <td>{plus_conv(advice_data["剂量"])}</td>
                         <td></td>
