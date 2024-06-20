@@ -84,7 +84,7 @@ class runner:
                 f.write(f'Fatal Error, too few reads {self.unmapped_reads_count:,}')
                 f.write('####################################################')
                 subprocess.run('sh 8e.cleanup_logs.sh', shell=True)
-            log.info(f'Fatal Error for PID {patient_id}, too few reads {self.unmapped_reads_count:,}')
+            log.info(f'Fatal Error for PID {self.PID}, too few reads {self.unmapped_reads_count:,}')
             return None
 
         # TODO: Abstract away trhe functions below.
