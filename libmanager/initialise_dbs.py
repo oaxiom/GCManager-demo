@@ -136,7 +136,9 @@ def build_demo_data(man, home_path, script_path, log):
 
     ########## RESTRICTED patient:
 
-    shutil.copy(os.path.join(script_path, 'demo_data', 'PID.RESTRICTED1', 'PID.RESTRICTED1.restricted1.data.gcm'), os.path.join(home_path, 'data', 'PID.RESTRICTED1'))
+    shutil.copy(os.path.join(script_path, 'demo_data', 'PID.RESTRICTED1', 'PID.RESTRICTED1.restricted1.data.gcm'),
+        os.path.join(home_path, 'data', 'PID.RESTRICTED1', 'PID.RESTRICTED1.data.gcm'))
+
     newpid_row = {
             'patient_id': 'RESTRICTED1',
             'seq_id': 'SEQRESTRICTED1',

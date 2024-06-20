@@ -40,6 +40,15 @@ class gcm_file:
 
         # Repack as tinyglbase objects on demand
 
+    def report_available(self, report_code: str) -> bool:
+        if not self.rest: # No restrictions
+            return True
+
+        if report_code in self.get_rest():
+            return True
+
+        return False
+
     def get_rest(self):
         if self.rest:
             return set(self.rest)

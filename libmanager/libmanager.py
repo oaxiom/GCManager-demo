@@ -793,8 +793,11 @@ class libmanager:
 
             self.log.info(f'Search found: {disease_code}, {descEN}, {descCN}')
 
+            if not gcm.report_available(disease_code):
+                self.log.info(f'User {user} asked for a {mode} report for {patient_id} but a report for {search_term} is not avaialble')
+                return None, None
+
             rep = reporter_pharma.reporter_pharma(self.data_path, self.script_path, patient_id, patient_data, gcm, disease_code, descEN, descCN, self.log, self.lang)
-            #html_file = rep.generate_html_file()
             html_file, html = rep.generate()
 
         elif mode == 'ClinVAR':
@@ -813,8 +816,11 @@ class libmanager:
 
             self.log.info(f'Search found: {disease_code}, {descEN}, {descCN}')
 
+            if not gcm.report_available(disease_code):
+                self.log.info(f'User {user} asked for a {mode} report for {patient_id} but a report for {search_term} is not avaialble')
+                return None, None
+
             rep = reporter_risk.reporter_risk(self.data_path, self.script_path, patient_id, patient_data, gcm, disease_code, descEN, descCN, self.log, self.lang)
-            #html_file = rep.generate_html_file()
             html_file, html = rep.generate()
 
         self.db_disease_codes.close()

@@ -45,4 +45,4 @@ man.settings.set_doctor_setting('lang', 'CN')
 pharma_reps = man.api.populate_report_generator('Pharma', '72210953309787')
 print(pharma_reps)
 for rep in pharma_reps:
-    cmd_process(f"man.generate_report('andrew', 'Pharma', '72210953309787', '{rep}')")
+    cmd_process(f"man.generate_report('tester', 'Pharma', '72210953309787', '{rep}')")
