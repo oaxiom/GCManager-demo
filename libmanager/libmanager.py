@@ -897,9 +897,10 @@ class libmanager:
 
     def get_version(self) -> str:
         self.lang = self.settings.get_lang(self.end_type) # Pull language out of system settings DB
+        SVER = VERSION.replace(' demo', '')
         if self.lang == 'EN':
-            return f'System Version: {VERSION}. Database Version: {DBVERSION}'
-        return f'发布版本：v1 完整版本：{VERSION}'
+            return f'Release Version: {RELEASEVERSION}. Full version: {SVER}'
+        return f'发布版本：{RELEASEVERSION} 完整版本：{SVER}'
 
     def add_task(self, patient_id:str) -> bool:
         """
