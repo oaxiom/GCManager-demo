@@ -58,11 +58,11 @@ gzip -f full_logs.out
 
 #### Now remove all the logs
 
-#rm *.align.out
-#rm *.bqsr.out 
-#rm merge_bams.out 
-#rm called.chr*.out 
-#rm genotypegvcfs.*.out 
-#rm gathervcfs.out 
-#rm variant_racalibrate.out 
-#rm annotate_snps.out 
+rm *.align.out
+rm *.bqsr.out 
+rm merge_bams.out 
+rm called.chr*.out 
+rm genotypegvcfs.*.out 
+rm gathervcfs.out 
+rm variant_racalibrate.out 
+rm annotate_snps.out 
