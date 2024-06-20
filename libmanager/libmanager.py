@@ -321,7 +321,7 @@ class libmanager:
 
         # Now see if there are restrictions for this patient_id.
         if patient_id:
-            gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.data.gcm'), logger=self.log)
+            gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.data.gcm'), logger=self.log)
             if 'rest' in gcm:
                 res = []
                 restricted_reports = gcm.get_rest()
@@ -453,9 +453,9 @@ class libmanager:
 
         self.log.info(f'{user} asked for analysis logs for {patient_id}')
 
-        if os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.data.gcm')):
+        if os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.data.gcm')):
             self.log.info(f'GCM is available for {patient_id}')
-            gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.data.gcm'), logger=self.log)
+            gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.data.gcm'), logger=self.log)
             return gcm.get_logs()
 
         # Note that this still returns even if the analysis is incomplete;
@@ -491,9 +491,9 @@ class libmanager:
 
         self.log.info(f'{user} asked for QC data for {patient_id}')
 
-        if os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.data.gcm')):
+        if os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.data.gcm')):
             self.log.info(f'GCM is available for {patient_id}')
-            gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.data.gcm'), logger=self.log)
+            gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.data.gcm'), logger=self.log)
             return gcm.get_qc()
         else:
             self.log.warning(f'QC data is not yet available for {patient_id}')
@@ -514,7 +514,7 @@ class libmanager:
             self.log.info(f'Asked for {patient_id} GCM file, but GCM file is not available, analysis is incomplete')
             return False
 
-        gcm_path = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.data.gcm')
+        gcm_path = os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.data.gcm')
 
         if not os.path.exists(gcm_path):
             self.log.error(f'Asked for {patient_id} GCM file, but GCM file does not exist (although it was reported to exist)')
@@ -539,7 +539,7 @@ class libmanager:
             self.log.warning(f'Asked for {patient_id} VCF file, but VCF file is not available')
             return False
 
-        vcf_path = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.gatk.dbsnp.vcf.gz')
+        vcf_path = os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.gatk.dbsnp.vcf.gz')
 
         if not os.path.exists(vcf_path):
             self.log.error(f'Asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
@@ -562,7 +562,7 @@ class libmanager:
             self.log.warning(f'Asked for {patient_id} CRAM file, but CRAM file is not available')
             return False
 
-        cram_path = os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.sorted.dedupe.recal.cram')
+        cram_path = os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.sorted.dedupe.recal.cram')
 
         if not os.path.exists(cram_path):
             self.log.error(f'Asked for {patient_id} CRAM file, but CRAM file does not exist (although it was reported to exist)')
@@ -754,7 +754,7 @@ class libmanager:
         assert self.analysis_complete(patient_id), f'{patient_id} analysis is not complete, but asking for a report'
 
         self.lang = self.settings.get_lang(self.end_type) # Pull language out of system settings DB
-        gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'{patient_id}.data.gcm'), logger=self.log)
+        gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.data.gcm'), logger=self.log)
 
         self.log.info(f'User "{user}" asked for a {mode} report for patient_id {patient_id} for the condition {search_term}')
 
