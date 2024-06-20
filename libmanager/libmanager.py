@@ -300,6 +300,16 @@ class libmanager:
         self.db_PID.close()
         return True
 
+    def __restrict_reports(self, gcm, results):
+        restricted_reports = gcm.get_rest()
+        if restricted_reports:
+            res = []
+            for r in results:
+                if r[0] in restricted_reports:
+                    res.append(r)
+            return res
+        return results
+
     def get_pharma_table(self, patient_id: str) -> list:
         '''
         **Purpose**
@@ -322,13 +332,7 @@ class libmanager:
         # Now see if there are restrictions for this patient_id.
         if patient_id:
             gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.data.gcm'), logger=self.log)
-            if 'rest' in gcm:
-                res = []
-                restricted_reports = gcm.get_rest()
-                for r in results:
-                    if r[0] in restricted_reports:
-                        res.append(r)
-            results = res
+            results = self.__restrict_reports(gcm, results)
 
         if results:
             results = [i[1] for i in results]
@@ -353,12 +357,13 @@ class libmanager:
         results = self.db_disease_codes_cursor.fetchall()
         self.db_disease_codes.close()
 
-        if results:
-            results = [i[0] for i in results]
-
         # Now see if there are restrictions for this patient_id.
         if patient_id:
-            pass
+            gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.data.gcm'), logger=self.log)
+            results = self.__restrict_reports(gcm, results)
+
+        if results:
+            results = [i[0] for i in results]
 
         return results
 
