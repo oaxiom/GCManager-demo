@@ -81,7 +81,6 @@ class reporter_risk:
         riskdb = tinyglbase.glload(os.path.join(self.script_path, 'static_data', 'Risk', 'risk_table.glb' ))
 
         # Cannot do an overlap as risk allelles don't care about het/hom.
-
         over = riskdb.map(genelist=risk_snps, key='SNPS')
 
         # I need to match the genotypes, but seems the genotype and patient_genotype can be in any order when heterozygote
@@ -96,13 +95,6 @@ class reporter_risk:
         self.log.info(f'Matched {len(over)} SNPs to GWAS Risk alleles')
 
         return over
-
-    '''
-        <td>单核苷酸多态性 (SNP) 基因型</td>
-        <td>Gene</td>
-        <td>效应</td>
-        <td>Risk Classification</td>
-    '''
 
     def __calc_overall_risk_factor(self, risky):
         '''
@@ -126,14 +118,10 @@ class reporter_risk:
         # Currently searches by EN
         search_results = annotated_data.getRowsByKey(key='phenotype_EN', values=self.search_term, case_sensitive=False)
 
-        if not search_results:
-            raise AssertionError(f'No associations matching {self.search_term} were found')
+        #if not search_results:
+        #    raise AssertionError(f'No associations matching {self.search_term} were found')
 
-        search_results.sort('sorter')
-        search_results.reverse()
-        rest_of_table = []
-
-        OR_score = self.__calc_overall_risk_factor(search_results)
+        OR_score = 1.0
 
         if self.lang == 'EN':
             protective = 'Protective'
@@ -149,6 +137,11 @@ class reporter_risk:
             else:
                 rest_of_table = '<tr><td>无相关建议</td><td></td><td></td><td></td></tr>'
         else:
+            search_results.sort('sorter')
+            search_results.reverse()
+            rest_of_table = []
+            OR_score = self.__calc_overall_risk_factor(search_results)
+
             for gene in search_results:
                 # Get the bar width from OR or BETA
                 effect = ''
