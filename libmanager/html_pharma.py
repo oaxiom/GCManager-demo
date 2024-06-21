@@ -87,9 +87,9 @@ def html_en(
 <p>The following report was generated based upon sequencing data for the whole genome.
 The report provides guidance on the efficacy of particular drugs, used in the treatment of
 {search_term}. The table lists drugs, the specific SNP and genotype of the patient, and
-provides potential guidance for treatment. The data here constitutes the best advice and
+provides potential guidance for treatment. The data here constitutes advice and
 care should be taken in interpreting these results.
-and best clinical practice should be followed.</p>
+Best clinical practice should be followed.</p>
 
 <hr>
 
@@ -115,7 +115,7 @@ and best clinical practice should be followed.</p>
     <tr>
         <th>Drug</th>
         <th>Gene</th>
-        <th>SNP Genotype</th>
+        <th>Patient SNP Genotype</th>
         <th>Effect</th>
         <th>Guidance</th>
         <th>Evidence Level</th>
@@ -134,11 +134,22 @@ and best clinical practice should be followed.</p>
     {no_reccomendation_table}
 </table>
 
+<hr>
+
 <h2>Drug guidance summary</h2>
 
 <p>Note the evidence level, which indicates the evidence supporting the genetic-drug
 association. Levels 1A, 1B are well supported, 2A, 2B are likely, level 3 has some supporting
 evidence of an association.</p>
+
+<p><b>Efficacy</b>: Patients with this genotype may show increased or decreased response to treatment.
+
+<p><b>Metabolism</b>: Patients with this genotype may show increased or decreased metabolic processing of this drug and may show increased or decreased clearance of the drug from their system.
+
+<p><b>Toxicity</b>: Patients with this genotype may have increased or decreased risk for toxic side-effects.
+
+<p><b>Medication</b>: Patients with this genotype may require a higher or lower dose to be effective.
+
 
 <hr>
 

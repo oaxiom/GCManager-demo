@@ -42,8 +42,8 @@ def cmd_process(cmd):
 
 man.settings.set_doctor_setting('lang', 'CN')
 
-risk_reps = man.api.populate_report_generator('Risk', '72210953309787')
+risk_reps = man.api.populate_report_generator('Risk', 'NA12878')
 print(risk_reps)
 for rep in risk_reps:
-    cmd_process(f"man.generate_report('tester', 'Risk', '72210953309787', '{rep}')")
+    cmd_process(f"man.generate_report('tester', 'Risk', 'NA12878', '{rep}')")
 

@@ -44,7 +44,8 @@ def cmd_process(cmd):
 
 ########
 # Testing;
-cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', '血栓形成')")
+# Empty;
+cmd_process("man.generate_report('andrew', 'Risk', 'NA12878', '心肌缺血')")
 
 '''
 man.settings.set_doctor_setting('lang', 'CN')

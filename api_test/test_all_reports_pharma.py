@@ -40,7 +40,7 @@ def cmd_process(cmd):
 ########
 # Testing;
 
-man.settings.set_doctor_setting('lang', 'CN')
+man.settings.set_doctor_setting('lang', 'EN')
 
 pharma_reps = man.api.populate_report_generator('Pharma', '72210953309787')
 print(pharma_reps)
