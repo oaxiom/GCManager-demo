@@ -446,8 +446,10 @@ async def add_new_patient(
             gcman.get_qc(user, patient_id) # See if we can load the gcm
             # Set the analysis as complete;
             gcman.set_analysis_complete(patient_id)
+            gcman.log.info(f'Added GCM for {patient_id}')
         elif file.filename.endswith('.vcf.gz'): # We got a VCF
             gcman.set_vcf_available(patient_id)
+            gcman.log.info(f'Converted VCF to GCM for {patient_id}')
             gcman.dbsnp_vcf_to_gcm(os.path.join(sequence_data_path, destination_filename), os.path.join(sequence_data_path, destination_filename).replace('.vcf.gz', '.data.gcm'))
             gcman.get_qc(user, patient_id)
             gcman.set_analysis_complete(patient_id)
