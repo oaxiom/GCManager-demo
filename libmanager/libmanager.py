@@ -626,8 +626,28 @@ class libmanager:
         self.db_PID_cursor.execute('UPDATE patients SET analysis_done=?, date_analysis=? WHERE PID=?', (1, datetime.datetime.now().isoformat(' '), patient_id, ))
         self.db_PID.commit()
         self.db_PID.close()
-
         self.update_patient_space_used(patient_id)
+        return True
+
+    def set_vcf_available(self, patient_id:str) -> bool:
+        '''
+        **Purpose**
+            if we have a VCF,  set it to present
+        '''
+        self.db_PID = sqlite3.connect(self.db_PID_path)
+        self.db_PID_cursor = self.db_PID.cursor()
+        self.db_PID_cursor.execute('UPDATE patient_data SET vcf_available=?, data_packed=? WHERE PID=?', (1, datetime.datetime.now().isoformat(' '), patient_id, ))
+        self.db_PID.commit()
+        self.db_PID.close()
+        self.update_patient_space_used(patient_id)
+        return True
+
+    def dbsnp_vcf_to_gcm(self, vcf_filename, gcm_filename) -> bool:
+        '''
+        **Purpose**
+            Convert to GCM
+        '''
+        gcms.dbsnp_vcf_to_gcm(vcf_filename, gcm_filename)
         return True
 
     def add_patient(self,

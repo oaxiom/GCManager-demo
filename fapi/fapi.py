@@ -381,8 +381,8 @@ async def add_new_patient(
         if len(files) != 1:
             raise HTTPException(status_code=513, detail='Doctor end expects only one file')
         # expects the file to have the extension .int.gz
-        if not files[0].filename.lower().endswith('.gcm'):
-            raise HTTPException(status_code=514, detail='Doctor end expects a file in the format .gcm')
+        if not (files[0].filename.lower().endswith('.gcm') or files[0].filename.lower().endswith('.vcf.gz')):
+            raise HTTPException(status_code=514, detail='Doctor end expects a single file in the format .gcm or .vcf.gz')
 
     else: # Backend
         # expected an even number of files.
@@ -400,7 +400,10 @@ async def add_new_patient(
     for file in files:
         # Need to rename the files:
         if gcman.end_type == 'Doctorend':
-            destination_filename = f'PID.{patient_id}.data.gcm' # Easy case
+            if file.filename.endswith('.gcm'):
+                destination_filename = f'PID.{patient_id}.data.gcm' # Easy case
+            elif file.filename.endswith('.vcf.gz'):
+                destination_filename = f'PID.{patient_id}.vcf.gz' # Easy case
         elif gcman.end_type == 'Backend':
             # TODO: Difficult case...
             destination_filename = file.filename
@@ -438,10 +441,16 @@ async def add_new_patient(
     shutil.rmtree(temp_data_path)
 
     if gcman.end_type == 'Doctorend':
-        # Need to rename the files as {patient_id}.data.gcm
-        gcman.get_qc(user, patient_id) # See if we can load the gcm
-        # Set the analysis as complete;
-        gcman.set_analysis_complete(patient_id)
+        if file.filename.endswith('.gcm'): # We got a GCM
+            # Need to rename the files as {patient_id}.data.gcm
+            gcman.get_qc(user, patient_id) # See if we can load the gcm
+            # Set the analysis as complete;
+            gcman.set_analysis_complete(patient_id)
+        elif file.filename.endswith('.vcf.gz'): # We got a VCF
+            gcman.set_vcf_available(patient_id)
+            gcman.dbsnp_vcf_to_gcm(os.path.join(sequence_data_path, destination_filename), os.path.join(sequence_data_path, destination_filename).replace('.vcf.gz', '.data.gcm'))
+            gcman.get_qc(user, patient_id)
+            gcman.set_analysis_complete(patient_id)
 
     else: # Backend/Analysisend/small platform
         # everything should be valid. I can add it to the queue.
