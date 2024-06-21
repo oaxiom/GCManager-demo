@@ -194,46 +194,48 @@ class reporter_pharma:
         rest_of_table = []
         no_reccomendation_table = []
 
+        if self.lang == 'EN':
+            no_rec = 'No guidance'
+        else:
+            no_rec = '常规用药'
+
         if not search_results:
             if self.lang == 'EN':
                 rest_of_table = '<tr><td>None</td><td>None</td><td>None</td><td>None</td><td>None</td><td>None</td></tr>'
             else:
                 rest_of_table = '<tr><td>无</td><td>无</td><td>无</td><td>无</td><td>无</td><td>无</td></tr>'
         else:
-            if search_results:
-                for drug in search_results:
-                    if self.lang == 'EN':
-                        SNP_impact = drug['SNP_impact_EN']
-                        description = drug['description_EN']
-                        no_rec = 'No guidance'
-                    else:
-                        SNP_impact = drug['SNP_impact_CN']
-                        description = drug['description_CN']
-                        no_rec = '常规用药'
+            for drug in search_results:
+                if self.lang == 'EN':
+                    SNP_impact = drug['SNP_impact_EN']
+                    description = drug['description_EN']
+                else:
+                    SNP_impact = drug['SNP_impact_CN']
+                    description = drug['description_CN']
 
-                    tab_row = f'''
-                <tr>
-                    <td>{drug['drug_CN']}<br>({drug['drug_EN']})</td>
-                    <td>{drug['gene']}</td>
-                    <td>{drug['SNP']}-{drug['patient_genotype']}</td>
-                    <td>{SNP_impact}</td>
-                    <td>{description}</td>
-                    <td>{drug['evidence_level']}</td>
-                </tr>
-                        '''
-                    rest_of_table.append(tab_row.replace('  ', ''))
-                rest_of_table = '\n'.join(rest_of_table)
-
-            if no_reccomendation:
-                for drug in no_reccomendation:
-                    tab_row_no_rec = f'''
-                        <tr>
-                        <td>{drug['drug_CN']} ({drug['drug_EN']})</td>
-                        <td>{no_rec}</td>
-                        </tr>
+                tab_row = f'''
+            <tr>
+                <td>{drug['drug_CN']}<br>({drug['drug_EN']})</td>
+                <td>{drug['gene']}</td>
+                <td>{drug['SNP']}-{drug['patient_genotype']}</td>
+                <td>{SNP_impact}</td>
+                <td>{description}</td>
+                <td>{drug['evidence_level']}</td>
+            </tr>
                     '''
-                    no_reccomendation_table.append(tab_row_no_rec.replace('  ', ''))
-                no_reccomendation_table = '\n'.join(no_reccomendation_table)
+                rest_of_table.append(tab_row.replace('  ', ''))
+            rest_of_table = '\n'.join(rest_of_table)
+
+        if no_reccomendation:
+            for drug in no_reccomendation:
+                tab_row_no_rec = f'''
+                    <tr>
+                    <td>{drug['drug_CN']} ({drug['drug_EN']})</td>
+                    <td>{no_rec}</td>
+                    </tr>
+                '''
+                no_reccomendation_table.append(tab_row_no_rec.replace('  ', ''))
+            no_reccomendation_table = '\n'.join(no_reccomendation_table)
 
         # THe summary top table
         summary_table_dict = {}

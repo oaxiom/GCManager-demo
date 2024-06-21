@@ -28,9 +28,9 @@ man.set_end_type('Doctorend')
 def cmd_process(cmd):
     print(f'\n>>> {cmd}')
     res = eval(cmd)
-    
+
     print(len(res))
-    
+
     if isinstance(res, str):
         lines = res.split('\n')
         if len(lines) > 10:
@@ -44,10 +44,9 @@ def cmd_process(cmd):
 
 ########
 # Testing;
-cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
-cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Hypertension')")
-cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', '心房颤动')")
+cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', '血栓形成')")
 
+'''
 man.settings.set_doctor_setting('lang', 'CN')
 cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
 cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Hypertension')")
@@ -59,14 +58,14 @@ cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Hyperten
 cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', '心房颤动')")
 
 
-'''
+
 cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Diabetes mellitus, type 2')")
 cmd_process("man.generate_report('andrew', 'Pharma', '72210953309787', 'Hypertension')")
 cmd_process("man.generate_report('andrew', 'Pharma', 'NA12878', '肌萎缩性脊髓侧索硬化症')")
-'''
+
 # Risk:
 
-'''
+
 cmd_process("man.generate_report('andrew', 'Risk', '72210953309787', 'Amyotrophic lateral sclerosis')")
 cmd_process("man.generate_report('andrew', 'Risk', '72210953309787', 'Rheumatoid arthritis')")
 '''
