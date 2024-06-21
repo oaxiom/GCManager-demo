@@ -5,9 +5,12 @@
 # Author(s):
 #
 
+import sys
+import os
 import pickle
 import gzip
 from . import tinyglbase
+from . import pipeline_support
 
 # TODO: Store the analysis date in the gcm file
 
@@ -101,3 +104,58 @@ class gcm_file:
 
         with open(filename, "wb") as oh:
             pickle.dump(gcm_data, oh, -1)
+
+def dbsnp_vcf_to_gcm(vcfgz_filename, gcm_filename):
+    """
+
+    ** Convert a dbCNP annotated VCF to a GCM file.
+
+    Returns a GCM
+
+
+    """
+    assert os.path.exists(vcfgz_filename), f'{vcfgz_filename} file not found'
+
+    gcm_data = {
+        'qc': None,
+        'full_logs': None,
+        'pharma': None,
+        'risk': None,
+        'clinvar': None, # Not currently used.
+        'rest': None,
+        }
+
+    # reverse is gzip.decompress(bytes_obj).decode()
+
+    # QC
+    gcm_data['qc'] = f'''
+        No QC data is available for this GCM, as
+        the GCM was generated using a pre-processed VCF file.
+        '''
+
+    # Full logs
+    gcm_data['full_logs'] = gzip.compress(f'''
+        No log data is available for this GCM, as
+        the GCM was generated using a pre-processed VCF file.
+
+        The file {vcfgz_filename} was converted to this GCM
+        '''.encode())
+
+    pharma, risk = pipeline_support.annotate_pharma_risk(vcfgz_filename)
+    # pharma table
+    gcm_data['pharma'] = gzip.compress(pharma.encode())
+
+    # risk
+    gcm_data['risk'] = gzip.compress(risk.encode())
+
+    # clinvar
+    #with open(f'{PID}.clinvar.pathogenic.tsv', 'rt') as f:
+    gcm_data['clinvar'] = None
+
+    # save the gcm
+    with open(gcm_filename, "wb") as oh:
+        pickle.dump(gcm_data, oh, -1)
+
+    gcm = gcm_file(gcm_filename, logger=None)
+
+    return gcm

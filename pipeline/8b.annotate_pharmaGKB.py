@@ -1,7 +1,6 @@
 
 import sys, os, subprocess, gzip
 #TODO: tinyglbase
-#from glbase3 import genelist, glload
 
 if len(sys.argv) != 2:
     print('Incorrect number of arguments. should be PID file only')
@@ -67,7 +66,5 @@ for r in results:
     output.write(f'{chrom}\t{rsid}\t{genotype}\n')
 
 output.close()
-
-
 
 print('Stage 8: Finished PharmaGKB')

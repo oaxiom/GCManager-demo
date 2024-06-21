@@ -36,7 +36,16 @@ cmd_process("man.get_logs('tester', 'NA12878')")
 print(man.get_qc('tester', 'NA12878'))
 print(man.get_qc('tester', '72210953309787'))
 
-gcm = gcms.gcm_file(os.path.join(man.data_path, f'PID.72210953309787', f'72210953309787.data.gcm'), logger=man.log)
+gcm = gcms.gcm_file(os.path.join(man.data_path, f'PID.72210953309787', f'PID.72210953309787.data.gcm'), logger=man.log)
 print(gcm.get_pharma())
 print(gcm.get_risk())
-print(gcm.get_clinvar())
+#print(gcm.get_clinvar())
+
+# Test conversion of a VCF to a GCM:
+
+gcm = gcms.dbsnp_vcf_to_gcm('../demo_data/vcfs/VCFANALYSIS.gatk.dbsnp.vcf.gz', '../demo_data/gcms/VCFANALYSIS.data.gcm')
+gcm.logger = man.log
+print(gcm.get_qc())
+print(gcm.get_logs())
+print(gcm.get_pharma())
+print(gcm.get_risk())
