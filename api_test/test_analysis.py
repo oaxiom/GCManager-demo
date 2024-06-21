@@ -81,6 +81,6 @@ seconds = 60
 
 while not man.analysis_complete('ANALYSISTEST'):
     man.process_analysis_queue()
-    print(man.analysis_queue.currently_processing)
+    #print(man.analysis_queue.currently_processing)
     print(f'Sleeping for {seconds} seconds')
     time.sleep(seconds)

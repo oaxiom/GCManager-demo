@@ -95,8 +95,8 @@ class reporter_pharma:
 
         '''
         def plus_conv(i):
-            i = i.replace('+', '<div style="color: #0000aa;">⬆</div>')
-            i = i.replace('-', '<div style="color: #00aa00;">⬇</div>')
+            i = i.replace('+', '<span style="color: #0000aa;">⬆</span>')
+            i = i.replace('-', '<span style="color: #00aa00;">⬇</span>')
             #i = i.replace(' ', '~') # if we need a ~ symbol;
             return i
 
@@ -252,8 +252,8 @@ class reporter_pharma:
                         continue
                     elif impacts == '药物动力学': # Pharmacokinetics;
                         continue
-                    #inc_dec = drug['inc_dec']
-                    summary_table_dict[drug_name][drug['gene']][impacts] += '+'
+                    inc_dec = drug['inc_dec']
+                    summary_table_dict[drug_name][drug['gene']][impacts] += inc_dec
 
         # convert the summary_table to HTML:
         summary_table = self.__generate_summary_table(no_reccomendation, summary_table_dict)
