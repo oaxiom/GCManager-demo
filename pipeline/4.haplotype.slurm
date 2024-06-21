@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=2
 #SBATCH --partition=batch
 #SBATCH -N 1
 
@@ -15,7 +15,7 @@ bamfile=$PID.sorted.final.bam
 
 # This approach is invalid for X and Y chromsomes.
 # Need to use -ploidy and build separate models for male and female
-gatk --java-options "-Xmx40G -XX:+UseParallelGC -XX:ParallelGCThreads=1" \
+gatk --java-options "-Xmx40G -XX:+UseParallelGC -XX:ParallelGCThreads=2" \
                 HaplotypeCaller \
                 -R $bash_ref_fasta \
                 -I $bamfile \

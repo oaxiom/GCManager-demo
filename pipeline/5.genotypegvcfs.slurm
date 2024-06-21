@@ -1,5 +1,5 @@
 #!/bin/sh
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=2
 #SBATCH --partition=batch
 #SBATCH -N 1
 
@@ -7,7 +7,7 @@ HOME=$(echo ~)
 
 bash_ref_fasta=$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta
 
-gatk --java-options "-Xmx30G -XX:ParallelGCThreads=1" \
+gatk --java-options "-Xmx30G -XX:ParallelGCThreads=2" \
 	GenotypeGVCFs \
 	-R $bash_ref_fasta \
 	-L $chrom \
