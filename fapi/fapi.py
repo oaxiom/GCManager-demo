@@ -503,7 +503,10 @@ def report_current_anaylsis_stage(patient_id:str, user=Depends(user_manager)) ->
     '''
     if not gcman.patient_exists(patient_id):
         raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': gcman.report_current_analysis_stage(patient_id), 'msg': None}
+        
+    percents, q_status = gcman.report_current_analysis_stage(patient_id)
+    
+    return {'code': 200, 'data': percents, 'msg': q_status}
 
 @app.get("/patient/export_QC_statistics/{patient_id}")
 def export_QC_statistics(patient_id: str, user=Depends(user_manager)) -> dict:

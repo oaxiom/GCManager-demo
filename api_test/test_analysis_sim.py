@@ -29,6 +29,10 @@ man.set_end_type('Backend')
 # 72210953309787 is complete;
 # PATIENTNOTSTARTED is incomplete
 
-while True:
-    print(man.report_current_analysis_stage('PATIENTNOTSTARTED'))
-    time.sleep(2)
+man.delete_patient('tester', 'PATIENTNOTSTARTED')
+man.add_patient("tester", "PATIENTNOTSTARTED", "SEQIDNEW", "张XX", "女", 50, "PATH/TO/SEQ")
+
+print(man.report_current_analysis_stage('72210953309787'))
+
+print(man.report_current_analysis_stage('PATIENTNOTSTARTED'))
+

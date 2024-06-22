@@ -45,15 +45,12 @@ class analysis_queue:
         '''
         Get the analysis progress for this patient ID, I assume you checked it exists.
         '''
-        # Do the simple case;
-        if self._analysis_complete(patient_id):
-            return {1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100, 7: 100, 8: 100, 9: 100}
-
         # See if we can get it from the progress file left by runner.py
         if os.path.exists(os.path.join(self.db_path, f'PID.{patient_id}', 'progress.txt')):
             return self._load_progress_txt_file(patient_id)
 
-        return # What to do?!?!
+        # If no progress.txt, it's probably not started.
+        return {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0} 
 
     def _analysis_complete(self, task: dict) -> bool:
         '''
