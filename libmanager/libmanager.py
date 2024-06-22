@@ -760,23 +760,19 @@ class libmanager:
         """
         Return the update;
         """
-        if self.analysis_queue.currently_processing:
-            current_patient_analysis = self.analysis_queue.currently_processing['PID']
-        else:
-            current_patient_analysis = 'None'
-        
+        self.lang = self.settings.get_lang(self.end_type) # Pull language out of system settings DB
         q_size = len(self.analysis_queue.q)
         
-        self.lang = self.settings.get_lang(self.end_type) # Pull language out of system settings DB
-        if self.lang == 'EN':
-            q_status = f'Currently processing {current_patient_analysis}, there are {q_size} items on the queue.'
-        else:
-            q_status = f'目前正在处理{current_patient_analysis}，队列中有{q_size}个项目。'
+        if self.analysis_queue.currently_processing:
+            current_patient_analysis = self.analysis_queue.currently_processing['PID']
+            if self.lang == 'EN': q_status = f'Currently processing {current_patient_analysis}, there are {q_size} items on the queue.'
+            else: q_status = f'目前正在处理{current_patient_analysis}，队列中有{q_size}个项目。'
+            return self.analysis_queue.analysis_progress(), q_status
         
-        if self._check_analysis_is_complete(patient_id):
-            return {1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100, 7: 100, 8: 100, 9: 100}, q_status
-
-        return self.analysis_queue.analysis_progress(patient_id), q_status
+        # Nothing being processed:
+        if self.lang == 'EN': q_status = 'Idle'
+        else: q_status = '无'
+        return {1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100, 7: 100, 8: 100, 9: 100}, q_status
         
     def generate_report(self, user:str, mode:str, patient_id:str, search_term:str):
         '''
