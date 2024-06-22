@@ -364,7 +364,7 @@ async def add_new_patient(
     GCManager-demo/demo_data/gcms/SRR10286930.data.gcm
 
     '''
-    assert gcman.end_type in ('Doctorend', 'Backend'), f'end_type appears not to have been set'
+    assert gcman.end_type in ('Doctorend', 'Backend'), f'end_type has not been set'
     # TODO: This function is 2x slow, as it copies the file first, then copies it again.
     # Supposedly it should be possible to remove one of the copies by using the underlying Starlette
     # Streamer.
@@ -454,7 +454,7 @@ async def add_new_patient(
             gcman.get_qc(user, patient_id)
             gcman.set_analysis_complete(patient_id)
 
-    else: # Backend/Analysisend/small platform
+    else: # Backend/small platform
         # everything should be valid. I can add it to the queue.
         gcman.add_task(patient_id)
         gcman.process_analysis_queue()
