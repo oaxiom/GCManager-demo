@@ -486,7 +486,7 @@ def delete_patient(patient_id:str, user=Depends(user_manager)) -> dict:
 
 
 @app.get("/patient/report_current_anaylsis_stage/{patient_id}")
-def report_current_anaylsis_stage(patient_id:str, user=Depends(user_manager)) -> dict:
+def report_current_anaylsis_stage(user=Depends(user_manager)) -> dict:
     '''
     Returns the current analysis stage for the indicated data,
     in the form:
@@ -504,7 +504,7 @@ def report_current_anaylsis_stage(patient_id:str, user=Depends(user_manager)) ->
     if not gcman.patient_exists(patient_id):
         raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
         
-    percents, q_status = gcman.report_current_analysis_stage(patient_id)
+    percents, q_status = gcman.report_current_analysis_stage()
     
     return {'code': 200, 'data': percents, 'msg': q_status}
 

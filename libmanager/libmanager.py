@@ -756,12 +756,10 @@ class libmanager:
 
         return r[0]
 
-    def report_current_analysis_stage(self, patient_id:str):
+    def report_current_analysis_stage(self):
         """
         Return the update;
         """
-        assert self.patient_exists(patient_id), f'{patient_id} does not exist'
-        
         if self.analysis_queue.currently_processing:
             current_patient_analysis = self.analysis_queue.currently_processing['PID']
         else:
