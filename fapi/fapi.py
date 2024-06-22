@@ -497,9 +497,6 @@ def report_current_anaylsis_stage(user=Depends(user_manager)) -> dict:
     形式为：
     {1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100, 7: 100, 8: 100, 9: 100}
     任务分析状态
-
-    Example value:
-    patient_id = '72210953309787'
     '''        
     percents, q_status = gcman.report_current_analysis_stage()
     
