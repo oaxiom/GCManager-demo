@@ -764,10 +764,10 @@ class libmanager:
         q_size = len(self.analysis_queue.q)
         
         if self.analysis_queue.currently_processing:
-            current_patient_analysis = self.analysis_queue.currently_processing['PID']
-            if self.lang == 'EN': q_status = f'Currently processing {current_patient_analysis}, there are {q_size} items on the queue.'
-            else: q_status = f'目前正在处理{current_patient_analysis}，队列中有{q_size}个项目。'
-            return self.analysis_queue.analysis_progress(current_patient_analysis), q_status
+            current_patient_analysis_pid = self.analysis_queue.currently_processing['PID']
+            if self.lang == 'EN': q_status = f'Currently processing {current_patient_analysis_pid}, there are {q_size} items on the queue.'
+            else: q_status = f'目前正在处理{current_patient_analysis_pid}，队列中有{q_size}个项目。'
+            return self.analysis_queue.analysis_progress(current_patient_analysis_pid), q_status
         
         # Nothing being processed:
         if self.lang == 'EN': q_status = 'Idle'
