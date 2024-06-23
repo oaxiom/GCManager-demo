@@ -730,7 +730,7 @@ class libmanager:
 
         sequence_data_path = data_dir # Copy the seq data here;
 
-        self.update_patient_space_used(completed_patient_id)
+        self.update_patient_space_used(patient_id)
 
         return True, sequence_data_path
 
