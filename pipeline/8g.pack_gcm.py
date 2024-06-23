@@ -5,6 +5,8 @@ if len(sys.argv) != 2:
     print('Incorrect number of arguments. should be PID file only')
     sys.exit(-1)
 
+print('Starting to make GCM')
+
 PID = sys.argv[1]
 
 gcm_data = {
@@ -42,4 +44,4 @@ with open(f'{PID}.clinvar.pathogenic.tsv', 'rt') as f:
 with open(f'{PID}.data.gcm', "wb") as oh:
     pickle.dump(gcm_data, oh, -1)
 
-
+print('Finsihed making GCM')
