@@ -642,6 +642,19 @@ class libmanager:
         self.update_patient_space_used(patient_id)
         return True
 
+    def set_cram_available(self, patient_id:str) -> bool:
+        '''
+        **Purpose**
+            if we have a CRAM,  set it to present
+        '''
+        self.db_PID = sqlite3.connect(self.db_PID_path)
+        self.db_PID_cursor = self.db_PID.cursor()
+        self.db_PID_cursor.execute('UPDATE patient_data SET cram_available=?, data_packed=? WHERE PID=?', (1, datetime.datetime.now().isoformat(' '), patient_id, ))
+        self.db_PID.commit()
+        self.db_PID.close()
+        self.update_patient_space_used(patient_id)
+        return True
+
     def dbsnp_vcf_to_gcm(self, vcf_filename, gcm_filename) -> bool:
         '''
         **Purpose**
@@ -762,18 +775,18 @@ class libmanager:
         """
         self.lang = self.settings.get_lang(self.end_type) # Pull language out of system settings DB
         q_size = len(self.analysis_queue.q)
-        
+
         if self.analysis_queue.currently_processing:
             current_patient_analysis_pid = self.analysis_queue.currently_processing['PID']
             if self.lang == 'EN': q_status = f'Currently processing {current_patient_analysis_pid}, there are {q_size} items on the queue.'
             else: q_status = f'目前正在处理{current_patient_analysis_pid}，队列中有{q_size}个项目。'
             return self.analysis_queue.analysis_progress(current_patient_analysis_pid), q_status
-        
+
         # Nothing being processed:
         if self.lang == 'EN': q_status = 'Idle'
         else: q_status = '无'
         return {1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100, 7: 100, 8: 100, 9: 100}, q_status
-        
+
     def generate_report(self, user:str, mode:str, patient_id:str, search_term:str):
         '''
         **Purpose**
@@ -959,5 +972,13 @@ class libmanager:
 
         if completed_patient_id:
             self.set_analysis_complete(completed_patient_id)
+
+            if os.path.exists(os.path.join(self.data_path, f'PID.{completed_patient_id}', 'PID.{completed_patient_id}.dbsnp.vcf.gz')):
+                self.set_vcf_available(completed_patient_id)
+
+            if os.path.exists(os.path.join(self.data_path, f'PID.{completed_patient_id}', 'PID.{completed_patient_id}.cram')):
+                self.set_cram_available(completed_patient_id)
+
+            self.update_patient_space_used(completed_patient_id)
 
         return True
