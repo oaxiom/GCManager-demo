@@ -19,7 +19,7 @@ print(f'Loaded {len(key_snps):,} SNPs')
 
 results = []
 
-vcf = gzip.open(f'{PID}.gatk.dbsnp.vcf.gz', 'rt')
+vcf = gzip.open(f'{PID}.dbsnp.vcf.gz', 'rt')
 for lineno, line in enumerate(vcf):
     if (lineno + 1) % 1e6 == 0:
         print(f'{lineno+1:,}')
