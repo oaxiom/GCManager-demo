@@ -33,8 +33,8 @@ man.set_end_type('Backend')
 
 # delete the patient if it's already there;
 try:
-    man.delete_patient('tester', 'ANALYSISTEST')
     man.delete_patient('tester', 'TOOFEWREADS')
+    man.delete_patient('tester', 'ANALYSISTEST')
 except AssertionError:
     pass
 
