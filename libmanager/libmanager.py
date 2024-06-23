@@ -233,6 +233,8 @@ class libmanager:
             PatientID | analysis_complete
 
         '''
+        self.lang = self.settings.get_lang(self.end_type)
+
         self.db_PID = sqlite3.connect(self.db_PID_path)
         self.db_PID_cursor = self.db_PID.cursor()
         self.db_PID_cursor.execute('SELECT PID, name, age, sex, analysis_done, institution_sending FROM patients')
@@ -246,7 +248,7 @@ class libmanager:
                 'name': row[1],
                 'age': row[2],
                 'sex': row[3],
-                'analysis_done': self._sql_yesno(row[4]),
+                'analysis_done': self._sql_yesno(row[4], self.lang),
                 'insititution_sending': row[5],
                 }
 
@@ -260,6 +262,8 @@ class libmanager:
         **Purpose**
             Return all of the patient_data table;
         '''
+        self.lang = self.settings.get_lang(self.end_type)
+
         self.db_PID = sqlite3.connect(self.db_PID_path)
         self.db_PID_cursor = self.db_PID.cursor()
         self.db_PID_cursor.execute('SELECT * FROM patient_data')
@@ -275,9 +279,9 @@ class libmanager:
             row = {
                 'patient_id': row[0],
                 'space_used': row[1],
-                'data_packed': self._sql_yesno(row[2]),
-                'cram_available': self._sql_yesno(row[3]),
-                'vcf_available': self._sql_yesno(row[4]),
+                'data_packed': self._sql_yesno(row[2], self.lang),
+                'cram_available': self._sql_yesno(row[3], self.lang),
+                'vcf_available': self._sql_yesno(row[4], self.lang),
                 }
 
             clean_results.append(row)
@@ -725,6 +729,8 @@ class libmanager:
         self.log.info(f'{user} added patient {patient_id}')
 
         sequence_data_path = data_dir # Copy the seq data here;
+
+        self.update_patient_space_used(completed_patient_id)
 
         return True, sequence_data_path
 
