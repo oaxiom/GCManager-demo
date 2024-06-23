@@ -23,8 +23,6 @@ python 8c.annotate_risk.py $PID
 
 echo Stage 8: Completed annotation and selection of SNPs
 
-sh 8e.cleanup_logs.sh
-
 python 8f.getqc.py $PID
 
 python 8g.pack_gcm.py $PID
@@ -52,6 +50,8 @@ bash_ref_fasta=$(echo '$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_
 samtools view -@ 2 -T $bash_ref_fasta -C -o $PID.cram $PID.sorted.final.bam
 
 rm $PID.sorted.final.bam
+
+sh 8e.cleanup_logs.sh
 
 sleep 10 # Wait for any buffers
 python runner.py

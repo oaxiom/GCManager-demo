@@ -5,6 +5,8 @@ if len(sys.argv) != 2:
     print('Incorrect number of arguments. should be PID file only')
     sys.exit(-1)
 
+print('Collecting QC')
+
 PID = sys.argv[1]
 
 def wc(filename, gziped):
@@ -32,7 +34,7 @@ for bams in glob.glob('*.sorted.dedupe.flagstat'):
         # These numbers are *2, i.e. a single read is two pairs.
         _ = oh.readline() # total reads
         _ = oh.readline() # primary
-        _ = oh.readline() # secondary 
+        _ = oh.readline() # secondary
         _ = oh.readline() # supplementary
         outputs['duplicates'] += int(oh.readline().split(' ')[0]) //2 # duplicates
         _ = oh.readline() # primary duplicates
@@ -47,7 +49,7 @@ for bams in glob.glob('*.sorted.dedupe.flagstat'):
         _ = oh.readline()
         _ = oh.readline()
         _ = oh.readline()
-            
+
 
 outputs['total_snps'] = wc(f'{PID}.recalibrated_snps_recalibrated_indels.vcf.gz', gziped=True)
 
@@ -61,3 +63,4 @@ with open(f'{PID}.qc', 'wt') as oh:
     oh.write(f"Total number of SNPs = {outputs['total_snps']}\n")
     oh.write(f"Total annotated SNPs = {outputs['total_annotated_snps']}\n")
 
+print('Finished collecting QC')

@@ -44,4 +44,4 @@ with open(f'{PID}.clinvar.pathogenic.tsv', 'rt') as f:
 with open(f'{PID}.data.gcm', "wb") as oh:
     pickle.dump(gcm_data, oh, -1)
 
-print('Finsihed making GCM')
+print('Finished making GCM')
