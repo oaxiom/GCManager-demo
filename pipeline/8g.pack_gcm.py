@@ -37,8 +37,8 @@ with open(f'{PID}.risk.txt', 'rt') as f:
     gcm_data['risk'] = gzip.compress(f.read().encode())
 
 # clinvar
-with open(f'{PID}.clinvar.pathogenic.tsv', 'rt') as f:
-    gcm_data['clinvar'] = gzip.compress(f.read().encode())
+#with open(f'{PID}.clinvar.pathogenic.tsv', 'rt') as f:
+gcm_data['clinvar'] = None # gzip.compress(f.read().encode())
 
 # save the gcm
 with open(f'{PID}.data.gcm', "wb") as oh:
