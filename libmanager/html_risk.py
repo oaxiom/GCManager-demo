@@ -101,6 +101,7 @@ represents the probability of the incidence of {search_term}, where the average 
         <th style="background-color: var(--tab-grey-bg);">SNP-genotype</th>
         <th style="background-color: var(--tab-grey-bg);">Gene</th>
         <th style="background-color: var(--tab-grey-bg);">Effect</th>
+        <th style="background-color: var(--tab-grey-bg);">OR Score</th>
         <th style="background-color: var(--tab-grey-bg);" colspan="2">Risk Classification</th>
     </tr>
     {main_table}
