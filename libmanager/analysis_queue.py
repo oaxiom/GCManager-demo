@@ -29,13 +29,13 @@ class analysis_queue:
 
         self.currently_processing = None
 
-    def _load_progress_txt_file(self, patient_id:str):
+    def _load_progress_txt_file(self, patient_id:str) -> dict:
         res = {}
 
         oh = open(os.path.join(self.data_path, f'PID.{patient_id}', 'progress.txt'))
         for line in oh:
-            line = line.strip().split(' ')
-            if line.startswith('Stage'):
+            if line.startswith('Stage '):
+                line = line.strip().split(' ')
                 line = line.split(' ')
                 res[int(line[1].strip(':'))] = int(line[2].strip('%'))
         oh.close()
