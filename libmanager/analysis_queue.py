@@ -36,7 +36,6 @@ class analysis_queue:
         for line in oh:
             if line.startswith('Stage '):
                 line = line.strip().split(' ')
-                line = line.split(' ')
                 res[int(line[1].strip(':'))] = int(line[2].strip('%'))
         oh.close()
 
@@ -61,9 +60,12 @@ class analysis_queue:
         '''
         # Probably best to check for the existence of the .data.gcm file
         if os.path.exists(task['gcm_path']):
+            # TODO: Check file size is not zero
             return True
+
         if os.path.exists(os.path.join(task['analysis_path'], 'FATALERROR.out')): # This is a tag left by runner to say we failed.
             return True
+
         return False
 
     def add_task(self, patient_id:str):
