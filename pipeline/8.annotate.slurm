@@ -54,6 +54,3 @@ sh 8e.cleanup_logs.sh
 
 python 8g.pack_gcm.py $PID
 
-sleep 10 # Wait for any buffers
-python runner.py
-
