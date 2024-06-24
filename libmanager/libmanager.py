@@ -951,7 +951,7 @@ class libmanager:
         return help_text.get_help(self.end_type, self.lang)
 
     def get_manual(self) -> str:
-        return os.path.join(self.script_path, '..', 'manual', 'manual.cn.pdf')
+        return os.path.join(self.script_path, 'manual', 'manual.cn.pdf')
 
     def get_version(self) -> str:
         self.lang = self.settings.get_lang(self.end_type) # Pull language out of system settings DB
