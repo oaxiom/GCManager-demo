@@ -29,7 +29,7 @@ oh = open('dbsnp.toml', 'wt')
 oh.write(toml)
 oh.close()
 
-result = subprocess.run(f'''vcfanno -lua "" dbsnp.toml {vcf} | awk -F "\t" '$3!="."' | bgzip > {PID}.dbsnp.vcf.gz''', shell=True)
+result = subprocess.run(f'''vcfanno -lua "" dbsnp.toml {vcf} | awk -F "\t" '$3!="."' | bgzip > {PID}.vcf.gz''', shell=True)
 
 print('Stage 8: Finished annotating dbSNP')
 

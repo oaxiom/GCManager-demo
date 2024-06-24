@@ -24,8 +24,8 @@ oh = open('clinvar.toml', 'wt')
 oh.write(toml)
 oh.close()
 
-subprocess.run(f'''vcfanno clinvar.toml {vcf} | bgzip > {PID}.gatk.dbsnp.clinvar.vcf.gz''', shell=True)
-subprocess.run(f'''bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%MC\t%Gene\t%RS\t%significance\t%ExAC_alleleFreq\t%diagnosis\n' {PID}.dbsnp.clinvar.vcf.gz | grep -v '\.\t\.' >{PID}.clinvar.tsv''', shell=True)
+subprocess.run(f'''vcfanno clinvar.toml {vcf} | bgzip > {PID}.clinvar.vcf.gz''', shell=True)
+subprocess.run(f'''bcftools query -f '%CHROM\t%POS\t%REF\t%ALT\t%MC\t%Gene\t%RS\t%significance\t%ExAC_alleleFreq\t%diagnosis\n' {PID}.clinvar.vcf.gz | grep -v '\.\t\.' >{PID}.clinvar.tsv''', shell=True)
 subprocess.run(f'''grep 'Pathogenic' {PID}.clinvar.tsv > {PID}.clinvar.pathogenic.tsv''', shell=True)
 
 print('Stage 8: Finished annotating ClinVAR')

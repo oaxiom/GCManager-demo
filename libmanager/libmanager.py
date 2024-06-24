@@ -549,7 +549,7 @@ class libmanager:
             self.log.warning(f'Asked for {patient_id} VCF file, but VCF file is not available')
             return False
 
-        vcf_path = os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.gatk.dbsnp.vcf.gz')
+        vcf_path = os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.vcf.gz')
 
         if not os.path.exists(vcf_path):
             self.log.error(f'Asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
@@ -983,7 +983,7 @@ class libmanager:
         if completed_patient_id:
             self.set_analysis_complete(completed_patient_id)
 
-            if os.path.exists(os.path.join(self.data_path, f'PID.{completed_patient_id}', 'PID.{completed_patient_id}.dbsnp.vcf.gz')):
+            if os.path.exists(os.path.join(self.data_path, f'PID.{completed_patient_id}', 'PID.{completed_patient_id}.vcf.gz')):
                 self.set_vcf_available(completed_patient_id)
 
             if os.path.exists(os.path.join(self.data_path, f'PID.{completed_patient_id}', 'PID.{completed_patient_id}.cram')):

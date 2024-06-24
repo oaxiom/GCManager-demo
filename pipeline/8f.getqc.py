@@ -53,7 +53,7 @@ for bams in glob.glob('*.sorted.dedupe.flagstat'):
 
 outputs['total_snps'] = wc(f'{PID}.recalibrated_snps_recalibrated_indels.vcf.gz', gziped=True)
 
-outputs['total_annotated_snps'] = wc(f'{PID}.dbsnp.vcf.gz', gziped=True)
+outputs['total_annotated_snps'] = wc(f'{PID}.vcf.gz', gziped=True)
 
 with open(f'{PID}.qc', 'wt') as oh:
     oh.write(f"Total number of input reads = {outputs['read_count']}\n")
