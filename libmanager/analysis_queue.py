@@ -30,7 +30,7 @@ class analysis_queue:
         self.currently_processing = None
 
     def _load_progress_txt_file(self, patient_id:str):
-        with open(os.path.join(self.db_path, f'PID.{patient_id}', 'progress.txt')) as f:
+        with open(os.path.join(self.data_path, f'PID.{patient_id}', 'progress.txt')) as f:
             prog = f.read()
 
         res = {}
@@ -50,7 +50,7 @@ class analysis_queue:
             return self._load_progress_txt_file(patient_id)
 
         # If no progress.txt, it's probably not started.
-        return {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0} 
+        return {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
 
     def _analysis_complete(self, task: dict) -> bool:
         '''

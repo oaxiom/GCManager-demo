@@ -689,7 +689,6 @@ def validate(encrypted: str) -> dict:
 
     Om7nQI7LG/RG8LvyC5fjzCEM981LAjyhiSrqQUkQ0f4P7PnYsgEbX6uYriO3Hox0AFfsSPM/FoWO4PMSMZUWCxE2EDSMHMCfBlIHuLC08p0bxZKghZUehXKsJMi3kAqSv49Gk/KiG5fE2rAkHhRo797TRfLHiFDyzbxtnTKEZFLMFMOd35+1q7WJ92vZ5jlXNB/SAGJvgVPgRfaT4AaWOYPllol82NGxFaZsRaSmVsjyaHb26ZdCxqMhS1Uo6u1mPdYYL2vXIYpB0l/X4S30CGSpVcbifjTLfeWI1FlAF5WQQsnFenXWmDl6xCGjzlTVOdZ0bF35q3GK0mt66EgQaA==
 
-
     '''
     try:
         ret = gcman.check_frontend_registration(encrypted)
