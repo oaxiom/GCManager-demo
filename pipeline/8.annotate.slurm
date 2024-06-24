@@ -49,7 +49,7 @@ bash_ref_fasta=$(echo $HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_a
 
 samtools view -@ 2 -T $bash_ref_fasta -C -o $PID.cram $PID.sorted.final.bam
 
-rm $PID.sorted.final.bam
+#rm $PID.sorted.final.bam
 
 sh 8e.cleanup_logs.sh
 
