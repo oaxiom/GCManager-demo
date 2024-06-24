@@ -497,9 +497,9 @@ def report_current_anaylsis_stage(user=Depends(user_manager)) -> dict:
     形式为：
     {1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100, 7: 100, 8: 100, 9: 100}
     任务分析状态
-    '''        
+    '''
     percents, q_status = gcman.report_current_analysis_stage()
-    
+
     return {'code': 200, 'data': percents, 'msg': q_status}
 
 @app.get("/patient/export_QC_statistics/{patient_id}")
@@ -705,3 +705,7 @@ def get_help_text() -> dict:
 @app.get('/settings/get_version')
 def get_version() -> dict:
     return {'code': 200, 'data': gcman.get_version(), 'msg': None}
+
+@app.get('/settings/get_manual')
+def get_manual() -> dict:
+    return {'code': 200, 'data': gcman.get_manual(), 'msg': None}
