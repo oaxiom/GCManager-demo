@@ -33,7 +33,8 @@ class analysis_queue:
         res = {}
 
         oh = open(os.path.join(self.data_path, f'PID.{patient_id}', 'progress.txt'))
-        for line in oh.split('\n'):
+        for line in oh:
+            line = line.strip().split(' ')
             if line.startswith('Stage'):
                 line = line.split(' ')
                 res[int(line[1].strip(':'))] = int(line[2].strip('%'))
