@@ -32,11 +32,12 @@ class analysis_queue:
     def _load_progress_txt_file(self, patient_id:str):
         res = {}
 
-        with open(os.path.join(self.data_path, f'PID.{patient_id}', 'progress.txt')) as f:
-            for line in f.split('\n'):
-                if line.startswith('Stage'):
-                    line = line.split(' ')
-                    res[int(line[1].strip(':'))] = int(line[2].strip('%'))
+        oh = open(os.path.join(self.data_path, f'PID.{patient_id}', 'progress.txt'))
+        for line in oh.split('\n'):
+            if line.startswith('Stage'):
+                line = line.split(' ')
+                res[int(line[1].strip(':'))] = int(line[2].strip('%'))
+        oh.close()
 
         return res
 
