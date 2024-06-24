@@ -40,10 +40,11 @@ def cmd_process(cmd):
 ########
 # Testing;
 
-man.settings.set_doctor_setting('lang', 'CN')
+man.settings.set_doctor_setting('lang', 'EN')
 
 risk_reps = man.api.populate_report_generator('Risk', 'NA12878')
 print(risk_reps)
 for rep in risk_reps:
-    cmd_process(f"man.generate_report('tester', 'Risk', 'NA12878', '{rep}')")
+    # Because it doesn't escape ' in the {rep}
+    cmd_process(f'man.generate_report("tester", "Risk", "NA12878", "{rep}")')
 

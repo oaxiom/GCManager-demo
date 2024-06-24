@@ -306,6 +306,7 @@ class libmanager:
 
     def __restrict_reports(self, gcm, results):
         restricted_reports = gcm.get_rest()
+        print(results, restricted_reports)
         if restricted_reports:
             res = []
             for r in results:
@@ -354,9 +355,9 @@ class libmanager:
         self.db_disease_codes_cursor = self.db_disease_codes.cursor()
 
         if self.lang == 'CN':
-            self.db_disease_codes_cursor.execute('SELECT desc_cn FROM diseasecodes_risk')
+            self.db_disease_codes_cursor.execute('SELECT dis_code, desc_cn FROM diseasecodes_risk')
         else:
-            self.db_disease_codes_cursor.execute('SELECT desc_en FROM diseasecodes_risk')
+            self.db_disease_codes_cursor.execute('SELECT dis_code, desc_en FROM diseasecodes_risk')
 
         results = self.db_disease_codes_cursor.fetchall()
         self.db_disease_codes.close()
@@ -367,7 +368,7 @@ class libmanager:
             results = self.__restrict_reports(gcm, results)
 
         if results:
-            results = [i[0] for i in results]
+            results = [i[1] for i in results]
 
         return results
 
