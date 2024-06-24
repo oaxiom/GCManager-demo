@@ -35,7 +35,7 @@ class analysis_queue:
 
         res = {}
         for line in prog.split('\n'):
-            if 'Stage' in line:
+            if line.startswith('Stage'):
                 line = line.split(' ')
             res[int(line[1].strip(':'))] = int(line[2].strip('%'))
 
