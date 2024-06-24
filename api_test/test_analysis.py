@@ -74,7 +74,7 @@ for f in allfiles:
     dst_path = os.path.join(sequence_data_path, os.path.split(f)[1])
     shutil.copy(src_path, dst_path)
 
-man.add_task('TOOFEWREADS')
+#man.add_task('TOOFEWREADS')
 man.add_task('ANALYSISTEST')
 
 seconds = 60
