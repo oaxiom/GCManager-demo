@@ -25,8 +25,6 @@ echo Stage 8: Completed annotation and selection of SNPs
 
 python 8f.getqc.py $PID
 
-python 8g.pack_gcm.py $PID
-
 # Final cleanups
 rm called.chr*.recal.g.vcf.gz
 rm called.chr*.recal.g.vcf.gz.tbi
@@ -51,7 +49,10 @@ samtools view -@ 2 -T $bash_ref_fasta -C -o $PID.cram $PID.sorted.final.bam
 
 rm $PID.sorted.final.bam
 
+# Has to go before the pack_gcm 
 sh 8e.cleanup_logs.sh
+
+python 8g.pack_gcm.py $PID
 
 sleep 10 # Wait for any buffers
 python runner.py
