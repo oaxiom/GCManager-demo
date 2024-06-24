@@ -46,7 +46,7 @@ class analysis_queue:
         Get the analysis progress for this patient ID, I assume you checked it exists.
         '''
         # See if we can get it from the progress file left by runner.py
-        if os.path.exists(os.path.join(self.db_path, f'PID.{patient_id}', 'progress.txt')):
+        if os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', 'progress.txt')):
             return self._load_progress_txt_file(patient_id)
 
         # If no progress.txt, it's probably not started.
