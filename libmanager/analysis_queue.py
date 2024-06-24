@@ -131,8 +131,8 @@ class analysis_queue:
                 # This makes certain all buffers are flushed, etc.
                 # Gives a chance for some background tasks to complete
                 finished_PID = self.currently_processing['PID']
-                time_taken = time.time() - self.currently_processing['time_started_analysis']
-                time_on_q = self.currently_processing['time_started_analysis'] - self.currently_processing['time_on_q']
+                time_taken = int(time.time() - self.currently_processing['time_started_analysis'])
+                time_on_q = int(self.currently_processing['time_started_analysis'] - self.currently_processing['time_on_q'])
                 self.log.info(f'{finished_PID}, analysis is complete, took {time_taken//60:,} minutes and spent {time_on_q//60:,} minutes on the queue.')
                 self.currently_processing = None # blank so a new task can be grabbed
                 return finished_PID # message back that PID is done;
