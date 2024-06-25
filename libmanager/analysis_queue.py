@@ -116,7 +116,7 @@ class analysis_queue:
 
         """
         if not self.currently_processing:
-            # Nothing running,
+            # Nothing running
             if self.q:
                 self.currently_processing = self.q.pop(0)
                 self.currently_processing['time_started_analysis'] = time.time()
@@ -124,6 +124,7 @@ class analysis_queue:
 
         if self.currently_processing:
             # Should run without waiting.
+            print(f'python {self.currently_processing["runner_path"]}')
             subprocess.Popen(f'python {self.currently_processing["runner_path"]}',
                 cwd=self.currently_processing["analysis_path"],
                 shell=True)

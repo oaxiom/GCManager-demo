@@ -978,6 +978,8 @@ class libmanager:
         if self.end_type != 'Backend':
             return
 
+        self.log.info('Processing Queue')
+
         completed_patient_id = self.analysis_queue.run()
 
         if completed_patient_id:
