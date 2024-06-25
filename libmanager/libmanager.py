@@ -665,7 +665,7 @@ class libmanager:
         **Purpose**
             Convert to GCM
         '''
-        gcms.dbsnp_vcf_to_gcm(vcf_filename, gcm_filename)
+        gcms.dbsnp_vcf_to_gcm(self.script_path, vcf_filename, gcm_filename)
         return True
 
     def add_patient(self,

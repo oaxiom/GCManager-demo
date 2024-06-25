@@ -9,16 +9,16 @@
 import os
 import gzip
 
-def annotate_pharma_risk(vcffile):
+def annotate_pharma_risk(vcffile, script_path):
     ##### Get the key snps
     key_snps_pharma = []
-    with open(os.path.expanduser('../static_data/PharmaGKB/key_snps.txt'), 'rt') as oh:
+    with open(os.path.join(script_path, 'static_data/PharmaGKB/key_snps.txt'), 'rt') as oh:
         for line in oh:
             key_snps_pharma.append(line.strip())
     key_snps_pharma = set(key_snps_pharma)
 
     key_snps_risk = []
-    with open(os.path.expanduser('../static_data/Risk/key_snps.txt'), 'rt') as oh:
+    with open(os.path.join(script_path, 'static_data/Risk/key_snps.txt'), 'rt') as oh:
         for line in oh:
             key_snps_risk.append(line.strip())
     key_snps_risk = set(key_snps_risk)

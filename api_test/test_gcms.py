@@ -43,7 +43,7 @@ print(gcm.get_risk())
 
 # Test conversion of a VCF to a GCM:
 
-gcm = gcms.dbsnp_vcf_to_gcm('../demo_data/vcfs/VCFANALYSIS.gatk.dbsnp.vcf.gz', '../demo_data/gcms/VCFANALYSIS.data.gcm')
+gcm = gcms.dbsnp_vcf_to_gcm(man.script_path, '../demo_data/vcfs/VCFANALYSIS.gatk.dbsnp.vcf.gz', '../demo_data/gcms/VCFANALYSIS.data.gcm')
 gcm.logger = man.log
 print(gcm.get_qc())
 print(gcm.get_logs())

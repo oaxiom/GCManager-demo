@@ -105,7 +105,7 @@ class gcm_file:
         with open(filename, "wb") as oh:
             pickle.dump(gcm_data, oh, -1)
 
-def dbsnp_vcf_to_gcm(vcfgz_filename, gcm_filename):
+def dbsnp_vcf_to_gcm(script_path, vcfgz_filename, gcm_filename):
     """
 
     ** Convert a dbCNP annotated VCF to a GCM file.
@@ -141,7 +141,7 @@ def dbsnp_vcf_to_gcm(vcfgz_filename, gcm_filename):
         The file {vcfgz_filename} was converted to this GCM
         '''.encode())
 
-    pharma, risk = pipeline_support.annotate_pharma_risk(vcfgz_filename)
+    pharma, risk = pipeline_support.annotate_pharma_risk(vcfgz_filename, script_path)
     # pharma table
     gcm_data['pharma'] = gzip.compress(pharma.encode())
 
