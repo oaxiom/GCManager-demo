@@ -68,6 +68,20 @@ class analysis_queue:
 
         return False
 
+    def patient_is_on_the_task_list(self, patient_id:str) -> bool:
+        """
+        Return if the patient is on the analysis queue or currently being analysed.
+
+        """
+        if self.currently_processing == patient_id:
+            return True
+
+        for t in tasks:
+            if t['PID'] == patient_id:
+                return True
+
+        return False
+
     def add_task(self, patient_id:str):
         """
 

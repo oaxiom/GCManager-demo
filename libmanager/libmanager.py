@@ -376,6 +376,8 @@ class libmanager:
         """
         **Purpose**
             check that the analysis is complete
+
+            TODO: Deprecate. Use the more robust analysis_complete()
         """
         assert self.patient_exists(patient_id), f'{patient_id} not found'
 
@@ -488,6 +490,8 @@ class libmanager:
         is_completed, result = self._get_log_fileB(3, os.path.join(log_path, 'merge_bams.out'))
         results += result
         if is_completed: return '\n'.join(results)
+
+        # TODO: Collect the rest of the stages.
 
         return '\n'.join(results)
 
@@ -743,6 +747,15 @@ class libmanager:
         """
         assert self.patient_exists(patient_id), f'{patient_id} does not exist'
 
+        # Race condition.
+        # Don't delete the patient if the analysis is incomplete.
+        # But this leaves the possibility of an incomplete analysis...
+        # Just delete it if it's not on the queue?
+
+        if self.analysis_queue.patient_is_on_the_task_list(patient_id):
+            self.log.info(f'{user} asked to delete {patient_id}, but {patient_id} is on the analysis queue and cannot be deleted')
+            return False
+
         # Check the data folder is valid;
         patient_db_path = os.path.join(self.home_path, 'data', f'PID.{patient_id}')
         assert os.path.exists(patient_db_path), f'{patient_db_path} file path is missing'
@@ -764,6 +777,8 @@ class libmanager:
         '''
         **Purpose**
             Return the summary statistics for the patient_id
+
+            TODO: Deprecate. Pretty sure this is not used. use gc.get_qc()
         '''
         self.db_PID = sqlite3.connect(self.db_PID_path)
         self.db_PID_cursor = self.db_PID.cursor()
@@ -830,7 +845,6 @@ class libmanager:
 
         # Select the proper report generator:
         if mode == 'Pharma':
-            # TODO: Fuzzy search
             self.db_disease_codes_cursor.execute('SELECT dis_code, desc_en, desc_cn FROM diseasecodes_pharma WHERE desc_en=? OR desc_cn=?', (search_term, search_term))
             res = self.db_disease_codes_cursor.fetchone()
             if not res:

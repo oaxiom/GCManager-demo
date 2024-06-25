@@ -148,17 +148,12 @@ class api:
         The button: 清除缓存 on the 患者数据管理 page.
 
         """
-        for f in glob.glob(os.path.join(self.manager.data_path, '*/*.out')):
-            os.remove(f)
-            self.log.info(f'{user} deleted file {f}')
-
         # Clean cached reports
         for f in glob.glob(os.path.join(self.manager.data_path, '*/*.html')):
             os.remove(f)
             self.log.info(f'{user} deleted file {f}')
 
         # Remove backups > 10
-
         for idx, f in enumerate(reversed(sorted(list(glob.glob(os.path.join(self.manager.backup_path, f'db_backup-{self.manager.end_type}-*.tar.gz')))))):
             if idx > 10:
                 os.remove(f)
@@ -171,13 +166,15 @@ class api:
     def clean_up_analysis(self, user:str, patient_id: str) -> str:
         # This is more for the backend;
 
+        if not self.manager.analysis_complete(patient_id):
+            # Don't clean an incomplete patient.
+            return True
+
         for f in glob.glob(os.path.join(self.manager.data_path, f'PID.{patient_id}', '*.out')):
             os.remove(f)
             self.log.info(f'{user} deleted file {f}')
 
         # Clean up unneeded BAMS; VCFs; etc.
-
-
         return True
 
     def get_disk_space(self) -> int:
