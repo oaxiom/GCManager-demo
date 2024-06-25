@@ -61,16 +61,17 @@ async def check_security(seconds):
         await asyncio.sleep(seconds)
 
 async def process_analysis_queue(seconds):
-    if gcman.end_type != 'Backend':
-        return
-    gcman.process_analysis_queue()
+    while True:
+        if gcman.end_type == 'Backend':
+            gcman.process_analysis_queue()
+        await asyncio.sleep(seconds)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Run at startup
     asyncio.create_task(check_backups(60*60*2)) # Once every two hours, this does not force a DB backup, it only checks if one is required
     asyncio.create_task(check_security(60*60)) # Once an hour
-    asyncio.create_task(process_analysis_queue(60*5)) # Every 5 minutes;
+    asyncio.create_task(process_analysis_queue(60*1)) # Every 5 minutes;
     yield
 
 app = FastAPI(lifespan=lifespan)
