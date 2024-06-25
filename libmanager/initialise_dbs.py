@@ -150,7 +150,7 @@ def build_demo_data(man, home_path, script_path, log):
             'space_used': '1.0Gb',
             'data_packed': datetime.datetime.now().isoformat(' '),
             'cram_available': 0,
-            'vcf_available': 1,
+            'vcf_available': 0,
             'institution_sending': 'HOSPITAL2',
         }
     db_PID_cursor.execute('UPDATE patients SET analysis_done = :analysis_done, date_added= :date_added, date_analysis = :date_analysis, data_dir = :data_dir, institution_sending= :institution_sending WHERE PID = :patient_id', newpid_row)

@@ -57,6 +57,8 @@ gcm = os.path.join(man.script_path, 'demo_data', 'gcms', 'PID.ANALYSISTEST.data.
 shutil.copy(gcm, os.path.join(sequence_data_path, 'PID.MINIMALGCM.data.gcm'))
 man.set_analysis_complete('MINIMALGCM')
 
+print(man.get_patients_data_table())
+
 pharma_reps = man.api.populate_report_generator('Pharma', 'MINIMALGCM')
 for rep in pharma_reps:
     cmd_process(f'man.generate_report("tester", "Pharma", "MINIMALGCM", "{rep}")') # formatting doens't escape string literals

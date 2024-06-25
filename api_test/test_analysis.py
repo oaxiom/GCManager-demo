@@ -39,7 +39,7 @@ except AssertionError:
     pass
 
 ###### A minimal fail;
-'''
+
 ret_code, sequence_data_path = man.api.add_new_patient(
     user='tester',
     patient_id='TOOFEWREADS',
@@ -55,7 +55,7 @@ for f in allfiles:
     src_path = os.path.join(man.script_path, 'demo_data', 'fastqs', f)
     dst_path = os.path.join(sequence_data_path, os.path.split(f)[1])
     shutil.copy(src_path, dst_path)
-'''
+
 ###### A minimal succesful sample;
 
 ret_code, sequence_data_path = man.api.add_new_patient(

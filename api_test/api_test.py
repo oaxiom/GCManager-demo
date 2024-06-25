@@ -46,7 +46,10 @@ cmd_process('man.api.populate_patient_list("andrew")')
 #  ('NA12878', '王XX', 22, '男', '1'),
 #  ('PATIENTNOTSTARTED', '李XX', 24, '女', '0')]
 
-cmd_process("man.delete_patient('tester', 'ANEWPATIENT')")
+try:
+    cmd_process("man.delete_patient('tester', 'ANEWPATIENT')")
+except AssertionError:
+    pass
 cmd_process("man.patient_exists('ANEWPATIENT')")
 cmd_process("man.patient_exists('72210953309787')")
 
