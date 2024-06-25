@@ -76,7 +76,7 @@ class analysis_queue:
         if self.currently_processing == patient_id:
             return True
 
-        for t in tasks:
+        for t in self.q:
             if t['PID'] == patient_id:
                 return True
 

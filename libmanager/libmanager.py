@@ -197,9 +197,9 @@ class libmanager:
 
         elif lang == 'CN':
             if v == '1': return '是'
-            return '不'
+            return '否'
 
-        return 'No'
+        return '否'
 
     def _get_patient_data(self, user, patient_id) -> dict:
         '''
@@ -219,7 +219,7 @@ class libmanager:
             'age': row[2],
             'sex': row[3],
             'analysis_done': bool(row[4]),
-            'insititution_sending': row[5],
+            'insititution_sending': row[5], # TODO: Fix typo
             }
 
         self.log.info(f'{user} asked for the patients_data for {patient_id}')
@@ -249,7 +249,7 @@ class libmanager:
                 'age': row[2],
                 'sex': row[3],
                 'analysis_done': self._sql_yesno(row[4], self.lang),
-                'insititution_sending': row[5],
+                'insititution_sending': row[5],  # TODO: Fix typo
                 }
 
             clean_results.append(row)

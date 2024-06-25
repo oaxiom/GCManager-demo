@@ -487,7 +487,7 @@ def delete_patient(patient_id:str, user=Depends(user_manager)) -> dict:
 
 
 @app.get("/patient/report_current_anaylsis_stage/")
-def report_current_anaylsis_stage(user=Depends(user_manager)) -> dict:
+def report_current_anaylsis_stage(user=Depends(user_manager)) -> dict:  # TODO: Fix typo
     '''
     Returns the current analysis stage for the indicated data,
     in the form:
