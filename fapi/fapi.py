@@ -62,9 +62,9 @@ async def check_security(seconds):
 
 async def process_analysis_queue(seconds):
     while True:
-        if gcman.end_type != 'Backend':
-            return
-gcman.process_analysis_queue()
+        if gcman.end_type == 'Backend':
+            gcman.process_analysis_queue()
+        await asyncio.sleep(seconds)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
