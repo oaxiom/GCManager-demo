@@ -45,4 +45,4 @@ cmd_process("man.settings.get_doctor_setting('lang')")
 # Expected Result
 # 'EN'
 
-cmd_process("man.api.populate_report_generator('Pharma')")
+cmd_process("man.api.populate_report_generator('Pharma', '72210953309787')")

@@ -59,8 +59,8 @@ man.set_analysis_complete('MINIMALGCM')
 
 pharma_reps = man.api.populate_report_generator('Pharma', 'MINIMALGCM')
 for rep in pharma_reps:
-    cmd_process(f"man.generate_report('tester', 'Pharma', 'MINIMALGCM', '{rep}')")
+    cmd_process(f'man.generate_report("tester", "Pharma", "MINIMALGCM", "{rep}")') # formatting doens't escape string literals
 
 pharma_reps = man.api.populate_report_generator('Risk', 'MINIMALGCM')
 for rep in pharma_reps:
-    cmd_process(f"man.generate_report('tester', 'Risk', 'MINIMALGCM', '{rep}')")
+    cmd_process(f'man.generate_report("tester", "Risk", "MINIMALGCM", "{rep}")')

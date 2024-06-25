@@ -55,3 +55,5 @@ cmd_process("man.settings.get_doctor_setting('lang')")
 html = cmd_process('man.get_help()')
 with open('help.EN.Doctorend.html', 'w') as f:
     f.write(html)
+
+cmd_process('man.get_manual()')
