@@ -7,6 +7,7 @@
 #
 
 import sys, os, uuid, datetime
+import time
 import logging
 import shutil
 import aiofiles
@@ -38,13 +39,19 @@ if not os.path.exists(home_path):
         gcman.initialize('admin123')
         log.warning('System DB not found. Initializing a blank production DB')
 
-from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form
+from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_login.exceptions import InvalidCredentialsException
 from fastapi.concurrency import run_in_threadpool
 from typing_extensions import Annotated
 from pydantic import UUID4, BaseModel, Field, ConfigDict
 from fastapi_login import LoginManager
+from fastapi.responses import HTMLResponse
+from starlette.requests import ClientDisconnect
+from urllib.parse import unquote
+import streaming_form_data
+from streaming_form_data import StreamingFormDataParser
+from streaming_form_data.targets import FileTarget, ValueTarget
 
 #gcman.set_end_type('Doctorend')
 
@@ -71,7 +78,7 @@ async def lifespan(app: FastAPI):
     # Run at startup
     asyncio.create_task(check_backups(60*60*2)) # Once every two hours, this does not force a DB backup, it only checks if one is required
     asyncio.create_task(check_security(60*60)) # Once an hour
-    asyncio.create_task(process_analysis_queue(60*1)) # Every 5 minutes;
+    asyncio.create_task(process_analysis_queue(60*1)) # Every minute;
     yield
 
 app = FastAPI(lifespan=lifespan)
@@ -326,7 +333,7 @@ def is_patient_id_valid(patient_id: str, user=Depends(user_manager)) -> dict:
     return {'code': 200, 'data': ret, 'msg': None}
 
 @app.post('/add_patient')
-async def add_new_patient(
+def add_new_patient(
     patient_id: Annotated[str, Form()],
     sequence_data_id: Annotated[str, Form()],
     name: Annotated[str, Form()],
@@ -334,6 +341,7 @@ async def add_new_patient(
     age: Annotated[int, Form()],
     institution_sending: Annotated[str, Form()], # 送检机构
     files: list[UploadFile],
+    #request: Request,
     user=Depends(user_manager)) -> dict:
     '''
 
@@ -396,7 +404,12 @@ async def add_new_patient(
 
     # copy the data to a temporary location
     temp_data_path = os.path.join(gcman.home_path, 'tmp')
-    os.mkdir(temp_data_path)
+    try:
+        os.mkdir(temp_data_path)
+    except FileExistsError:
+        # A failed previous upload?
+        shutil.rmtree(temp_data_path)
+        os.mkdir(temp_data_path)
 
     for file in files:
         # Need to rename the files:
@@ -408,16 +421,22 @@ async def add_new_patient(
         elif gcman.end_type == 'Backend':
             # TODO: Difficult case...
             destination_filename = file.filename
+            # TODO: Check that all filenames are unique
 
         try:
-            f = await run_in_threadpool(open, os.path.join(temp_data_path, destination_filename), 'wb')
-            await run_in_threadpool(shutil.copyfileobj, file.file, f)
+            #f = await run_in_threadpool(open, os.path.join(temp_data_path, destination_filename), 'wb')
+            #await run_in_threadpool(shutil.copyfileobj, file.file, f)
+            gcman.log.info(f'Uploading file {file.filename} {time.time():.0f}')
+            destination_location = os.path.join(temp_data_path, destination_filename)
+            with open(destination_location, 'wb') as f:
+                shutil.copyfileobj(file.file, f, length=1024*1024)
+
         except Exception:
             return {'code': 517, 'data': None, 'msg': 'Upload file error'}
         finally:
-            if 'f' in locals(): await run_in_threadpool(f.close)
-            await file.close()
-            gcman.log.info(f'Copied file {file.filename} to {patient_id}')
+            #if 'f' in locals(): await run_in_threadpool(f.close)
+            #await file.close()
+            gcman.log.info(f'Finished uploading file {file.filename} to {patient_id} {time.time():.0f}')
 
     # You have to do this after the copy, otherwise you end up with a half-done patient if the
     # upload fails.
