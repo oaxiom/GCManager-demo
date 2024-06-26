@@ -47,11 +47,7 @@ from typing_extensions import Annotated
 from pydantic import UUID4, BaseModel, Field, ConfigDict
 from fastapi_login import LoginManager
 from fastapi.responses import HTMLResponse
-from starlette.requests import ClientDisconnect
 from urllib.parse import unquote
-import streaming_form_data
-from streaming_form_data import StreamingFormDataParser
-from streaming_form_data.targets import FileTarget, ValueTarget
 
 #gcman.set_end_type('Doctorend')
 
