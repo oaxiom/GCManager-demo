@@ -122,7 +122,7 @@ def login(data: OAuth2PasswordRequestForm = Depends()) -> dict:
 
     access_token = user_manager.create_access_token(
         data=dict(sub=username),
-        expires=datetime.timedelta(hours=2)
+        expires=datetime.timedelta(hours=12)
         )
 
     return {'access_token': access_token, 'token_type': 'bearer'}
