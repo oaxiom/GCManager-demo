@@ -291,17 +291,17 @@ class libmanager:
         return clean_results
 
     def update_patient_space_used(self, patient_id:str) -> bool:
-        self.db_PID = sqlite3.connect(self.db_PID_path)
-        self.db_PID_cursor = self.db_PID.cursor()
+        db_PID = sqlite3.connect(self.db_PID_path)
+        db_PID_cursor = db_PID.cursor()
         patient_path = os.path.join(self.data_path, f'PID.{patient_id}')
         k, m, g = utils.measure_disk_space(patient_path)
         # update the db;
         if self.end_type == 'Doctorend':
-            self.db_PID_cursor.execute('UPDATE patient_data SET space_used = ? WHERE PID = ?', (m, patient_id))
+            db_PID_cursor.execute('UPDATE patient_data SET space_used = ? WHERE PID = ?', (m, patient_id))
         else:
-            self.db_PID_cursor.execute('UPDATE patient_data SET space_used = ? WHERE PID = ?', (g, patient_id))
-        self.db_PID.commit()
-        self.db_PID.close()
+            db_PID_cursor.execute('UPDATE patient_data SET space_used = ? WHERE PID = ?', (g, patient_id))
+        db_PID.commit()
+        db_PID.close()
         return True
 
     def __restrict_reports(self, gcm, results):
