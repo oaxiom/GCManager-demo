@@ -306,7 +306,6 @@ class libmanager:
 
     def __restrict_reports(self, gcm, results):
         restricted_reports = gcm.get_rest()
-        print(results, restricted_reports)
         if restricted_reports:
             res = []
             for r in results:
@@ -670,6 +669,7 @@ class libmanager:
             Convert to GCM
         '''
         gcms.dbsnp_vcf_to_gcm(self.script_path, vcf_filename, gcm_filename)
+        self.update_patient_space_used(patient_id)
         return True
 
     def add_patient(self,
@@ -734,8 +734,6 @@ class libmanager:
         self.log.info(f'{user} added patient {patient_id}')
 
         sequence_data_path = data_dir # Copy the seq data here;
-
-        self.update_patient_space_used(patient_id)
 
         return True, sequence_data_path, patient_id
 
