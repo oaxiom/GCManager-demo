@@ -737,7 +737,7 @@ class libmanager:
 
         self.update_patient_space_used(patient_id)
 
-        return True, sequence_data_path
+        return True, sequence_data_path, patient_id
 
     def delete_patient(self, user:str, patient_id:str) -> bool:
         """

@@ -109,7 +109,7 @@ class api:
         # Sanitise input;
         age = int(age)
 
-        ret, sequence_data_path  = self.manager.add_patient(
+        ret, sequence_data_path, safe_patient_id  = self.manager.add_patient(
             user=user,
             patient_id=patient_id,
             seq_id=sequence_data_id,
@@ -121,7 +121,7 @@ class api:
         # Sends the sequence_data path back to the FAPI,
         # so it knows where to copy the data.
 
-        return ret, sequence_data_path
+        return ret, sequence_data_path, safe_patient_id
 
     def populate_patient_data_list(self) -> str:
         """

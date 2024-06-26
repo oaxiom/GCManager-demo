@@ -440,11 +440,11 @@ def add_new_patient(
             #await file.close()
             gcman.log.info(f'Finished uploading file {file.filename} to {patient_id}')
     end_time = int(time.time())
-    gcman.log.info('Uploaded {len(files)} in {end_time - start_time} to {patient_id}')
+    gcman.log.info(f'Uploaded {len(files)} files in {end_time - start_time} to {patient_id} seconds')
 
     # You have to do this after the copy, otherwise you end up with a half-done patient if the
     # upload fails.
-    ret_code, sequence_data_path = gcman.api.add_new_patient(
+    ret_code, sequence_data_path, safe_patient_id = gcman.api.add_new_patient(
         user=user,
         patient_id=patient_id,
         sequence_data_id=sequence_data_id,
@@ -466,26 +466,26 @@ def add_new_patient(
 
     if gcman.end_type == 'Doctorend':
         if file.filename.endswith('.gcm'): # We got a GCM
-            # Need to rename the files as {patient_id}.data.gcm
-            gcman.get_qc(user, patient_id) # See if we can load the gcm
+            # Need to rename the files as {safe_patient_id}.data.gcm
+            gcman.get_qc(user, safe_patient_id) # See if we can load the gcm
             # Set the analysis as complete;
-            gcman.set_analysis_complete(patient_id)
-            gcman.log.info(f'Added GCM for {patient_id}')
+            gcman.set_analysis_complete(safe_patient_id)
+            gcman.log.info(f'Added GCM for {safe_patient_id}')
         elif file.filename.endswith('.vcf.gz'): # We got a VCF
-            gcman.set_vcf_available(patient_id)
-            gcman.log.info(f'Converted VCF to GCM for {patient_id}')
+            gcman.set_vcf_available(safe_patient_id)
+            gcman.log.info(f'Converted VCF to GCM for {safe_patient_id}')
             gcman.dbsnp_vcf_to_gcm(os.path.join(sequence_data_path, destination_filename), os.path.join(sequence_data_path, destination_filename).replace('.vcf.gz', '.data.gcm'))
-            gcman.get_qc(user, patient_id)
-            gcman.set_analysis_complete(patient_id)
+            gcman.get_qc(user, safe_patient_id)
+            gcman.set_analysis_complete(safe_patient_id)
 
     else: # Backend/small platform
         # everything should be valid. I can add it to the queue.
         gcman.add_task(patient_id)
         gcman.process_analysis_queue()
 
-    gcman.update_patient_space_used(patient_id)
+    gcman.update_patient_space_used(safe_patient_id)
 
-    return {'code': 200, 'data': gcman.patient_exists(patient_id), 'msg': None}
+    return {'code': 200, 'data': gcman.patient_exists(safe_patient_id), 'msg': None}
 
 @app.post('/del_patient')
 def delete_patient(patient_id:str, user=Depends(user_manager)) -> dict:
