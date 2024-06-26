@@ -411,6 +411,8 @@ def add_new_patient(
         shutil.rmtree(temp_data_path)
         os.mkdir(temp_data_path)
 
+    start_time = int(time.time())
+
     for file in files:
         # Need to rename the files:
         if gcman.end_type == 'Doctorend':
@@ -426,7 +428,7 @@ def add_new_patient(
         try:
             #f = await run_in_threadpool(open, os.path.join(temp_data_path, destination_filename), 'wb')
             #await run_in_threadpool(shutil.copyfileobj, file.file, f)
-            gcman.log.info(f'Uploading file {file.filename} {time.time():.0f}')
+            gcman.log.info(f'Uploading file {file.filename}')
             destination_location = os.path.join(temp_data_path, destination_filename)
             with open(destination_location, 'wb') as f:
                 shutil.copyfileobj(file.file, f, length=1024*1024)
@@ -436,7 +438,9 @@ def add_new_patient(
         finally:
             #if 'f' in locals(): await run_in_threadpool(f.close)
             #await file.close()
-            gcman.log.info(f'Finished uploading file {file.filename} to {patient_id} {time.time():.0f}')
+            gcman.log.info(f'Finished uploading file {file.filename} to {patient_id}')
+    end_time = int(time.time())
+    gcman.log.info('Uploaded {len(files)} in {end_time - start_time} to {patient_id}')
 
     # You have to do this after the copy, otherwise you end up with a half-done patient if the
     # upload fails.
