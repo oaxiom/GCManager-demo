@@ -329,7 +329,7 @@ def is_patient_id_valid(patient_id: str, user=Depends(user_manager)) -> dict:
     return {'code': 200, 'data': ret, 'msg': None}
 
 @app.post('/add_patient')
-async def add_new_patient(
+def add_new_patient(
     patient_id: Annotated[str, Form()],
     sequence_data_id: Annotated[str, Form()],
     name: Annotated[str, Form()],
@@ -423,11 +423,11 @@ async def add_new_patient(
 
         try:
             gcman.log.info(f'Uploading file {file.filename}')
-            f = await run_in_threadpool(open, os.path.join(temp_data_path, destination_filename), 'wb')
-            await run_in_threadpool(shutil.copyfileobj, file.file, f)
-            #destination_location = os.path.join(temp_data_path, destination_filename)
-            #with open(destination_location, 'wb') as f:
-            #    shutil.copyfileobj(file.file, f, length=1024*1024)
+            #f = await run_in_threadpool(open, os.path.join(temp_data_path, destination_filename), 'wb')
+            #await run_in_threadpool(shutil.copyfileobj, file.file, f)
+            destination_location = os.path.join(temp_data_path, destination_filename)
+            with open(destination_location, 'wb') as f:
+                shutil.copyfileobj(file.file, f, length=1024*1024)
 
         except Exception:
             return {'code': 517, 'data': None, 'msg': 'Upload file error'}
