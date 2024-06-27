@@ -337,6 +337,163 @@ def add_new_patient(
     sex: Annotated[str, Form()],
     age: Annotated[int, Form()],
     institution_sending: Annotated[str, Form()], # 送检机构
+    files: list[UploadFile],
+    #request: Request,
+    user=Depends(user_manager)) -> dict:
+    '''
+
+    # Add a new patient to the database.
+
+    ## Example data:
+    patient_id: ANEWPATIENT12345
+
+    sequence_data_id: SEQID2345
+
+    name: 王XX
+
+    sex: 男
+
+    age: 30
+
+    institution_sending: 一家大医院
+
+    # Files:
+
+    ## If Backend:
+
+    GCManager-demo/demo_data/fastqs/SRR10286930_tiny_1.fastq.gz
+
+    GCManager-demo/demo_data/fastqs/SRR10286930_tiny_2.fastq.gz
+
+    ## If Doctorend:
+
+    GCManager-demo/demo_data/gcms/SRR10286930.data.gcm
+
+    '''
+    assert gcman.end_type in ('Doctorend', 'Backend'), f'end_type has not been set'
+    # TODO: This function is 2x slow, as it copies the file first, then copies it again.
+    # Supposedly it should be possible to remove one of the copies by using the underlying Starlette
+    # Streamer.
+
+    gcman.log.info(f'Supplied {len(files)} files')
+
+    # Check it doesn't exist already
+    if gcman.patient_exists(patient_id):
+        raise HTTPException(status_code=512, detail=f'{patient_id} already exists')
+
+    # Validate the files for the specific end;
+    if gcman.end_type == 'Doctorend':
+        # expects one file only, consisting of the intermediate file;
+        if len(files) != 1:
+            raise HTTPException(status_code=513, detail='Doctor end expects only one file')
+        # expects the file to have the extension .int.gz
+        if not (files[0].filename.lower().endswith('.gcm') or files[0].filename.lower().endswith('.vcf.gz')):
+            raise HTTPException(status_code=514, detail='Doctor end expects a single file in the format .gcm or .vcf.gz')
+
+    else: # Backend
+        # expected an even number of files.
+        if len(files) % 2 != 0:
+            raise HTTPException(status_code=515, detail='Analysis end expects an even number of files, one for each read pair')
+        # Expects all files to have the form _1.fastq.gz
+        for f in files:
+            if not f.filename.lower().endswith('.fastq.gz'):
+                raise HTTPException(status_code=516, detail=f'File format appears incorrect, ".fastq.gz" is missing in file {f}')
+
+    # copy the data to a temporary location
+    temp_data_path = os.path.join(gcman.home_path, 'tmp')
+    try:
+        os.mkdir(temp_data_path)
+    except FileExistsError:
+        # A failed previous upload?
+        shutil.rmtree(temp_data_path)
+        os.mkdir(temp_data_path)
+
+    start_time = int(time.time())
+
+    for file in files:
+        # Need to rename the files:
+        if gcman.end_type == 'Doctorend':
+            if file.filename.endswith('.gcm'):
+                destination_filename = f'PID.{patient_id}.data.gcm' # Easy case
+            elif file.filename.endswith('.vcf.gz'):
+                destination_filename = f'PID.{patient_id}.vcf.gz' # Easy case
+        elif gcman.end_type == 'Backend':
+            # TODO: Difficult case...
+            destination_filename = file.filename
+            # TODO: Check that all filenames are unique
+
+        try:
+            gcman.log.info(f'Uploading file {file.filename}')
+            #f = await run_in_threadpool(open, os.path.join(temp_data_path, destination_filename), 'wb')
+            #await run_in_threadpool(shutil.copyfileobj, file.file, f)
+            destination_location = os.path.join(temp_data_path, destination_filename)
+            with open(destination_location, 'wb') as f:
+                shutil.copyfileobj(file.file, f, length=1024*1024)
+
+        except Exception:
+            return {'code': 517, 'data': None, 'msg': 'Upload file error'}
+        finally:
+            #if 'f' in locals(): await run_in_threadpool(f.close)
+            #await file.close()
+            gcman.log.info(f'Finished uploading file {file.filename} to {patient_id}')
+    end_time = int(time.time())
+    gcman.log.info(f'Uploaded {len(files)} files in {end_time - start_time} to {patient_id} seconds')
+
+    # You have to do this after the copy, otherwise you end up with a half-done patient if the
+    # upload fails.
+    ret_code, sequence_data_path, safe_patient_id = gcman.api.add_new_patient(
+        user=user,
+        patient_id=patient_id,
+        sequence_data_id=sequence_data_id,
+        name=name,
+        sex=sex,
+        age=age,
+        institution_sending=institution_sending,
+        )
+
+    # move the data to the correct location
+    allfiles = os.listdir(temp_data_path)
+    for f in allfiles:
+        src_path = os.path.join(temp_data_path, f)
+        dst_path = os.path.join(sequence_data_path, f)
+        shutil.move(src_path, dst_path)
+
+    # And sanitise tmp
+    shutil.rmtree(temp_data_path)
+
+    if gcman.end_type == 'Doctorend':
+        if file.filename.endswith('.gcm'): # We got a GCM
+            # Need to rename the files as {safe_patient_id}.data.gcm
+            gcman.get_qc(user, safe_patient_id) # See if we can load the gcm
+            # Set the analysis as complete;
+            gcman.set_analysis_complete(safe_patient_id)
+            gcman.log.info(f'Added GCM for {safe_patient_id}')
+        elif file.filename.endswith('.vcf.gz'): # We got a VCF
+            gcman.set_vcf_available(safe_patient_id)
+            gcman.log.info(f'Converted VCF to GCM for {safe_patient_id}')
+            gcman.dbsnp_vcf_to_gcm(os.path.join(sequence_data_path, destination_filename), os.path.join(sequence_data_path, destination_filename).replace('.vcf.gz', '.data.gcm'))
+            gcman.get_qc(user, safe_patient_id)
+            gcman.set_analysis_complete(safe_patient_id)
+
+    else: # Backend/small platform
+        # everything should be valid. I can add it to the queue.
+        gcman.add_task(safe_patient_id)
+        gcman.process_analysis_queue()
+
+    gcman.update_patient_space_used(safe_patient_id)
+
+    return {'code': 200, 'data': gcman.patient_exists(safe_patient_id), 'msg': None}
+
+"""
+# This version only takes the PATH of the file
+@app.post('/add_patient')
+def add_new_patient(
+    patient_id: Annotated[str, Form()],
+    sequence_data_id: Annotated[str, Form()],
+    name: Annotated[str, Form()],
+    sex: Annotated[str, Form()],
+    age: Annotated[int, Form()],
+    institution_sending: Annotated[str, Form()], # 送检机构
     #files: Annotated[list, Form()], # Send the path of the file.
     files: Annotated[list, Form()],
     #files: list[UploadFile], # If over the internet
@@ -446,38 +603,6 @@ def add_new_patient(
     end_time = int(time.time())
     gcman.log.info(f'Uploaded {len(files)} files in {end_time - start_time} to {patient_id} seconds')
 
-    '''
-    # UploadFile version
-    for file in files:
-        # Need to rename the files:
-        if gcman.end_type == 'Doctorend':
-            if file.filename.endswith('.gcm'):
-                destination_filename = f'PID.{patient_id}.data.gcm' # Easy case
-            elif file.filename.endswith('.vcf.gz'):
-                destination_filename = f'PID.{patient_id}.vcf.gz' # Easy case
-        elif gcman.end_type == 'Backend':
-            # TODO: Difficult case...
-            destination_filename = file.filename
-            # TODO: Check that all filenames are unique
-
-        try:
-            gcman.log.info(f'Uploading file {file.filename}')
-            #f = await run_in_threadpool(open, os.path.join(temp_data_path, destination_filename), 'wb')
-            #await run_in_threadpool(shutil.copyfileobj, file.file, f)
-            destination_location = os.path.join(temp_data_path, destination_filename)
-            with open(destination_location, 'wb') as f:
-                shutil.copyfileobj(file.file, f, length=1024*1024)
-
-        except Exception:
-            return {'code': 517, 'data': None, 'msg': 'Upload file error'}
-        finally:
-            #if 'f' in locals(): await run_in_threadpool(f.close)
-            #await file.close()
-            gcman.log.info(f'Finished uploading file {file.filename} to {patient_id}')
-    end_time = int(time.time())
-    gcman.log.info(f'Uploaded {len(files)} files in {end_time - start_time} to {patient_id} seconds')
-    '''
-
     # You have to do this after the copy, otherwise you end up with a half-done patient if the
     # upload fails.
     ret_code, sequence_data_path, safe_patient_id = gcman.api.add_new_patient(
@@ -523,6 +648,8 @@ def add_new_patient(
 
 
     return {'code': 200, 'data': gcman.patient_exists(safe_patient_id), 'msg': None}
+
+"""
 
 @app.post('/del_patient')
 def delete_patient(patient_id:str, user=Depends(user_manager)) -> dict:
