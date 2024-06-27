@@ -369,7 +369,9 @@ def add_new_patient(
 
     ## If Doctorend:
 
-    GCManager-demo/demo_data/gcms/SRR10286930.data.gcm
+    /Users/andrew/Tools/GCManager-demo/demo_data/gcms/SRR10286930.data.gcm
+
+    /Users/andrew/Tools/GCManager-demo/demo_data/vcfs/VCFANALYSIS.gatk.dbsnp.vcf.gz
 
     '''
     assert gcman.end_type in ('Doctorend', 'Backend'), f'end_type has not been set'
@@ -428,18 +430,18 @@ def add_new_patient(
             destination_filename = os.path.split(filename)[1] # Don't rename the FASTQ
             # TODO: Check that all filenames are unique
 
-        #try:
-        gcman.log.info(f'Uploading file {filename}')
-        #f = await run_in_threadpool(open, os.path.join(temp_data_path, destination_filename), 'wb')
-        #await run_in_threadpool(shutil.copyfileobj, file.file, f)
-        destination_location = os.path.join(temp_data_path, destination_filename)
-        #with open(destination_location, 'wb') as f:
-        shutil.copyfile(filename, destination_location)
+        try:
+            gcman.log.info(f'Uploading file {filename}')
+            #f = await run_in_threadpool(open, os.path.join(temp_data_path, destination_filename), 'wb')
+            #await run_in_threadpool(shutil.copyfileobj, file.file, f)
+            destination_location = os.path.join(temp_data_path, destination_filename)
+            #with open(destination_location, 'wb') as f:
+            shutil.copyfile(filename, destination_location)
 
-        #except Exception:
-        #    return {'code': 517, 'data': None, 'msg': 'Upload file error'}
-        #finally:
-        #    gcman.log.info(f'Finished uploading file {filename} to {patient_id}')
+        except Exception:
+            return {'code': 517, 'data': None, 'msg': 'Upload file error'}
+        finally:
+            gcman.log.info(f'Finished uploading file {filename} to {patient_id}')
 
     end_time = int(time.time())
     gcman.log.info(f'Uploaded {len(files)} files in {end_time - start_time} to {patient_id} seconds')
@@ -499,13 +501,13 @@ def add_new_patient(
     shutil.rmtree(temp_data_path)
 
     if gcman.end_type == 'Doctorend':
-        if file.filename.endswith('.gcm'): # We got a GCM
+        if files[0].endswith('.gcm'): # We got a GCM
             # Need to rename the files as {safe_patient_id}.data.gcm
             gcman.get_qc(user, safe_patient_id) # See if we can load the gcm
             # Set the analysis as complete;
             gcman.set_analysis_complete(safe_patient_id)
             gcman.log.info(f'Added GCM for {safe_patient_id}')
-        elif file.filename.endswith('.vcf.gz'): # We got a VCF
+        elif files[0].endswith('.vcf.gz'): # We got a VCF
             gcman.set_vcf_available(safe_patient_id)
             gcman.log.info(f'Converted VCF to GCM for {safe_patient_id}')
             gcman.dbsnp_vcf_to_gcm(os.path.join(sequence_data_path, destination_filename), os.path.join(sequence_data_path, destination_filename).replace('.vcf.gz', '.data.gcm'))
@@ -518,6 +520,7 @@ def add_new_patient(
         gcman.process_analysis_queue()
 
     gcman.update_patient_space_used(safe_patient_id)
+
 
     return {'code': 200, 'data': gcman.patient_exists(safe_patient_id), 'msg': None}
 

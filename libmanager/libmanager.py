@@ -669,7 +669,7 @@ class libmanager:
             Convert to GCM
         '''
         gcms.dbsnp_vcf_to_gcm(self.script_path, vcf_filename, gcm_filename)
-        self.update_patient_space_used(patient_id)
+
         return True
 
     def add_patient(self,
