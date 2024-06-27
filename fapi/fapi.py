@@ -48,6 +48,7 @@ from pydantic import UUID4, BaseModel, Field, ConfigDict
 from fastapi_login import LoginManager
 from fastapi.responses import HTMLResponse
 from urllib.parse import unquote
+from typing import Optional, List
 
 #gcman.set_end_type('Doctorend')
 
@@ -336,7 +337,9 @@ def add_new_patient(
     sex: Annotated[str, Form()],
     age: Annotated[int, Form()],
     institution_sending: Annotated[str, Form()], # 送检机构
-    files: list[UploadFile],
+    #files: Annotated[list, Form()], # Send the path of the file.
+    files: Annotated[list, Form()],
+    #files: list[UploadFile], # If over the internet
     #request: Request,
     user=Depends(user_manager)) -> dict:
     '''
@@ -360,9 +363,9 @@ def add_new_patient(
 
     ## If Backend:
 
-    GCManager-demo/demo_data/fastqs/SRR10286930_tiny_1.fastq.gz
+    /Users/andrew/Tools/GCManager-demo/demo_data/fastqs/SRR10286930_tiny_1.fastq.gz
 
-    GCManager-demo/demo_data/fastqs/SRR10286930_tiny_2.fastq.gz
+    /Users/andrew/Tools/GCManager-demo/demo_data/fastqs/SRR10286930_tiny_2.fastq.gz
 
     ## If Doctorend:
 
@@ -373,6 +376,9 @@ def add_new_patient(
     # TODO: This function is 2x slow, as it copies the file first, then copies it again.
     # Supposedly it should be possible to remove one of the copies by using the underlying Starlette
     # Streamer.
+
+    files = files[0].strip('[]').strip("'").split(',')
+    print(files)
 
     gcman.log.info(f'Supplied {len(files)} files')
 
@@ -386,7 +392,7 @@ def add_new_patient(
         if len(files) != 1:
             raise HTTPException(status_code=513, detail='Doctor end expects only one file')
         # expects the file to have the extension .int.gz
-        if not (files[0].filename.lower().endswith('.gcm') or files[0].filename.lower().endswith('.vcf.gz')):
+        if not (files[0].lower().endswith('.gcm') or files[0].lower().endswith('.vcf.gz')):
             raise HTTPException(status_code=514, detail='Doctor end expects a single file in the format .gcm or .vcf.gz')
 
     else: # Backend
@@ -395,7 +401,7 @@ def add_new_patient(
             raise HTTPException(status_code=515, detail='Analysis end expects an even number of files, one for each read pair')
         # Expects all files to have the form _1.fastq.gz
         for f in files:
-            if not f.filename.lower().endswith('.fastq.gz'):
+            if not f.lower().endswith('.fastq.gz'):
                 raise HTTPException(status_code=516, detail=f'File format appears incorrect, ".fastq.gz" is missing in file {f}')
 
     # copy the data to a temporary location
@@ -409,6 +415,37 @@ def add_new_patient(
 
     start_time = int(time.time())
 
+    # list and shutil version
+    for filename in files:
+        # Need to rename the files:
+        if gcman.end_type == 'Doctorend':
+            if filename.endswith('.gcm'):
+                destination_filename = f'PID.{patient_id}.data.gcm' # Easy case
+            elif filename.endswith('.vcf.gz'):
+                destination_filename = f'PID.{patient_id}.vcf.gz' # Easy case
+        elif gcman.end_type == 'Backend':
+            # TODO: Difficult case...
+            destination_filename = os.path.split(filename)[1] # Don't rename the FASTQ
+            # TODO: Check that all filenames are unique
+
+        #try:
+        gcman.log.info(f'Uploading file {filename}')
+        #f = await run_in_threadpool(open, os.path.join(temp_data_path, destination_filename), 'wb')
+        #await run_in_threadpool(shutil.copyfileobj, file.file, f)
+        destination_location = os.path.join(temp_data_path, destination_filename)
+        #with open(destination_location, 'wb') as f:
+        shutil.copyfile(filename, destination_location)
+
+        #except Exception:
+        #    return {'code': 517, 'data': None, 'msg': 'Upload file error'}
+        #finally:
+        #    gcman.log.info(f'Finished uploading file {filename} to {patient_id}')
+
+    end_time = int(time.time())
+    gcman.log.info(f'Uploaded {len(files)} files in {end_time - start_time} to {patient_id} seconds')
+
+    '''
+    # UploadFile version
     for file in files:
         # Need to rename the files:
         if gcman.end_type == 'Doctorend':
@@ -437,6 +474,7 @@ def add_new_patient(
             gcman.log.info(f'Finished uploading file {file.filename} to {patient_id}')
     end_time = int(time.time())
     gcman.log.info(f'Uploaded {len(files)} files in {end_time - start_time} to {patient_id} seconds')
+    '''
 
     # You have to do this after the copy, otherwise you end up with a half-done patient if the
     # upload fails.
