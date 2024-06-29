@@ -36,7 +36,7 @@ class users:
 
         env_path = os.path.join(self.home_path, 'dbs', ".env")
         if os.path.exists(env_path):
-            self.log.warning(".env file already exists. Skipping.")
+            self.log.warning("env file already exists. Skipping.")
         else:
             self.log.info(f'Set up new .env')
             with open(env_path, "w") as f:

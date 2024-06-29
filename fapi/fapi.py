@@ -39,6 +39,8 @@ if not os.path.exists(home_path):
         gcman.initialize('admin123')
         log.warning('System DB not found. Initializing a blank production DB')
 
+gcman.check_security()
+
 from fastapi import FastAPI, Depends, HTTPException, UploadFile, File, Form, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi_login.exceptions import InvalidCredentialsException

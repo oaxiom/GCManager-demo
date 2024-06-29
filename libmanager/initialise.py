@@ -73,7 +73,13 @@ def initialize_system(gcmanager, end_type, log, script_path, home_path, backup_p
     else:
         log.info('Demo version overwrote existing tree')
 
-    initialise_dbs.init_dbs(home_path, script_path, log)
+    initialise_dbs.init_dbs(gcmanager, home_path, script_path, log)
+
+    with open(os.path.join(home_path, 'dbs', ".env"), "r") as f:
+        gcmanager.env = f.read()
+    
+    with open(os.path.join(home_path, 'dbs', ".fren"), "r") as f:
+        gcmanager.fren = f.read()
 
     # set the machine id:
     with open(os.path.join(home_path, 'dbs', '.mchne'), "w") as f:

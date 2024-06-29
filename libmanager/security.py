@@ -9,10 +9,13 @@
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
+from cryptography.fernet import Fernet
 
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"])
+
+###### Password Hashing
 
 def hash_password(plaintext: str):
     """
@@ -39,6 +42,21 @@ def verify_password(plaintext: str, hashed: str) -> bool:
     """
 
     return pwd_context.verify(plaintext, hashed)
+
+####### Two way string hashing/encryption
+
+def str_encrypt(string, env):
+    fernet = Fernet(env)
+    return fernet.encrypt(string.encode())
+    
+def str_decrypt(string, env):
+    fernet = Fernet(env)
+    return fernet.decrypt(string).decode()
+
+def str_gen_key():
+    return Fernet.generate_key()
+
+####### Asymmetric hash
 
 def gen_keys():
     private_key = rsa.generate_private_key(

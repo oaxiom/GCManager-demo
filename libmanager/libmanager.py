@@ -50,7 +50,7 @@ class libmanager:
         # initialise is called...
         if not os.path.exists(os.path.join(home_path, 'logs')):
             self.log = logger.basic_logger()
-        else: # Loos fine call the ful logger;
+        else: # Logs fine call the ful logger;
             self.log = logger.logger(os.path.join(home_path, 'logs'))
 
         self.end_type = None
@@ -59,6 +59,9 @@ class libmanager:
         self.db_path = os.path.join(self.home_path, 'dbs')
         self.data_path = os.path.join(self.home_path, 'data')
         self.backup_path = os.path.join(os.path.expanduser('~'), 'GCMBackup/')
+
+        self.env = None
+        self.fren = None
 
         self.api = api.api(self, self.log, home_path)
 
@@ -79,6 +82,12 @@ class libmanager:
 
         self.analysis_queue = analysis_queue.analysis_queue(self.script_path, self.db_path, self.data_path, self.log)
 
+        try: 
+            self.check_security()
+        except FileNotFoundError:
+            # security wil fail if we are initialising a full DB
+            pass
+        
         self.log.info(f"Started libmanager")
 
     def check_security(self):
@@ -86,14 +95,31 @@ class libmanager:
         **Purpose**
             Perform sanity and purity check on the system.
 
-            Must be fast, and callable from most functions.
-
-            TODO: Maybe have a FAST and SLOW security check? or an async one?
-
         '''
-        # TODO: Make sure the username is 'gcm'
+        # TODO: Make sure the username is 'gcm' (only if Backend)
 
         # TODO: Confirm GC, and the dbs structure.
+        
+        # dbenv checking
+        with open(os.path.join(self.home_path, 'dbs', ".env"), "r") as f:
+            cenv = f.read()
+
+        if not self.env:
+            self.env = cenv
+        else:
+            if self.env != cenv:
+                self.log.info('Failed Machine security check (env is wrong)')
+                return False
+
+        with open(os.path.join(self.home_path, 'dbs', ".fren"), "r") as f:
+            cfren = f.read()
+
+        if not self.fren:
+            self.fren = cfren
+        else:
+            if self.fren != cfren:
+                self.log.info('Failed Machine security check (fren is wrong)')
+                return False
 
         # TODO: Add md5sum check on self.db_disease_codes
 
@@ -102,7 +128,7 @@ class libmanager:
             mchne = f.read()
 
         if not security.verify_password(utils.guid(), mchne):
-            self.log.info('Failed Machine security check')
+            self.log.info('Failed Machine security check (machine ID has changed)')
             return False
 
         self.log.info('Security check passed')
@@ -245,9 +271,9 @@ class libmanager:
         for row in results:
             row = {
                 'patient_id': row[0],
-                'name': row[1],
-                'age': row[2],
-                'sex': row[3],
+                'name': security.str_decrypt(row[1], self.fren),
+                'age': security.str_decrypt(row[2], self.fren),
+                'sex': security.str_decrypt(row[3], self.fren),
                 'analysis_done': self._sql_yesno(row[4], self.lang),
                 'insititution_sending': row[5],  # TODO: Fix typo
                 }
@@ -706,9 +732,9 @@ class libmanager:
         newpid_row = {
             'patient_id': patient_id,
             'seq_id': seq_id,
-            'name': name,
-            'age': age,
-            'sex': sex,
+            'name': security.str_encrypt(name, self.fren),
+            'age': security.str_encrypt(str(age), self.fren),
+            'sex': security.str_encrypt(sex, self.fren),
             'analysis_done': 0,
             'date_added': datetime.datetime.now().isoformat(' '),
             'date_analysis': 'null',
@@ -833,7 +859,9 @@ class libmanager:
         self.db_PID.close()
 
         # TODO: Check return
-        patient_data = {'name': patient_data[0], 'age': patient_data[1], 'sex': patient_data[2]}
+        patient_data = {'name': security.str_decrypt(patient_data[0], self.fren), 
+            'age': security.str_decrypt(patient_data[1], self.fren), 
+            'sex': security.str_decrypt(patient_data[2], self.fren)}
 
         self.db_disease_codes = sqlite3.connect(self.db_disease_codes_path)
         self.db_disease_codes_cursor = self.db_disease_codes.cursor()

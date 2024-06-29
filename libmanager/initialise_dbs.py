@@ -13,8 +13,9 @@ import sys, os, sqlite3, shutil, glob, datetime, uuid
 
 from . import settings
 from . import user
+from . import security
 
-def init_dbs(home_path, script_path, log):
+def init_dbs(gcmanager, home_path, script_path, log):
     log.info('Setting up tables')
 
     # Setup the PID database;
@@ -46,6 +47,11 @@ def init_dbs(home_path, script_path, log):
             if not (lineEN and lineCN): continue
             disease_dbc.execute('INSERT INTO diseasecodes_pharma VALUES (?, ?, ?)', (f'P{did+1}', lineEN.strip(), lineCN.strip()))
     log.info('Setting up Pharma table')
+
+    with open(os.path.join(home_path, 'dbs', ".fren"), "wb") as f:
+        fren = security.str_gen_key()
+        f.write(fren)
+    gcmanager.fren = fren
 
     # Load ClinVar
     # Isn't this per patient?
