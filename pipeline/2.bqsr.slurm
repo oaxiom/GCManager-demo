@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#SBATCH --cpus-per-task=4
 #SBATCH --partition=batch
 #SBATCH -N 1
 

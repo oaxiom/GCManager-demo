@@ -1,5 +1,5 @@
 #!/bin/sh
-#SBATCH --cpus-per-task=1
+#SBATCH --cpus-per-task=2
 #SBATCH -J gathervcfs
 #SBATCH -o gathervcfs.out
 

@@ -36,6 +36,8 @@ class runner:
         self.PID = patient_id
         self.log = log
 
+        self.ncores = os.cpu_count()
+
         self.stage1 = 0
         self.stage2 = 0
         self.stage3 = 0
@@ -127,7 +129,7 @@ class runner:
         if not os.path.exists('merge_bams.out'):
             # Not started
             self.touch_all_outs(3)
-            subprocess.run('sbatch 3.merge_bams.slurm', shell=True)
+            subprocess.run(f'sbatch -c {self.ncores} 3.merge_bams.slurm', shell=True)
             self.final_results(3)
             return None
         else:
@@ -188,7 +190,7 @@ class runner:
         if not os.path.exists('variant_racalibrate.out'):
             # Not started yet
             self.touch_all_outs(7)
-            subprocess.run('sbatch 7.variantrecalibrate.slurm', shell=True)
+            subprocess.run('sbatch -c {self.ncores} 7.variantrecalibrate.slurm', shell=True)
             self.final_results(7)
             return None
         else:
