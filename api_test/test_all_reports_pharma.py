@@ -11,7 +11,7 @@ sys.path.append('../')
 from libmanager import libmanager, support, VERSION
 
 if 'demo' in VERSION:
-    home_path = os.path.join(os.path.expanduser('~'), 'GCMDataDEMO/') # Pre-initialised demo data
+    home_path = os.path.join(os.path.expanduser('~'), 'gcm', 'GCMDataDEMO/') # Pre-initialised demo data
 else:
     print('Only works in DEMO mode')
     sys.exit(-1)

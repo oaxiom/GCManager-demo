@@ -11,7 +11,7 @@ sys.path.append('../')
 from libmanager import libmanager, support, VERSION
 
 if 'demo' in VERSION:
-    home_path = os.path.join(os.path.expanduser('~'), 'GCMDataDEMO/') # Pre-initialised demo data
+    home_path = os.path.join(os.path.expanduser('~'), 'gcm', 'GCMDataDEMO/') # Pre-initialised demo data
 else:
     print('Only works in DEMO mode')
     sys.exit(-1)
@@ -33,14 +33,14 @@ man.set_end_type('Backend')
 
 # delete the patient if it's already there;
 try:
-    #man.delete_patient('tester', 'TOOFEWREADS')
+    man.delete_patient('tester', 'TOOFEWREADS')
     man.delete_patient('tester', 'ANALYSISTEST')
 except AssertionError:
     pass
 
 ###### A minimal fail;
 
-ret_code, sequence_data_path = man.api.add_new_patient(
+ret_code, sequence_data_path, safe_patient_id = man.api.add_new_patient(
     user='tester',
     patient_id='TOOFEWREADS',
     sequence_data_id='SQEQID2',
@@ -58,7 +58,7 @@ for f in allfiles:
 
 ###### A minimal succesful sample;
 
-ret_code, sequence_data_path = man.api.add_new_patient(
+ret_code, sequence_data_path, safe_patient_id = man.api.add_new_patient(
     user='tester',
     patient_id='ANALYSISTEST',
     sequence_data_id='SQEQID2',

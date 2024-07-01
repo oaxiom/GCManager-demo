@@ -10,7 +10,7 @@ Instructions to set up Ubuntu:
 5. (Optional) Download the 'test_data.tar.gz' package. Unpack in ~/
 
 6. Install critical Ubuntu packages:
-    a. $ sudo apt install libbz2-dev liblzma-dev libncurses5-dev default-jre
+    a. $ sudo apt install libbz2-dev liblzma-dev libncurses5-dev default-jrei
 
 6. Setup the python venv:
     a. $ sudo apt install python3-venv

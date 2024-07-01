@@ -13,7 +13,7 @@ from libmanager import libmanager, support, VERSION
 #from test_common import *
 
 if 'demo' in VERSION:
-    home_path = os.path.join(os.path.expanduser('~'), 'GCMDataDEMO/') # Pre-initialised demo data
+    home_path = os.path.join(os.path.expanduser('~'), 'gcm', 'GCMDataDEMO/') # Pre-initialised demo data
 else:
     print('Only works in DEMO mode')
     sys.exit(-1)

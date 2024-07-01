@@ -10,7 +10,7 @@ import sys, os, shutil, uuid, base64
 sys.path.append('../')
 from libmanager import libmanager, support, VERSION, security
 
-home_path = os.path.join(os.path.expanduser('~'), 'GCMDataDEMO/')
+home_path = os.path.join(os.path.expanduser('~'), 'gcm', 'GCMDataDEMO/')
 
 man = libmanager.libmanager(home_path=home_path)
 man.set_end_type('Doctorend')

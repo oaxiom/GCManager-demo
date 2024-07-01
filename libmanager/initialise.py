@@ -20,8 +20,15 @@ from . import utils
 from . import logger
 
 def initialize_system(gcmanager, end_type, log, script_path, home_path, backup_path, demo):
-    #initialise doesn't care whic end we are. It builds all the possible dbs.
+    #initialise doesn't care which end we are. It builds all the possible dbs.
     #assert end_type in ('Doctorend', 'Backend'), f'{end_type} must be one of Doctorend or Backend'
+
+    # home_path is now always gcm/GCMDemoDATA/
+    # gcm is not guaranteed to exist, but it should never be deleted
+    # as it may contain accessory data.
+
+    if not os.path.exists(home_path.replace('GCMDataDEMO/', '')):
+        os.mkdir(home_path.replace('GCMDataDEMO/', ''))
 
     if not demo:
         #log.info('Check for existing data directory')
@@ -77,7 +84,7 @@ def initialize_system(gcmanager, end_type, log, script_path, home_path, backup_p
 
     with open(os.path.join(home_path, 'dbs', ".env"), "r") as f:
         gcmanager.env = f.read()
-    
+
     with open(os.path.join(home_path, 'dbs', ".fren"), "r") as f:
         gcmanager.fren = f.read()
 

@@ -23,9 +23,9 @@ from contextlib import asynccontextmanager
 logging.getLogger("multipart").setLevel(logging.ERROR)
 
 if 'demo' in VERSION:
-    home_path = os.path.join(os.path.expanduser('~'), 'GCMDataDEMO/') # Pre-initialised demo data
+    home_path = os.path.join(os.path.expanduser('~'), 'gcm', 'GCMDataDEMO/') # Pre-initialised demo data
 else:
-    home_path = os.path.join(os.path.expanduser('~'), 'GCMData/')
+    home_path = os.path.join(os.path.expanduser('~'), 'gcm', 'GCMData/')
 
 gcman = libmanager.libmanager(home_path=home_path)
 log = gcman.log
@@ -75,7 +75,7 @@ async def process_analysis_queue(seconds):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Run at startup
-    asyncio.create_task(check_backups(60*60*2)) # Once every two hours, this does not force a DB backup, it only checks if one is required
+    asyncio.create_task(check_backups(60))#*60*2)) # Once every two hours, this does not force a DB backup, it only checks if one is required
     asyncio.create_task(check_security(60*60)) # Once an hour
     asyncio.create_task(process_analysis_queue(60*1)) # Every minute;
     yield

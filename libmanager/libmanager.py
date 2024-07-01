@@ -58,7 +58,7 @@ class libmanager:
         self.script_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], '..')
         self.db_path = os.path.join(self.home_path, 'dbs')
         self.data_path = os.path.join(self.home_path, 'data')
-        self.backup_path = os.path.join(os.path.expanduser('~'), 'GCMBackup/')
+        self.backup_path = os.path.join(os.path.expanduser('~'), 'gcm', 'gcmbackup/')
 
         self.env = None
         self.fren = None
@@ -82,12 +82,12 @@ class libmanager:
 
         self.analysis_queue = analysis_queue.analysis_queue(self.script_path, self.db_path, self.data_path, self.log)
 
-        try: 
+        try:
             self.check_security()
         except FileNotFoundError:
             # security wil fail if we are initialising a full DB
             pass
-        
+
         self.log.info(f"Started libmanager")
 
     def check_security(self):
@@ -99,7 +99,7 @@ class libmanager:
         # TODO: Make sure the username is 'gcm' (only if Backend)
 
         # TODO: Confirm GC, and the dbs structure.
-        
+
         # dbenv checking
         with open(os.path.join(self.home_path, 'dbs', ".env"), "r") as f:
             cenv = f.read()
@@ -152,7 +152,7 @@ class libmanager:
         else:
             return None
 
-        if time.time() - last_backup_time > 86400:  # 24 hours = 86400; time.time() reports seconds;
+        if time.time() - last_backup_time > 60: #86400:  # 24 hours = 86400; time.time() reports seconds;
             def backup_db(self, path_to_copy):
                 shutil.make_archive(os.path.join(self.backup_path, f'db_backup-{self.end_type}-{int(time.time())}'),
                     'gztar',
@@ -601,7 +601,7 @@ class libmanager:
             self.log.warning(f'Asked for {patient_id} CRAM file, but CRAM file is not available')
             return False
 
-        cram_path = os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.sorted.dedupe.recal.cram')
+        cram_path = os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.cram')
 
         if not os.path.exists(cram_path):
             self.log.error(f'Asked for {patient_id} CRAM file, but CRAM file does not exist (although it was reported to exist)')
@@ -761,6 +761,7 @@ class libmanager:
 
         sequence_data_path = data_dir # Copy the seq data here;
 
+        # ret, sequence_data_path, safe_patient_id
         return True, sequence_data_path, patient_id
 
     def delete_patient(self, user:str, patient_id:str) -> bool:
@@ -859,8 +860,8 @@ class libmanager:
         self.db_PID.close()
 
         # TODO: Check return
-        patient_data = {'name': security.str_decrypt(patient_data[0], self.fren), 
-            'age': security.str_decrypt(patient_data[1], self.fren), 
+        patient_data = {'name': security.str_decrypt(patient_data[0], self.fren),
+            'age': security.str_decrypt(patient_data[1], self.fren),
             'sex': security.str_decrypt(patient_data[2], self.fren)}
 
         self.db_disease_codes = sqlite3.connect(self.db_disease_codes_path)

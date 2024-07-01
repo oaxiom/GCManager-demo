@@ -13,7 +13,7 @@ from libmanager import libmanager, support, VERSION
 #from test_common import *
 
 if 'demo' in VERSION:
-    home_path = os.path.join(os.path.expanduser('~'), 'GCMDataDEMO/') # Pre-initialised demo data
+    home_path = os.path.join(os.path.expanduser('~'), 'gcm', 'GCMDataDEMO/') # Pre-initialised demo data
 else:
     print('Only works in DEMO mode')
     sys.exit(-1)
@@ -43,7 +43,7 @@ try:
 except AssertionError:
     pass
 
-ret_code, sequence_data_path = man.api.add_new_patient(
+ret_code, sequence_data_path, safe_patient_id  = man.api.add_new_patient(
     user='tester',
     patient_id='MINIMALGCM',
     sequence_data_id='SQEQID2',
@@ -54,6 +54,7 @@ ret_code, sequence_data_path = man.api.add_new_patient(
     )
 
 gcm = os.path.join(man.script_path, 'demo_data', 'gcms', 'PID.ANALYSISTEST.data.gcm')
+print(sequence_data_path)
 shutil.copy(gcm, os.path.join(sequence_data_path, 'PID.MINIMALGCM.data.gcm'))
 man.set_analysis_complete('MINIMALGCM')
 

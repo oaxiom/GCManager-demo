@@ -77,7 +77,7 @@ def init_dbs(gcmanager, home_path, script_path, log):
     user.users(home_path, log).initialize_dbs()
 
 def build_demo_data(man, home_path, script_path, log):
-    log.info('Moving DEMO data')
+    log.info('Moving data')
 
     # Setup two patients, and copy the data
     man.add_patient('demo_user', '72210953309787', 'SEQ72210953309787', '何XX', '男', 43, 'HOSPITAL1') # Complete
@@ -92,7 +92,7 @@ def build_demo_data(man, home_path, script_path, log):
     user_home_path = os.path.expanduser('~')
     shutil.copy(os.path.join(script_path, 'demo_data', 'PID.72210953309787', 'PID.72210953309787.vcf.gz'), os.path.join(home_path, 'data', 'PID.72210953309787'))
     shutil.copy(os.path.join(script_path, 'demo_data', 'PID.72210953309787', 'PID.72210953309787.data.gcm'), os.path.join(home_path, 'data', 'PID.72210953309787'))
-    shutil.copy(os.path.join(script_path, 'demo_data', 'PID.72210953309787', 'PID.72210953309787.sorted.dedupe.recal.cram'), os.path.join(home_path, 'data', 'PID.72210953309787'))
+    shutil.copy(os.path.join(script_path, 'demo_data', 'PID.72210953309787', 'PID.72210953309787.cram'), os.path.join(home_path, 'data', 'PID.72210953309787'))
 
 
     [shutil.copy(f, os.path.join(home_path, 'data', 'PID.NA12878')) for f in glob.glob(os.path.join(script_path, 'demo_data', 'PID.NA12878', '*.out'))]

@@ -13,7 +13,7 @@ from libmanager import libmanager, support, VERSION
 script_path = os.path.dirname(os.path.realpath(__file__))
 
 if 'demo' in VERSION:
-    home_path = os.path.join(os.path.expanduser('~'), 'GCMDataDEMO/') # Pre-initialised demo data
+    home_path = os.path.join(os.path.expanduser('~'), 'gcm', 'GCMDataDEMO/') # Pre-initialised demo data
 else:
     print('init_test only works in DEMO mode')
     sys.exit(-1)
