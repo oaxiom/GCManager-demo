@@ -7,7 +7,7 @@ PWD=$(pwd)
 PID=$(basename $PWD)
 HOME=$(echo ~)
 
-bash_ref_fasta=$HOME/gcmtools/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta
+bash_ref_fasta=$HOME/gcm/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta
 
 gvcffile=called.$chrom.recal.g.vcf.gz
 
