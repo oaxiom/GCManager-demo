@@ -152,7 +152,7 @@ class libmanager:
         else:
             return None
 
-        if time.time() - last_backup_time > 60: #86400:  # 24 hours = 86400; time.time() reports seconds;
+        if time.time() - last_backup_time > 86400:  # 24 hours = 86400; time.time() reports seconds;
             def backup_db(self, path_to_copy):
                 shutil.make_archive(os.path.join(self.backup_path, f'db_backup-{self.end_type}-{int(time.time())}'),
                     'gztar',
