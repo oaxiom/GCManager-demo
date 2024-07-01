@@ -82,7 +82,7 @@ seconds = 60
 while not man.analysis_complete('ANALYSISTEST'):
     man.process_analysis_queue()
     print(man.report_current_analysis_stage())
-    print(man.get_patients_data_table())
+    print('\n'.join(man.get_patients_data_table()))
     #print(man.analysis_queue.currently_processing)
     print(f'Sleeping for {seconds} seconds')
     time.sleep(seconds)
