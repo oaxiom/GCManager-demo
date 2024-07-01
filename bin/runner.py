@@ -190,7 +190,7 @@ class runner:
         if not os.path.exists('variant_racalibrate.out'):
             # Not started yet
             self.touch_all_outs(7)
-            subprocess.run('sbatch -c {self.ncores} 7.variantrecalibrate.slurm', shell=True)
+            subprocess.run(f'sbatch -c {self.ncores} 7.variantrecalibrate.slurm', shell=True)
             self.final_results(7)
             return None
         else:
@@ -213,7 +213,7 @@ class runner:
         if not os.path.exists('annotate_snps.out'):
             # Stage 8 not started
             self.touch_all_outs(8)
-            subprocess.run('sbatch 8.annotate.slurm', shell=True)
+            subprocess.run('sbatch -c 1 8.annotate.slurm', shell=True)
             self.final_results(8)
             return None
         else:
