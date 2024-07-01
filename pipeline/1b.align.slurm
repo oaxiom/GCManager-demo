@@ -1,6 +1,5 @@
 #!/bin/sh
-
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=$(nproc)
 #SBATCH --partition=batch
 #SBATCH -N 1
 
