@@ -147,13 +147,13 @@ class reporter_risk:
                 effect = ''
                 minus_row = ''
                 plus_row = ''
-                wid = 20 * len(gene['risky'])
+                wid = 20 * abs(gene['risky'])
                 # TODO: Make this more sensitive
-                if '-' in gene['risky']:
+                if gene['risky'] < 0:
                     effect = protective # Protective
                     minus_row = f'<div class="rounded-rectangleL" style="width:{wid}px; background-color: #00aa00; float:right;"></div>'
-                elif '+' in gene['risky']:
-                    effect = deleterious# Deleterious
+                elif gene['risky'] > 0:
+                    effect = deleterious # Deleterious
                     plus_row = f'<div class="rounded-rectangleR" style="width:{wid}px; background-color: #aa0000;"></div>'
 
                 tab_row = f'''
