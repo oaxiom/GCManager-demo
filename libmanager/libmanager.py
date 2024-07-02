@@ -534,6 +534,9 @@ class libmanager:
             self.log.info(f'GCM is available for {patient_id}')
             gcm = gcms.gcm_file(os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.data.gcm'), logger=self.log)
             return gcm.get_qc()
+        elif os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', 'FATALERROR.out')):
+            with open(os.path.join(self.data_path, f'PID.{patient_id}', 'FATALERROR.out'), 'rt') as f:
+                return f.read()
         else:
             self.log.warning(f'QC data is not yet available for {patient_id}')
             if self.settings.get_lang(self.end_type) == 'EN':
