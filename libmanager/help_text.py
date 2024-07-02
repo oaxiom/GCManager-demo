@@ -143,6 +143,7 @@ This page displays the Help text, and the system version and the database versio
 '''
 
 def get_help(end_type, lang='CN'):
+    assert end_type in ('Doctorend', 'Backend'), f'{end_type} not found'
     # load the correct end_type help;
 
     if end_type == 'Doctorend':
@@ -152,7 +153,7 @@ def get_help(end_type, lang='CN'):
             return help_text_en
 
     # TODO: Add Backened text
-    if end_type == 'Backened':
+    if end_type == 'Backend':
         if lang == 'CN':
             return help_text_cn
         elif lang == 'EN':

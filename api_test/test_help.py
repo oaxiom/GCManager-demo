@@ -41,6 +41,8 @@ def cmd_process(cmd):
 ########
 # Testing;
 
+man.set_end_type('Doctorend')
+
 cmd_process("man.settings.set_doctor_setting('lang', 'CN')")
 cmd_process("man.settings.get_doctor_setting('lang')")
 
@@ -54,6 +56,27 @@ cmd_process("man.settings.get_doctor_setting('lang')")
 
 html = cmd_process('man.get_help()')
 with open('help.EN.Doctorend.html', 'w') as f:
+    f.write(html)
+
+cmd_process('man.get_manual()')
+
+########
+# Backend
+
+man.set_end_type('Backend')
+cmd_process("man.settings.set_backend_setting('lang', 'CN')")
+cmd_process("man.settings.get_backend_setting('lang')")
+
+html = cmd_process('man.get_help()')
+
+with open('help.CN.Backend.html', 'w') as f:
+    f.write(html)
+
+cmd_process("man.settings.set_backend_setting('lang', 'EN')")
+cmd_process("man.settings.get_backend_setting('lang')")
+
+html = cmd_process('man.get_help()')
+with open('help.EN.Backend.html', 'w') as f:
     f.write(html)
 
 cmd_process('man.get_manual()')
