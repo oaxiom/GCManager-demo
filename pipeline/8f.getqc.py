@@ -5,6 +5,11 @@ if len(sys.argv) != 2:
     print('Incorrect number of arguments. should be PID file only')
     sys.exit(-1)
 
+FATAL_ERROR = None
+if os.path.exists('FATALERROR.out'):
+    with open('FATALERROR.out', 'rt') as f:
+        FATAL_ERROR = f.read()
+
 print('Collecting QC')
 
 PID = sys.argv[1]
@@ -57,10 +62,13 @@ outputs['total_annotated_snps'] = wc(f'{PID}.vcf.gz', gziped=True)
 
 with open(f'{PID}.qc', 'wt') as oh:
     oh.write(f"Total number of input reads = {outputs['read_count']}\n")
-    oh.write(f"Mapped reads = {outputs['mapped_reads']} ({(outputs['mapped_reads']/outputs['read_count']*100):.1f}%)\n")
-    oh.write(f"Properly paired = {outputs['properly_paired']}\n")
-    oh.write(f"Read duplicates = {outputs['duplicates']}\n")
-    oh.write(f"Total number of SNPs = {outputs['total_snps']}\n")
-    oh.write(f"Total annotated SNPs = {outputs['total_annotated_snps']}\n")
+    if FATAL_ERROR:
+        oh.write(FATAL_ERROR)
+    else:
+        oh.write(f"Mapped reads = {outputs['mapped_reads']} ({(outputs['mapped_reads']/outputs['read_count']*100):.1f}%)\n")
+        oh.write(f"Properly paired = {outputs['properly_paired']}\n")
+        oh.write(f"Read duplicates = {outputs['duplicates']}\n")
+        oh.write(f"Total number of SNPs = {outputs['total_snps']}\n")
+        oh.write(f"Total annotated SNPs = {outputs['total_annotated_snps']}\n")
 
 print('Finished collecting QC')
