@@ -486,10 +486,9 @@ def add_new_patient(
 
     return {'code': 200, 'data': gcman.patient_exists(safe_patient_id), 'msg': None}
 
-"""
 # This version only takes the PATH of the file
-@app.post('/add_patient')
-def add_new_patient(
+@app.post('/add_patient_move')
+def add_new_patient_move(
     patient_id: Annotated[str, Form()],
     sequence_data_id: Annotated[str, Form()],
     name: Annotated[str, Form()],
@@ -504,6 +503,8 @@ def add_new_patient(
     '''
 
     # Add a new patient to the database.
+
+    # This version accepts a file path, and MOVEs the data (NO COPY)
 
     ## Example data:
     patient_id: ANEWPATIENT12345
@@ -590,12 +591,12 @@ def add_new_patient(
             # TODO: Check that all filenames are unique
 
         try:
-            gcman.log.info(f'Uploading file {filename}')
+            gcman.log.info(f'Moving file {filename}')
             #f = await run_in_threadpool(open, os.path.join(temp_data_path, destination_filename), 'wb')
             #await run_in_threadpool(shutil.copyfileobj, file.file, f)
             destination_location = os.path.join(temp_data_path, destination_filename)
             #with open(destination_location, 'wb') as f:
-            shutil.copyfile(filename, destination_location)
+            shutil.move(filename, destination_location)
 
         except Exception:
             return {'code': 517, 'data': None, 'msg': 'Upload file error'}
@@ -651,8 +652,6 @@ def add_new_patient(
 
     return {'code': 200, 'data': gcman.patient_exists(safe_patient_id), 'msg': None}
 
-"""
-
 @app.post('/del_patient')
 def delete_patient(patient_id:str, user=Depends(user_manager)) -> dict:
     """
@@ -688,9 +687,11 @@ def report_current_anaylsis_stage(user=Depends(user_manager)) -> dict:  # TODO: 
     {1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100, 7: 100, 8: 100, 9: 100}
     任务分析状态
     '''
-    percents, q_status = gcman.report_current_analysis_stage()
+    percents, q_status, patient_id, q_size = gcman.report_current_analysis_stage()
 
-    return {'code': 200, 'data': percents, 'msg': q_status}
+    return {'code': 200,
+        'data': {'percents': percents, 'q_message': q_status, 'current_analyis_patient_id': patient_id, 'items_on_q': q_size},
+        'msg': q_status}
 
 @app.get("/patient/export_QC_statistics/{patient_id}")
 def export_QC_statistics(patient_id: str, user=Depends(user_manager)) -> dict:
