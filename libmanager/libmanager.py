@@ -783,6 +783,11 @@ class libmanager:
         if self.analysis_queue.patient_is_on_the_task_list(patient_id):
             self.log.info(f'{user} asked to delete {patient_id}, but {patient_id} is on the analysis queue and cannot be deleted')
             return False
+            
+        elif patient_id == self.analysis_queue.currently_processing:
+            # Yes, I want to delete this patient.
+            # This would allow a user to delete a frozen analysis.
+            self.analysis_queue.currently_processing = None
 
         # Check the data folder is valid;
         patient_db_path = os.path.join(self.home_path, 'data', f'PID.{patient_id}')
