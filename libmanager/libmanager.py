@@ -784,7 +784,7 @@ class libmanager:
             self.log.info(f'{user} asked to delete {patient_id}, but {patient_id} is on the analysis queue and cannot be deleted')
             return False
             
-        elif patient_id == self.analysis_queue.currently_processing:
+        elif self.analysis_queue.patient_is_currently_processing(patient_id):
             # Yes, I want to delete this patient.
             # This would allow a user to delete a frozen analysis.
             self.analysis_queue.currently_processing = None
@@ -806,7 +806,7 @@ class libmanager:
 
         return True
 
-    def summary_statistics(self, patient_id:str, ):
+    def summary_statistics(self, patient_id:str):
         '''
         **Purpose**
             Return the summary statistics for the patient_id
