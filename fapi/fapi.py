@@ -599,7 +599,7 @@ def add_new_patient_move(
         dst_path = os.path.join(sequence_data_path, f)
         shutil.move(src_path, dst_path)
 
-    # And sanitise tmp
+    # And sanitise tmp, even though it's a move()
     shutil.rmtree(temp_data_path)
 
     # Backend/small platform
@@ -823,6 +823,18 @@ def register_frontend(encrypted: str) -> dict:
         raise HTTPException(status_code=500, detail='Validation encryption failure')
 
     return {'code': 200, 'data': ret, 'msg': None}
+
+@app.post('/security/clear_activation/')
+def clear_activation() -> dict:
+    """
+    
+    ## Clear the activation
+    
+    """
+    if not gcman._already_registered():
+        return {'code': 500, 'data': False, 'msg': 'System not registered'}
+    
+    return {'code': 200, 'data': gcman.clear_activation(), 'msg': None}
 
 @app.post('/security/validate/')
 def validate(encrypted: str) -> dict:

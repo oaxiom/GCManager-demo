@@ -966,6 +966,18 @@ class libmanager:
 
         return True
 
+    def clear_activation(self) -> bool:
+        """
+        # Clear the activation key;
+        """
+        m = os.path.join(self.data_path, '.mac')
+        if not os.path.exists(m):
+            return False
+            
+        os.remove(m)
+        
+        return True
+
     def check_frontend_registration(self, encrypted:str) -> bool:
         """
         **Purpose**
