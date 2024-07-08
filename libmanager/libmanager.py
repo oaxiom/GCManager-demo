@@ -775,19 +775,20 @@ class libmanager:
         """
         assert self.patient_exists(patient_id), f'{patient_id} does not exist'
 
-        # Race condition.
-        # Don't delete the patient if the analysis is incomplete.
-        # But this leaves the possibility of an incomplete analysis...
-        # Just delete it if it's not on the queue?
+        if self.end_type == 'Backend':
+            # Race condition.
+            # Don't delete the patient if the analysis is incomplete.
+            # But this leaves the possibility of an incomplete analysis...
+            # Just delete it if it's not on the queue?
 
-        if self.analysis_queue.patient_is_on_the_task_list(patient_id):
-            self.log.info(f'{user} asked to delete {patient_id}, but {patient_id} is on the analysis queue and cannot be deleted')
-            return False
-            
-        elif self.analysis_queue.patient_is_currently_processing(patient_id):
-            # Yes, I want to delete this patient.
-            # This would allow a user to delete a frozen analysis.
-            self.analysis_queue.currently_processing = None
+            if self.analysis_queue.patient_is_on_the_task_list(patient_id):
+                self.log.info(f'{user} asked to delete {patient_id}, but {patient_id} is on the analysis queue and cannot be deleted')
+                return False
+
+            elif self.analysis_queue.patient_is_currently_processing(patient_id):
+                # Yes, I want to delete this patient.
+                # This would allow a user to delete a frozen analysis.
+                self.analysis_queue.currently_processing = None
 
         # Check the data folder is valid;
         patient_db_path = os.path.join(self.home_path, 'data', f'PID.{patient_id}')
@@ -978,9 +979,9 @@ class libmanager:
         m = os.path.join(self.data_path, '.mac')
         if not os.path.exists(m):
             return False
-            
+
         os.remove(m)
-        
+
         return True
 
     def check_frontend_registration(self, encrypted:str) -> bool:
