@@ -42,6 +42,7 @@ from . import utils
 from . import help_text
 from . import gcms
 from . import security
+from . import errormsgs
 from . import VERSION, DBVERSION, RELEASEVERSION
 
 class libmanager:
@@ -1025,6 +1026,17 @@ class libmanager:
         if self.lang == 'EN':
             return f'Release Version: {RELEASEVERSION}. Full version: {SVER}'
         return f'发布版本：{RELEASEVERSION} 完整版本：{SVER}'
+
+    def get_error(self, typ, **kargs):
+        self.lang = self.settings.get_lang(self.end_type)
+
+        if typ not in errormsgs.errormsgs[self.lang]:
+            if self.lang == 'EN': return 'None'
+            else: return '无'
+
+        if kargs:
+            return errormsgs.errormsgs[self.lang][typ].format(**kargs)
+        return errormsgs.errormsgs[self.lang][typ]
 
     def add_task(self, patient_id:str) -> bool:
         """

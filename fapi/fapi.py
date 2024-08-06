@@ -63,7 +63,7 @@ async def check_security(seconds):
     while True:
         ret = gcman.check_security()
         if not ret:
-            raise HTTPException(status_code=400, detail="Failed security check (Machine)")
+            raise HTTPException(status_code=400, detail=gcman.get_error('fail_sec_check_mac'))
         await asyncio.sleep(seconds)
 
 async def process_analysis_queue(seconds):
@@ -108,10 +108,10 @@ def register(user: UserCreate) -> dict:
 
     """
     if gcman.users.user_exists(user.username):
-        raise HTTPException(status_code=400, detail="A user with this username already exists")
+        raise HTTPException(status_code=400, detail=gcman.get_error('user_exists'))
 
     gcman.users.add_user(uuid.uuid4(), user.username, user.password)
-    return {'code': 200, 'data': (user.username, user.password), 'msg': "Successful registration"}
+    return {'code': 200, 'data': (user.username, user.password), 'msg': gcman.get_error('user_success_registration')}
 
 @app.post('/auth/token')
 def login(data: OAuth2PasswordRequestForm = Depends()) -> dict:
@@ -132,33 +132,37 @@ def login(data: OAuth2PasswordRequestForm = Depends()) -> dict:
 
 @app.post('/auth/change')
 def change_password(username:str, newpassword:str, oldpassword:str = None, requesting_user=Depends(user_manager)) -> dict:
+
+    if not gcman.users.user_exists(username):
+        raise HTTPException(status_code=400, detail=gcman.get_error('user_not_exists', username=username))
+
     if not gcman.users.is_admin(requesting_user):
         # We are not an admin. Check the old password;
         if not oldpassword:
-            raise HTTPException(status_code=400, detail="Old password is required")
+            raise HTTPException(status_code=400, detail=gcman.get_error('old_password_reqd'))
         if not gcman.users.check_password(username, oldpassword):
-            raise HTTPException(status_code=400, detail="Incorrect old password")
+            raise HTTPException(status_code=400, detail=gcman.get_error('incorrect_old_pass'))
     else: # We are the admin
         if username == requesting_user:
             # We are trying to change our own password.
             # We will need the old password
             if not oldpassword:
-                raise HTTPException(status_code=400, detail="Old password is required")
+                raise HTTPException(status_code=400, detail=gcman.get_error('old_password_reqd'))
             if not gcman.users.check_password(username, oldpassword):
-                raise HTTPException(status_code=400, detail="Incorrect old password")
+                raise HTTPException(status_code=400, detail=gcman.get_error('incorrect_old_pass'))
         # We are not changing our own password, must be someone else's so no need oldpassword
 
     # If an admin, we don't need the oldpassword.
     ret = gcman.users.change_password(username, newpassword)
 
     if not ret: # probably old == new
-        raise HTTPException(status_code=400, detail="Password is the same as old password")
+        raise HTTPException(status_code=400, detail=gcman.get_error('oldpass_is_newpass'))
 
     # Logout needs to go on the server side if using JWTs.
     # See: https://github.com/MushroomMaula/fastapi_login/issues/82
 
     gcman.log.info(f'{requesting_user} changed password for {username}')
-    return {'code': 200, 'data': True, 'msg': f'Succesfully changed password for user {username}'}
+    return {'code': 200, 'data': True, 'msg': gcman.get_error('changed_pass', username=username)}
 
 @app.post("/auth/delete")
 def delete(username_to_delete:str, requesting_user=Depends(user_manager)) -> dict:
@@ -167,7 +171,7 @@ def delete(username_to_delete:str, requesting_user=Depends(user_manager)) -> dic
     """
     # Check we are admin, and valid
     if not gcman.users.is_admin(requesting_user):
-        raise HTTPException(status_code=400, detail="The current user is not an admin")
+        raise HTTPException(status_code=400, detail=gcman.get_error('user_not_admin'))
 
     if not get_user(requesting_user): # I guess impossible to get here, but check anyway
         # If a non-admin user gets here, something strange going on.
@@ -176,16 +180,16 @@ def delete(username_to_delete:str, requesting_user=Depends(user_manager)) -> dic
 
     # Check user_to_delete is valid and not and admin
     if not get_user(username_to_delete):
-        raise HTTPException(status_code=400, detail=f"A user with this username {username_to_delete} does not exist")
+        raise HTTPException(status_code=400, detail=gcman.get_error('del_user_not_exist', username_to_delete=username_to_delete))
     if gcman.users.is_admin(username_to_delete):
-        raise HTTPException(status_code=400, detail="An admin user cannot be deleted")
+        raise HTTPException(status_code=400, detail=gcman.get_error('cannot_del_admin'))
 
     ret = gcman.users.delete_user(username_to_delete)
     if not ret:
         # I guess impossible to get here, but check anyway
-        raise HTTPException(status_code=400, detail="Unknown Error")
+        raise HTTPException(status_code=400, detail=gcman.get_error('unk'))
 
-    return {'code': 200, 'data': ret, 'msg': f"{username_to_delete} succesfully deleted"}
+    return {'code': 200, 'data': ret, 'msg': gcman.get_error('user_deleted', username_to_delete=username_to_delete)}
 
 '''
 # Logout needs to go on the server side if using JWTs.
@@ -213,7 +217,7 @@ def set_end_type(end_type: str) -> dict:
     """
     assert end_type in ('Doctorend', 'Backend'), f'{end_type} must be one of Doctorend or Backend'
 
-    return {'code': 200, 'data': gcman.set_end_type(end_type), 'msg': None}
+    return {'code': 200, 'data': gcman.set_end_type(end_type), 'msg': gcman.get_error('none')}
 
 @app.get('/populate_user_list/')
 def populate_user_list(user=Depends(user_manager)) -> dict:
@@ -225,9 +229,9 @@ def populate_user_list(user=Depends(user_manager)) -> dict:
     ]
     """
     if not gcman.users.is_admin(user):
-        raise HTTPException(status_code=400, detail="The current user is not an admin")
+        raise HTTPException(status_code=400, detail=gcman.get_error('user_not_admin'))
 
-    return {'code': 200, 'data': gcman.users.get_user_table(user), 'msg': None}
+    return {'code': 200, 'data': gcman.users.get_user_table(user), 'msg': gcman.get_error('none')}
 
 @app.get('/populate_patient_list/')
 def populate_patient_list(user=Depends(user_manager)) -> dict:
@@ -244,7 +248,7 @@ def populate_patient_list(user=Depends(user_manager)) -> dict:
     ]
     搜索患者
     """
-    return {'code': 200, 'data': gcman.api.populate_patient_list(user), 'msg': None}
+    return {'code': 200, 'data': gcman.api.populate_patient_list(user), 'msg': gcman.get_error('none')}
 
 @app.get('/populate_report_generator/{mode}')
 def populate_report_generator(mode: str, lang: str, patient_id:str, user=Depends(user_manager)) -> dict:
@@ -268,7 +272,7 @@ def populate_report_generator(mode: str, lang: str, patient_id:str, user=Depends
     TODO: Deprecate lang;
 
     """
-    return {'code': 200, 'data': gcman.api.populate_report_generator(mode, patient_id), 'msg': None}
+    return {'code': 200, 'data': gcman.api.populate_report_generator(mode, patient_id), 'msg': gcman.get_error('none')}
 
 @app.get("/patient/export_vcf/{patient_id:str}")
 def export_vcf(patient_id: str, user=Depends(user_manager)) -> dict:
@@ -282,8 +286,9 @@ def export_vcf(patient_id: str, user=Depends(user_manager)) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
-    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': gcman.api.export_vcf(patient_id), 'msg': None}
+    if not gcman.patient_exists(patient_id):
+        raise HTTPException(status_code=500, detail=gcman.get_error('pid_not_found', patient_id=patient_id))
+    return {'code': 200, 'data': gcman.api.export_vcf(patient_id), 'msg': gcman.get_error('none')}
 
 @app.get("/patient/export_cram/{patient_id}")
 def export_cram(patient_id: str, user=Depends(user_manager)) -> dict:
@@ -291,8 +296,9 @@ def export_cram(patient_id: str, user=Depends(user_manager)) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
-    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': gcman.api.export_cram(patient_id), 'msg': None}
+    if not gcman.patient_exists(patient_id):
+        raise HTTPException(status_code=500, detail=gcman.get_error('pid_not_found', patient_id=patient_id))
+    return {'code': 200, 'data': gcman.api.export_cram(patient_id), 'msg': gcman.get_error('none')}
 
 @app.get("/patient/export_gcm/{patient_id}")
 def export_gcm(patient_id: str, user=Depends(user_manager)) -> dict:
@@ -300,8 +306,9 @@ def export_gcm(patient_id: str, user=Depends(user_manager)) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
-    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': gcman.get_gcm_path(user, patient_id), 'msg': None}
+    if not gcman.patient_exists(patient_id):
+        raise HTTPException(status_code=500, detail=gcman.get_error('pid_not_found', patient_id=patient_id))
+    return {'code': 200, 'data': gcman.get_gcm_path(user, patient_id), 'msg': gcman.get_error('none')}
 
 @app.get("/patient/generate_report/{mode}/{patient_id}")
 def generate_report(mode: str, patient_id: str, selected_report:str, user=Depends(user_manager)) -> dict:
@@ -318,13 +325,15 @@ def generate_report(mode: str, patient_id: str, selected_report:str, user=Depend
     selected_report = '中风'
 
     '''
-    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found')
+    if not gcman.patient_exists(patient_id):
+        raise HTTPException(status_code=500, detail=gcman.get_error('pid_not_found', patient_id=patient_id))
 
-    if not gcman.analysis_complete(patient_id): raise HTTPException(status_code=500, detail=f'Analysis is not complete for {patient_id}')
+    if not gcman.analysis_complete(patient_id):
+        raise HTTPException(status_code=500, detail=gcman.get_error('analysis_not_complete', patient_id=patient_id))
 
     html_filename, html = gcman.api.generate_report(user, mode, patient_id, selected_report)
 
-    return {'code': 200, 'data': {'html_filename': html_filename, 'html': html}, 'msg': None}
+    return {'code': 200, 'data': {'html_filename': html_filename, 'html': html}, 'msg': gcman.get_error('none')}
 
 @app.get("/patient/{patient_id}")
 def is_patient_id_valid(patient_id: str, user=Depends(user_manager)) -> dict:
@@ -338,7 +347,7 @@ def is_patient_id_valid(patient_id: str, user=Depends(user_manager)) -> dict:
 
     '''
     ret = gcman.patient_exists(patient_id)
-    return {'code': 200, 'data': ret, 'msg': None}
+    return {'code': 200, 'data': ret, 'msg': gcman.get_error('none')}
 
 @app.post('/add_patient')
 def add_new_patient(
@@ -390,25 +399,25 @@ def add_new_patient(
 
     # Check it doesn't exist already
     if gcman.patient_exists(patient_id):
-        raise HTTPException(status_code=512, detail=f'{patient_id} already exists')
+        raise HTTPException(status_code=512, detail=gcman.get_error('pid_exists'))
 
     # Validate the files for the specific end;
     if gcman.end_type == 'Doctorend':
         # expects one file only, consisting of the intermediate file;
         if len(files) != 1:
-            raise HTTPException(status_code=513, detail='Doctor end expects only one file')
+            raise HTTPException(status_code=513, detail=gcman.get_error('doc_only_one_file'))
         # expects the file to have the extension .int.gz
         if not (files[0].filename.lower().endswith('.gcm') or files[0].filename.lower().endswith('.vcf.gz')):
-            raise HTTPException(status_code=514, detail='Doctor end expects a single file in the format .gcm or .vcf.gz')
+            raise HTTPException(status_code=514, detail=gcman.get_error('doc_wrong_file_format'))
 
     else: # Backend
         # expected an even number of files.
         if len(files) % 2 != 0:
-            raise HTTPException(status_code=515, detail='Analysis end expects an even number of files, one for each read pair')
+            raise HTTPException(status_code=515, detail=gcman.get_error('ana_even_files'))
         # Expects all files to have the form _1.fastq.gz
         for f in files:
             if not f.filename.lower().endswith('.fastq.gz'):
-                raise HTTPException(status_code=516, detail=f'File format appears incorrect, ".fastq.gz" is missing in file {f}')
+                raise HTTPException(status_code=516, detail=gcman.get_error('ana_wrong_file_format', f=f))
 
     # copy the data to a temporary location
     temp_data_path = os.path.join(gcman.home_path, 'tmp')
@@ -442,11 +451,12 @@ def add_new_patient(
                 shutil.copyfileobj(file.file, f, length=1024*1024)
 
         except Exception:
-            return {'code': 517, 'data': None, 'msg': 'Upload file error'}
+            return {'code': 517, 'data': None, 'msg': gcman.get_error('upload_error')}
         finally:
             #if 'f' in locals(): await run_in_threadpool(f.close)
             #await file.close()
             gcman.log.info(f'Finished uploading file {file.filename} to {patient_id}')
+
     end_time = int(time.time())
     gcman.log.info(f'Uploaded {len(files)} files in {end_time - start_time} to {patient_id} seconds')
 
@@ -493,7 +503,7 @@ def add_new_patient(
 
     gcman.update_patient_space_used(safe_patient_id)
 
-    return {'code': 200, 'data': gcman.patient_exists(safe_patient_id), 'msg': None}
+    return {'code': 200, 'data': gcman.patient_exists(safe_patient_id), 'msg': gcman.get_error('none')}
 
 # This version only takes the PATH of the file
 @app.post('/add_patient_move')
@@ -544,16 +554,16 @@ def add_new_patient_move(
 
     # Check it doesn't exist already
     if gcman.patient_exists(patient_id):
-        raise HTTPException(status_code=512, detail=f'{patient_id} already exists')
+        raise HTTPException(status_code=512, detail=gcman.get_error('pid_exists', patient_id=patient_id))
 
     # Validate the files for the Backend;
     # expected an even number of files.
     if len(files) % 2 != 0:
-        raise HTTPException(status_code=515, detail='Analysis end expects an even number of files, one for each read pair')
+        raise HTTPException(status_code=515, detail=gcman.get_error('ana_even_files'))
     # Expects all files to have the form _1.fastq.gz
     for f in files:
         if not f.lower().endswith('.fastq.gz'):
-            raise HTTPException(status_code=516, detail=f'File format appears incorrect, ".fastq.gz" is missing in file {f}')
+            raise HTTPException(status_code=516, detail=gcman.get_error('ana_wrong_file_format', f=f))
 
     # copy the data to a temporary location
     temp_data_path = os.path.join(gcman.home_path, 'tmp')
@@ -582,7 +592,7 @@ def add_new_patient_move(
             shutil.move(filename, destination_location)
 
         except Exception:
-            return {'code': 517, 'data': None, 'msg': 'Upload file error'}
+            return {'code': 517, 'data': None, 'msg': gcman.get_error('upload_error')}
         finally:
             gcman.log.info(f'Finished uploading file {filename} to {patient_id}')
 
@@ -617,7 +627,7 @@ def add_new_patient_move(
 
     gcman.update_patient_space_used(safe_patient_id)
 
-    return {'code': 200, 'data': gcman.patient_exists(safe_patient_id), 'msg': None}
+    return {'code': 200, 'data': gcman.patient_exists(safe_patient_id), 'msg': gcman.get_error('none')}
 
 @app.post('/del_patient')
 def delete_patient(patient_id:str, user=Depends(user_manager)) -> dict:
@@ -634,11 +644,11 @@ def delete_patient(patient_id:str, user=Depends(user_manager)) -> dict:
         raise InvalidCredentialsException
 
     if not gcman.patient_exists(patient_id):
-        raise HTTPException(status_code=500, detail=f'{patient_id} does not exist')
+        raise HTTPException(status_code=500, detail=gcman.get_error('pid_not_exist', patient_id=patient_id))
 
     gcman.delete_patient(user, patient_id)
 
-    return {'code': 200, 'data': True, 'msg': None}
+    return {'code': 200, 'data': True, 'msg': gcman.get_error('none')}
 
 
 @app.get("/patient/report_current_anaylsis_stage/")
@@ -671,8 +681,10 @@ def export_QC_statistics(patient_id: str, user=Depends(user_manager)) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
-    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': gcman.get_qc(user, patient_id), 'msg': None}
+    if not gcman.patient_exists(patient_id):
+        raise HTTPException(status_code=500, detail=gcman.get_error('pid_not_found', patient_id=patient_id))
+
+    return {'code': 200, 'data': gcman.get_qc(user, patient_id), 'msg': gcman.get_error('none')}
 
 @app.get("/patient/get_logs/{patient_id}")
 def get_logs(patient_id:str, user=Depends(user_manager)) -> dict:
@@ -688,8 +700,10 @@ def get_logs(patient_id:str, user=Depends(user_manager)) -> dict:
     Example value:
     patient_id = '72210953309787'
     '''
-    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': gcman.get_logs(user, patient_id), 'msg': None}
+    if not gcman.patient_exists(patient_id):
+        raise HTTPException(status_code=500, detail=gcman.get_error('pid_not_found', patient_id=patient_id))
+
+    return {'code': 200, 'data': gcman.get_logs(user, patient_id), 'msg': gcman.get_error('none')}
 
 @app.get("/populate_patient_data_list/")
 def populate_patient_data_list(user=Depends(user_manager)) -> dict:
@@ -720,7 +734,7 @@ def populate_patient_data_list(user=Depends(user_manager)) -> dict:
 
 
     '''
-    return {'code': 200, 'data': gcman.api.populate_patient_data_list(), 'msg': None}
+    return {'code': 200, 'data': gcman.api.populate_patient_data_list(), 'msg': gcman.get_error('none')}
 
 @app.get("/system/clean_free_space/")
 def clean_free_space(user=Depends(user_manager)) -> dict:
@@ -733,11 +747,11 @@ def clean_free_space(user=Depends(user_manager)) -> dict:
     #if not gcman.users.is_admin(user):
     #    raise InvalidCredentialsException
 
-    return {'code': 200, 'data': gcman.api.clean_free_space(user), 'msg': None}
+    return {'code': 200, 'data': gcman.api.clean_free_space(user), 'msg': gcman.get_error('none')}
 
 @app.get("/system/get_disk_space/")
 def get_disk_space() -> dict:
-    return {'code': 200, 'data': gcman.api.get_disk_space(), 'msg': None}
+    return {'code': 200, 'data': gcman.api.get_disk_space(), 'msg': gcman.get_error('none')}
 
 @app.get("/patient/clean_up_analysis/{patient_id}")
 def clean_up_analysis(patient_id: str, user=Depends(user_manager)) -> dict:
@@ -749,8 +763,10 @@ def clean_up_analysis(patient_id: str, user=Depends(user_manager)) -> dict:
     #if not gcman.users.is_admin(user):
     #    raise InvalidCredentialsException
 
-    if not gcman.patient_exists(patient_id): raise HTTPException(status_code=500, detail=f'{patient_id} not found!')
-    return {'code': 200, 'data': gcman.api.clean_up_analysis(user, patient_id), 'msg': 'Cleanup completed'}
+    if not gcman.patient_exists(patient_id):
+        raise HTTPException(status_code=500, detail=gcman.get_error('pid_not_found', patient_id=patient_id))
+
+    return {'code': 200, 'data': gcman.api.clean_up_analysis(user, patient_id), 'msg': gcman.get_error('cleanup_done')}
 
 class Setting(BaseModel):
     key: str = Field(examples=["lang"])
@@ -768,7 +784,7 @@ def set_system_doctor_setting(setting: Setting, user=Depends(user_manager)) -> d
 
     '''
     gcman.api.set_system_doctor_setting(setting.key, setting.setting)
-    return {'code': 200, 'data': gcman.api.get_system_doctor_setting(setting.key), 'msg': None}
+    return {'code': 200, 'data': gcman.api.get_system_doctor_setting(setting.key), 'msg': gcman.get_error('none')}
 
 @app.post('/settings/backend/')
 def set_system_backend_setting(setting: Setting, user=Depends(user_manager)) -> dict:
@@ -782,7 +798,7 @@ def set_system_backend_setting(setting: Setting, user=Depends(user_manager)) -> 
 
     '''
     gcman.api.set_system_backend_setting(setting.key, setting.setting)
-    return {'code': 200, 'data': gcman.api.get_system_backend_setting(setting.key), 'msg': None}
+    return {'code': 200, 'data': gcman.api.get_system_backend_setting(setting.key), 'msg': gcman.get_error('none')}
 
 @app.get("/settings/get_doctorend/{key}")
 def get_system_doctor_setting(key:str) -> dict:
@@ -791,7 +807,7 @@ def get_system_doctor_setting(key:str) -> dict:
     Example value:
     key = 'lang'
     '''
-    return {'code': 200, 'data': gcman.api.get_system_doctor_setting(key), 'msg': None}
+    return {'code': 200, 'data': gcman.api.get_system_doctor_setting(key), 'msg': gcman.get_error('none')}
 
 @app.get("/settings/get_backend/{key}")
 def get_system_backend_setting(key:str) -> dict:
@@ -800,14 +816,14 @@ def get_system_backend_setting(key:str) -> dict:
     Example value:
     key = 'lang'
     '''
-    return {'code': 200, 'data': gcman.api.get_system_backend_setting(key), 'msg': None}
+    return {'code': 200, 'data': gcman.api.get_system_backend_setting(key), 'msg': gcman.get_error('none')}
 
 @app.get("/security/get_public_key")
 def get_public_key() -> dict:
     '''
     Returns the public crypto key
     '''
-    return {'code': 200, 'data': gcman.get_public_key(), 'msg': None}
+    return {'code': 200, 'data': gcman.get_public_key(), 'msg': gcman.get_error('none')}
 
 @app.post('/security/register_frontend/')
 def register_frontend(encrypted: str) -> dict:
@@ -825,13 +841,13 @@ def register_frontend(encrypted: str) -> dict:
 
     """
     if gcman._already_registered():
-        return {'code': 500, 'data': False, 'msg': 'System already registered'}
+        return {'code': 500, 'data': False, 'msg': gcman.get_error('system_registered')}
     try:
         ret = gcman.register_frontend(encrypted)
     except binascii.Error:
-        raise HTTPException(status_code=500, detail='Validation encryption failure')
+        raise HTTPException(status_code=500, detail=gcman.get_error('validation_enc_fail'))
 
-    return {'code': 200, 'data': ret, 'msg': None}
+    return {'code': 200, 'data': ret, 'msg': gcman.get_error('none')}
 
 @app.post('/security/clear_activation/')
 def clear_activation() -> dict:
@@ -841,9 +857,9 @@ def clear_activation() -> dict:
 
     """
     if not gcman._already_registered():
-        return {'code': 500, 'data': False, 'msg': 'System not registered'}
+        return {'code': 500, 'data': False, 'msg': gcman.get_error('sys_not_registered')}
 
-    return {'code': 200, 'data': gcman.clear_activation(), 'msg': None}
+    return {'code': 200, 'data': gcman.clear_activation(), 'msg': gcman.get_error('none')}
 
 @app.post('/security/validate/')
 def validate(encrypted: str) -> dict:
@@ -863,18 +879,18 @@ def validate(encrypted: str) -> dict:
     try:
         ret = gcman.check_frontend_registration(encrypted)
     except ValueError:
-        raise HTTPException(status_code=500, detail='Validation encryption failure')
+        raise HTTPException(status_code=500, detail=gcman.get_error('validation_enc_fail'))
 
-    return {'code': 200, 'data': ret, 'msg': None}
+    return {'code': 200, 'data': ret, 'msg': gcman.get_error('none')}
 
 @app.get('/settings/get_help_text')
 def get_help_text() -> dict:
-    return {'code': 200, 'data': gcman.get_help(), 'msg': None}
+    return {'code': 200, 'data': gcman.get_help(), 'msg': gcman.get_error('none')}
 
 @app.get('/settings/get_version')
 def get_version() -> dict:
-    return {'code': 200, 'data': gcman.get_version(), 'msg': None}
+    return {'code': 200, 'data': gcman.get_version(), 'msg': gcman.get_error('none')}
 
 @app.get('/settings/get_manual')
 def get_manual() -> dict:
-    return {'code': 200, 'data': gcman.get_manual(), 'msg': None}
+    return {'code': 200, 'data': gcman.get_manual(), 'msg': gcman.get_error('none')}
