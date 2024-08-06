@@ -32,6 +32,8 @@ errormsgs = {
         'ana_even_files':            'Analysis end expects an even number of files, one for each read pair',
         'ana_wrong_file_format':     'File format appears incorrect, ".fastq.gz" is missing in file {f}',
         'upload_error':              'Upload file error',
+        'gcm_corrupt':               'GCM file is corrupt',
+        'vcf_corrupt':               'VCF file is corrupt',
 
         # Others;
         'cleanup_done':              'Cleanup completed',
@@ -76,6 +78,8 @@ errormsgs = {
         'ana_even_files':            '分析端只接受偶数个文件，每组文件分别为左右两端配对读数',
         'ana_wrong_file_format':     '文件格式错误, ".fastq.gz" 后缀在 {f} 中缺失',
         'upload_error':              '上传文件出错',
+        'gcm_corrupt':               'GCM文件已损坏，请上传正常GCM文件',
+        'vcf_corrupt':               'VCF文件已损坏，请上传正常VCF文件',
 
         # Others;
         'cleanup_done':              '清理成功',

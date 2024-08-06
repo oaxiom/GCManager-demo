@@ -15,6 +15,7 @@ import base64
 from contextlib import asynccontextmanager
 import asyncio
 import binascii
+import  _pickle
 sys.path.append('../')
 
 from libmanager import support, VERSION, libmanager
@@ -450,7 +451,7 @@ def add_new_patient(
             with open(destination_location, 'wb') as f:
                 shutil.copyfileobj(file.file, f, length=1024*1024)
 
-        except Exception:
+        except Exception: # Can restrict this to more reasonable throws?
             return {'code': 517, 'data': None, 'msg': gcman.get_error('upload_error')}
         finally:
             #if 'f' in locals(): await run_in_threadpool(f.close)
@@ -485,14 +486,25 @@ def add_new_patient(
     if gcman.end_type == 'Doctorend':
         if file.filename.endswith('.gcm'): # We got a GCM
             # Need to rename the files as {safe_patient_id}.data.gcm
-            gcman.get_qc(user, safe_patient_id) # See if we can load the gcm
+            try:
+                gcman.get_qc(user, safe_patient_id) # See if we can load the gcm
+            except _pickle.UnpicklingError:
+                # delete the partially complete patient
+                gcman.delete_patient(user=user, patient_id=patient_id)
+                return {'code': 518, 'data': None, 'msg': gcman.get_error('gcm_corrupt')}
+                
             # Set the analysis as complete;
             gcman.set_analysis_complete(safe_patient_id)
             gcman.log.info(f'Added GCM for {safe_patient_id}')
         elif file.filename.endswith('.vcf.gz'): # We got a VCF
             gcman.set_vcf_available(safe_patient_id)
             gcman.log.info(f'Converted VCF to GCM for {safe_patient_id}')
-            gcman.dbsnp_vcf_to_gcm(os.path.join(sequence_data_path, destination_filename), os.path.join(sequence_data_path, destination_filename).replace('.vcf.gz', '.data.gcm'))
+            try:
+                gcman.dbsnp_vcf_to_gcm(os.path.join(sequence_data_path, destination_filename), os.path.join(sequence_data_path, destination_filename).replace('.vcf.gz', '.data.gcm'))
+            except Exception:
+                gcman.delete_patient(user=user, patient_id=patient_id)
+                return {'code': 518, 'data': None, 'msg': gcman.get_error('vcf_corrupt')}
+                
             gcman.get_qc(user, safe_patient_id)
             gcman.set_analysis_complete(safe_patient_id)
 
