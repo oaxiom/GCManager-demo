@@ -138,6 +138,15 @@ def change_password(username:str, newpassword:str, oldpassword:str = None, reque
             raise HTTPException(status_code=400, detail="Old password is required")
         if not gcman.users.check_password(username, oldpassword):
             raise HTTPException(status_code=400, detail="Incorrect old password")
+    else: # We are the admin
+        if username == requesting_user:
+            # We are trying to change our own password.
+            # We will need the old password
+            if not oldpassword:
+                raise HTTPException(status_code=400, detail="Old password is required")
+            if not gcman.users.check_password(username, oldpassword):
+                raise HTTPException(status_code=400, detail="Incorrect old password")
+        # We are not changing our own password, must be someone else's so no need oldpassword
 
     # If an admin, we don't need the oldpassword.
     ret = gcman.users.change_password(username, newpassword)
@@ -827,13 +836,13 @@ def register_frontend(encrypted: str) -> dict:
 @app.post('/security/clear_activation/')
 def clear_activation() -> dict:
     """
-    
+
     ## Clear the activation
-    
+
     """
     if not gcman._already_registered():
         return {'code': 500, 'data': False, 'msg': 'System not registered'}
-    
+
     return {'code': 200, 'data': gcman.clear_activation(), 'msg': None}
 
 @app.post('/security/validate/')
