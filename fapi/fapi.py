@@ -289,7 +289,12 @@ def export_vcf(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
     if not gcman.patient_exists(patient_id):
         raise HTTPException(status_code=500, detail=gcman.get_error('pid_not_found', patient_id=patient_id))
-    return {'code': 200, 'data': gcman.api.export_vcf(patient_id), 'msg': gcman.get_error('none')}
+
+    vcf_path = gcman.api.export_vcf(patient_id)
+    if not vcf_path:
+        raise HTTPException(status_code=500, detail=gcman.get_error('file_not_available', filetype='VCF'))
+
+    return {'code': 200, 'data': vcf_path, 'msg': gcman.get_error('none')}
 
 @app.get("/patient/export_cram/{patient_id}")
 def export_cram(patient_id: str, user=Depends(user_manager)) -> dict:
@@ -299,7 +304,12 @@ def export_cram(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
     if not gcman.patient_exists(patient_id):
         raise HTTPException(status_code=500, detail=gcman.get_error('pid_not_found', patient_id=patient_id))
-    return {'code': 200, 'data': gcman.api.export_cram(patient_id), 'msg': gcman.get_error('none')}
+
+    cram_path = gcman.api.export_vcf(patient_id)
+    if not cram_path:
+        raise HTTPException(status_code=500, detail=gcman.get_error('file_not_available', filetype='CRAM'))
+
+    return {'code': 200, 'data': cram_path, 'msg': gcman.get_error('none')}
 
 @app.get("/patient/export_gcm/{patient_id}")
 def export_gcm(patient_id: str, user=Depends(user_manager)) -> dict:
@@ -309,7 +319,12 @@ def export_gcm(patient_id: str, user=Depends(user_manager)) -> dict:
     '''
     if not gcman.patient_exists(patient_id):
         raise HTTPException(status_code=500, detail=gcman.get_error('pid_not_found', patient_id=patient_id))
-    return {'code': 200, 'data': gcman.get_gcm_path(user, patient_id), 'msg': gcman.get_error('none')}
+
+    gcm_path = gcman.api.export_vcf(patient_id)
+    if not gcm_path:
+        raise HTTPException(status_code=500, detail=gcman.get_error('file_not_available', filetype='GCM'))
+
+    return {'code': 200, 'data': gcm_path, 'msg': gcman.get_error('none')}
 
 @app.get("/patient/generate_report/{mode}/{patient_id}")
 def generate_report(mode: str, patient_id: str, selected_report:str, user=Depends(user_manager)) -> dict:
@@ -492,7 +507,7 @@ def add_new_patient(
                 # delete the partially complete patient
                 gcman.delete_patient(user=user, patient_id=patient_id)
                 return {'code': 518, 'data': None, 'msg': gcman.get_error('gcm_corrupt')}
-                
+
             # Set the analysis as complete;
             gcman.set_analysis_complete(safe_patient_id)
             gcman.log.info(f'Added GCM for {safe_patient_id}')
@@ -504,7 +519,7 @@ def add_new_patient(
             except Exception:
                 gcman.delete_patient(user=user, patient_id=patient_id)
                 return {'code': 518, 'data': None, 'msg': gcman.get_error('vcf_corrupt')}
-                
+
             gcman.get_qc(user, safe_patient_id)
             gcman.set_analysis_complete(safe_patient_id)
 

@@ -80,6 +80,9 @@ class analysis_queue:
         return False
 
     def patient_is_currently_processing(self, patient_id:str) -> bool:
+        if not self.currently_processing: # No one on the queue
+            return False
+
         if patient_id == self.currently_processing["PID"]:
             return True
         return False

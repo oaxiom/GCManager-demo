@@ -26,6 +26,8 @@ errormsgs = {
         'analysis_not_complete':     'Analysis is not complete for {patient_id}',
         'end_type_not_set':          'end_type has not been set',
 
+        'file_not_available':        'File {filetype} is not available',
+
         # Upload file errors
         'doc_only_one_file':         'Doctor end expects only one file',
         'doc_wrong_file_format':     'Doctor end expects a single file in the format .gcm or .vcf.gz',
@@ -71,6 +73,8 @@ errormsgs = {
 
         'analysis_not_complete':     '对 {patient_id} 的分析还未完成',
         'end_type_not_set':          '还未设置端的类型，请设置医生端或分析端',
+
+        'file_not_available':        '文件 {filetype} 不存在',
 
         # Upload file errors
         'doc_only_one_file':         '医生端只接受一个文件',

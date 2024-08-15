@@ -575,7 +575,7 @@ class libmanager:
         assert self.patient_exists(patient_id), f'{patient_id} not found'
 
         if not self._check_analysis_is_complete(patient_id):
-            self.log.info(f'Asked for {patient_id} VCF file, but VCF file is not available, analysis is incomplete')
+            self.log.warning(f'Asked for {patient_id} VCF file, but VCF file is not available, analysis is incomplete')
             return False
 
         if not self._check_cram_vcf_status(patient_id, 'vcf'):
@@ -598,7 +598,7 @@ class libmanager:
         assert self.patient_exists(patient_id), f'{patient_id} not found'
 
         if not self._check_analysis_is_complete(patient_id):
-            self.log.info(f'Asked for {patient_id} CRAM file, but CRAM file is not available, analysis is incomplete')
+            self.log.warning(f'Asked for {patient_id} CRAM file, but CRAM file is not available, analysis is incomplete')
             return False
 
         if not self._check_cram_vcf_status(patient_id, 'cram'):
