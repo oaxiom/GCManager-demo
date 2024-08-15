@@ -14,4 +14,4 @@ samtools index $PID.sorted.final.bam
 echo Stage 3: Done Merging
 
 sleep 10 # Wait for any buffers
-python runner.py
+python3 runner.py

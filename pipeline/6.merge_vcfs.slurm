@@ -24,5 +24,5 @@ tabix genotype.raw.vcf.gz
 echo Stage 6: Collected VCFs
 
 sleep 10 # Wait for any buffers
-python runner.py
+python3 runner.py
 

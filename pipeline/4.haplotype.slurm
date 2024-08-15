@@ -30,5 +30,5 @@ gatk --java-options "-Xmx40G -XX:+UseParallelGC -XX:ParallelGCThreads=2" \
 echo Stage 4: Completed chrom $chrom
 
 sleep 10 # Wait for any buffers
-python runner.py
+python3 runner.py
 

@@ -80,4 +80,4 @@ gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" ApplyVQS
 echo Stage 7: Finished recalibrating
 
 sleep 10 # Wait for any buffers
-python runner.py
+python3 runner.py

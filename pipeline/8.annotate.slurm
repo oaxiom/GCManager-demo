@@ -13,17 +13,17 @@ echo Started Stage 8 with PID = $PID vcf = $vcf
 # TODO: Potential problem here, if PharmaGKB or Risk/GWAS is updated, the python script needs to be rerun
 
 echo 'Started dbSNP'
-python 8a.annotate_dbsnp.py $PID 
+python3 8a.annotate_dbsnp.py $PID 
 echo 'Started Pharma'
-python 8b.annotate_pharmaGKB.py $PID
+python3 8b.annotate_pharmaGKB.py $PID
 echo 'Risk'
-python 8c.annotate_risk.py $PID
+python3 8c.annotate_risk.py $PID
 #echo 'ClinVAR'
 #python 8d.annotate_ClinVar.py $PID
 
 echo Stage 8: Completed annotation and selection of SNPs
 
-python 8f.getqc.py $PID
+python3 8f.getqc.py $PID
 
 # Final cleanups
 rm called.chr*.recal.g.vcf.gz
@@ -52,5 +52,5 @@ rm $PID.sorted.final.bam
 # Has to go before the pack_gcm 
 sh 8e.cleanup_logs.sh
 
-python 8g.pack_gcm.py $PID
+python3 8g.pack_gcm.py $PID
 

@@ -27,5 +27,5 @@ samtools flagstat -@ 4 $base.sorted.dedupe.bam >$base.sorted.dedupe.flagstat
 echo Stage 1: Aligned Read for sample $p1 $p2 # repalce with timer later
 
 sleep 10 # Wait for any buffers
-python runner.py
+python3 runner.py
 

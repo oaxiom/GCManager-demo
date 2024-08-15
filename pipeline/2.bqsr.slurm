@@ -40,5 +40,5 @@ gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" \
 echo Stage 2: Done BQSR for $bamfile
 
 sleep 10 # Wait for any buffers
-python runner.py
+python3 runner.py
 

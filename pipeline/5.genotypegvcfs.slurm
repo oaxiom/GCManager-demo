@@ -17,5 +17,5 @@ gatk --java-options "-Xmx30G -XX:ParallelGCThreads=2" \
 echo Stage 5: Genotyped chrom $chr
 
 sleep 10 # Wait for any buffers
-python runner.py
+python3 runner.py
 
