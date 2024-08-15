@@ -400,7 +400,7 @@ def add_new_patient(
 
     # Check it doesn't exist already
     if gcman.patient_exists(patient_id):
-        raise HTTPException(status_code=512, detail=gcman.get_error('pid_exists'))
+        raise HTTPException(status_code=512, detail=gcman.get_error('pid_exists', patient_id=patient_id))
 
     # Validate the files for the specific end;
     if gcman.end_type == 'Doctorend':
