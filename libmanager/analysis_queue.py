@@ -140,8 +140,7 @@ class analysis_queue:
 
         if self.currently_processing:
             # Should run without waiting.
-            print(f'python {self.currently_processing["runner_path"]}')
-            subprocess.Popen(f'python {self.currently_processing["runner_path"]}',
+            subprocess.Popen(f'python3 {self.currently_processing["runner_path"]}',
                 cwd=self.currently_processing["analysis_path"],
                 shell=True)
 
