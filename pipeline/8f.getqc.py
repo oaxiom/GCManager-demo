@@ -1,4 +1,6 @@
 
+# NOTE: This must use vanilla python3
+
 import sys, gzip, glob
 
 if len(sys.argv) != 2:

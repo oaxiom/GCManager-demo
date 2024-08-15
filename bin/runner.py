@@ -6,6 +6,7 @@
 #
 # Known bugs:
 
+# NOTE: This must use vanilla python3
 
 import sys, os, glob, subprocess, logging, statistics, pathlib
 
@@ -79,7 +80,7 @@ class runner:
 
         self.get_total_read_count()
         if self.unmapped_reads_count < 5e6:
-            # It is very unliukely the data will produce anything useful.
+            # It is very unlikely the data will produce anything useful.
             # Kill the analysis.
             [self.touch_all_outs(i) for i in [1,2,3,4,5,6,7,8]]
             with open('FATALERROR.out', 'w') as f:
@@ -90,7 +91,7 @@ class runner:
             log.info(f'Fatal Error for PID {self.PID}, too few reads {self.unmapped_reads_count:,}')
             return None
 
-        # TODO: Abstract away trhe functions below.
+        # TODO: Abstract away the functions below.
         # It's basically two types
 
         # Is Stage 1 (alignment) copmplete?

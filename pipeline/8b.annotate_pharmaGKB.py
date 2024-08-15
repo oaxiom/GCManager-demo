@@ -1,6 +1,7 @@
 
+# NOTE: This must use vanilla python3
+
 import sys, os, subprocess, gzip
-#TODO: tinyglbase
 
 if len(sys.argv) != 2:
     print('Incorrect number of arguments. should be PID file only')
@@ -57,7 +58,7 @@ for r in results:
         genotype = f'{ref_allele}{alt_allele}'
     elif alleles == '0|1': # Possible a 1|0?
         # The genotype is phased, and is matching. But, for our purposes,
-        # We cna assume REF/ALT
+        # We can assume REF/ALT
         genotype = f'{ref_allele}{alt_allele}'
     else:
         print('phasing not found', alleles)

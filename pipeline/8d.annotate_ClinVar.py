@@ -1,4 +1,6 @@
 
+# NOTE: This must use vanilla python3
+
 import sys, os, subprocess, gzip
 
 if len(sys.argv) != 2:
