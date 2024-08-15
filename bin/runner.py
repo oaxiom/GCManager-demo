@@ -51,7 +51,7 @@ class runner:
 
     def run(self):
         # Statistics
-        self.unmapped_reads_count = None # NEeded to estimate bwa completion
+        self.unmapped_reads_count = None # Needed to estimate bwa completion
         self.mapped_read_count = None # I think I don't need this?
 
         if os.path.exists('full_logs.out.gz'):
@@ -101,7 +101,7 @@ class runner:
             # start stage 1
             log.info('Submitting Stage 1: Align')
             self.touch_all_outs(1)
-            subprocess.run('./1b.batch.sh', shell=True)
+            subprocess.run('bash 1b.batch.sh', shell=True)
             self.final_results(1)
             return None
         elif len(align_outs) >= 1:
@@ -116,7 +116,7 @@ class runner:
         if len(bqsr_outs) == 0: # We havne't started yet
             log.info('Submitting Stage 2: BQSR')
             self.touch_all_outs(2)
-            subprocess.run('./2.batch.sh', shell=True)
+            subprocess.run('sh 2.batch.sh', shell=True)
             self.final_results(2)
             return None
         elif len(align_outs) >= 1:
@@ -148,7 +148,7 @@ class runner:
         call_outs = list(glob.glob('called.*.out'))
         if len(call_outs) == 0:
             self.touch_all_outs(4)
-            subprocess.run('./4.batch.sh', shell=True)
+            subprocess.run('sh 4.batch.sh', shell=True)
             self.final_results(4)
             return None
         else:
@@ -161,7 +161,7 @@ class runner:
         outs = list(glob.glob('genotypegvcfs.*.out'))
         if len(outs) == 0:
             self.touch_all_outs(5)
-            subprocess.run('./5.batch.sh', shell=True)
+            subprocess.run('sh 5.batch.sh', shell=True)
             self.final_results(5)
             return None
         elif len(outs) == 22:
