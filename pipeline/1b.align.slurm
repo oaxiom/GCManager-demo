@@ -17,12 +17,12 @@ echo Stage 1: Number of reads = $num_reads
 rg='@RG\\tID:'$base'\\tSM:'$PID'\\tPL:ILLUMINA'
 echo RG = $rg
 
-bwa_cmd="bwa mem -R $rg -K 100000000 -v 3 -t 4 -Y $bash_ref_fasta $p1 $p2"
+bwa_cmd="/opt/seqanalysis/bin/bwa mem -R $rg -K 100000000 -v 3 -t 4 -Y $bash_ref_fasta $p1 $p2"
 echo $bwa_cmd
-eval $bwa_cmd | samtools view -b - | samtools fixmate -m -@ 1 - - | samtools sort -@ 2 -m 4G - | samtools markdup -s -@ 2 -O bam - $base.sorted.dedupe.bam
-samtools index -@ 1 $base.sorted.dedupe.bam
+eval $bwa_cmd | /opt/seqanalysis/bin/samtools view -b - | /opt/seqanalysis/bin/samtools fixmate -m -@ 1 - - | /opt/seqanalysis/bin/samtools sort -@ 2 -m 4G - | /opt/seqanalysis/bin/samtools markdup -s -@ 2 -O bam - $base.sorted.dedupe.bam
+/opt/seqanalysis/bin/samtools index -@ 1 $base.sorted.dedupe.bam
 
-samtools flagstat -@ 4 $base.sorted.dedupe.bam >$base.sorted.dedupe.flagstat
+/opt/seqanalysis/bin/samtools flagstat -@ 4 $base.sorted.dedupe.bam >$base.sorted.dedupe.flagstat
 
 echo Stage 1: Aligned Read for sample $p1 $p2 # repalce with timer later
 

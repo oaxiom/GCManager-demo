@@ -16,7 +16,7 @@ known_1000g_snps=$HOME/gcmtools/static_data/hg38_v0_20231023/1000G_phase1.snps.h
 pwd=$(pwd)
 PID=$(basename $pwd)
 
-gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" \
+/opt/seqanalysis/bin/gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" \
 	VariantRecalibrator \
 	-R $hg38_ref_fasta \
 	-V genotype.raw.vcf.gz \
@@ -38,7 +38,7 @@ gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" \
 
 echo Stage 7: VariantRecalibrator SNPs
 
-gatk --java-options '-Xmx8g -XX:+UseParallelGC -XX:ParallelGCThreads=4' VariantRecalibrator \
+/opt/seqanalysis/bin/gatk --java-options '-Xmx8g -XX:+UseParallelGC -XX:ParallelGCThreads=4' VariantRecalibrator \
 	-R $hg38_ref_fasta \
    	-V genotype.raw.vcf.gz \
    	-O recalibrate_INDEL.recal \
@@ -56,7 +56,7 @@ echo Stage 7: VariantRecalibrator INDELs
 #Rscript vqsr_snp_plots.R
 #Rscript vqsr_indel_plots.R
 
-gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" ApplyVQSR \
+/opt/seqanalysis/bin/gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" ApplyVQSR \
 	-R $hg38_ref_fasta \
 	-V genotype.raw.vcf.gz \
         -O $PID.recalibrated_snps_raw_indels.vcf.gz \
@@ -68,7 +68,7 @@ gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" ApplyVQS
 
 echo Stage 7: ApplyVQSR SNPs
 
-gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" ApplyVQSR \
+/opt/seqanalysis/bin/gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" ApplyVQSR \
 	-R $hg38_ref_fasta \
 	-V $PID.recalibrated_snps_raw_indels.vcf.gz \
 	-O $PID.recalibrated_snps_recalibrated_indels.vcf.gz \

@@ -5,7 +5,7 @@
 
 
 
-java -jar $HOME/gcm/external_tools/picard-3.2.0/picard.jar \
+java -jar /opt/seqanalysis/bin/picard.jar \
 	GatherVcfs \
 	-O genotype.raw.vcf.gz \
 	-I genotype.chr1.vcf.gz -I genotype.chr2.vcf.gz -I genotype.chr3.vcf.gz \
@@ -19,7 +19,7 @@ java -jar $HOME/gcm/external_tools/picard-3.2.0/picard.jar \
 
 # 	-I genotype.chrX.vcf -I genotype.chrY.vcf.gz -I genotype.chrM.vcf.gz O=merged.vcf.gzi
 
-tabix genotype.raw.vcf.gz
+/opt/seqanalysis/bin/tabix genotype.raw.vcf.gz
 
 echo Stage 6: Collected VCFs
 

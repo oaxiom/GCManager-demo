@@ -17,7 +17,7 @@ echo Stage 2: Starting BQSR for $bamfile
 
 # Base Calibrator and ApplyBQSR are fast
 # Online docs suggerst this may be a problem if the data is large enough.
-gatk --java-options "-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=4" \
+/opt/seqanalysis/bin/gatk --java-options "-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=4" \
                 BaseRecalibrator \
                 -L $interval_list \
                 -R $bash_ref_fasta \
@@ -27,7 +27,7 @@ gatk --java-options "-Xmx20G -XX:+UseParallelGC -XX:ParallelGCThreads=4" \
 		        --known-sites $known_1000g \
                 -O $bqfile
 
-gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" \
+/opt/seqanalysis/bin/gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" \
                 ApplyBQSR -R $bash_ref_fasta \
                 -I $bamfile \
                 -L $interval_list \

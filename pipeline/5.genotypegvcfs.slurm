@@ -7,7 +7,7 @@ HOME=$(echo ~)
 
 bash_ref_fasta=$HOME/gcm/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta
 
-gatk --java-options "-Xmx30G -XX:ParallelGCThreads=2" \
+/opt/seqanalysis/bin/gatk --java-options "-Xmx30G -XX:ParallelGCThreads=2" \
 	GenotypeGVCFs \
 	-R $bash_ref_fasta \
 	-L $chrom \

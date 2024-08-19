@@ -11,7 +11,7 @@ PID = sys.argv[1]
 
 ##### Get the key snps
 key_snps = []
-oh = open(os.path.expanduser('~/gcmtools/static_data/Risk/key_snps.txt'), 'rt')
+oh = open(os.path.expanduser('~/gcm/static_data/Risk/key_snps.txt'), 'rt')
 for line in oh:
     key_snps.append(line.strip())
 oh.close()

@@ -8,8 +8,8 @@ PID=$(basename $pwd)
 
 echo Stage 3: Merging BAMs to $PID.sorted.final.bam
 
-samtools merge -@ 2 -o $PID.sorted.final.bam *.sorted.dedupe.recal.bam
-samtools index $PID.sorted.final.bam
+/opt/seqanalysis/bin/samtools merge -@ 2 -o $PID.sorted.final.bam *.sorted.dedupe.recal.bam
+/opt/seqanalysis/bin/samtools index $PID.sorted.final.bam
 
 echo Stage 3: Done Merging
 
