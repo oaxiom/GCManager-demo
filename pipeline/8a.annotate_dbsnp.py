@@ -12,7 +12,7 @@ vcf = f'{PID}.recalibrated_snps_recalibrated_indels.vcf.gz'
 
 # I do this through python, as I can't think of a way to fix the path correctly in BASH:
 # output the toml file
-dbsnp_path=os.path.expanduser('~/gcm/static_data/dbsnp138/dbsnp.vcf.gz')
+dbsnp_path=os.path.expanduser('~/gcm/static_data/dbsnp138/Homo_sapiens_assembly38.dbsnp138.vcf.gz')
 toml = f'''
 [[annotation]]
 file="{dbsnp_path}"
@@ -31,7 +31,7 @@ oh = open('dbsnp.toml', 'wt')
 oh.write(toml)
 oh.close()
 
-result = subprocess.run(f'''/opt/seqanalysis/bin/vcfanno -lua "" dbsnp.toml {vcf} | awk -F "\t" '$3!="."' | bgzip > {PID}.vcf.gz''', shell=True)
+result = subprocess.run(f'''/opt/seqanalysis/bin/vcfanno -lua "" dbsnp.toml {vcf} | awk -F "\t" '$3!="."' | /opt/seqanalysis/bin/bgzip > {PID}.vcf.gz''', shell=True)
 
 print('Stage 8: Finished annotating dbSNP')
 
