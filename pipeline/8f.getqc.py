@@ -1,7 +1,7 @@
 
 # NOTE: This must use vanilla python3
 
-import sys, gzip, glob
+import sys, gzip, glob, os
 
 if len(sys.argv) != 2:
     print('Incorrect number of arguments. should be PID file only')
