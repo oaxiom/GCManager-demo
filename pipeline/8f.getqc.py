@@ -17,6 +17,7 @@ print('Collecting QC')
 PID = sys.argv[1]
 
 def wc(filename, gziped):
+    i = 0
     if gziped:
         oh = gzip.open(filename, 'rt')
     else:
