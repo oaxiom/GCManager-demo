@@ -128,6 +128,37 @@ class analysis_queue:
                 dst_path = os.path.join(path, f)
                 shutil.copy(src_path, dst_path)
 
+    def __sweeper(self):
+        """
+        If the q is idle, go through all PIDs, and attempt to re-add to the queue
+        python runner.py if full_logs.
+
+        """
+        # Paranoia!
+        if self.currently_processing:
+            return
+
+        if self.q:
+            return
+
+        self.log.info('Started sweeper')
+
+        for pid_path in glob.glob(os.path.join(self.data_path, 'PID.*'):
+            if os.path.exists(os.path.join(pid_path, 'full_logs.out.gz')):
+                # Irrecoverable, also likely a fatal error
+                continue
+            if os.path.exists(os.path.join(pid_path, 'FATALERROR.out')):
+                # Irrecoverable
+                continue
+
+            # More tests?
+            patient_id = os.path.split(pid_path)[1][4:] # Can't use split or lstrip, or anything.
+
+            self.log.info(f'Sweeper is attempting to rescue {patient_id}')
+            self.add_task(patient_id) # re-add it to the queue.
+
+        return
+
     def run(self):
         """
         **Purpose**
@@ -140,6 +171,8 @@ class analysis_queue:
                 self.currently_processing = self.q.pop(0)
                 self.currently_processing['time_started_analysis'] = time.time()
                 self.log.info(f'Started analysing {self.currently_processing["PID"]}')
+            else:
+                self.__sweeper()
 
         if self.currently_processing:
             # Should run without waiting.

@@ -61,7 +61,7 @@ for r in results:
         genotype = f'{ref_allele}{alt_allele}'
     elif alleles == '0|1': # Possible a 1|0?
         # The genotype is phased, and is matching. But, for our purposes,
-        # We cna assume REF/ALT
+        # We can assume REF/ALT
         genotype = f'{ref_allele}{alt_allele}'
     else:
         print('phasing not found', alleles)
