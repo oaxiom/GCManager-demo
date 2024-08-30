@@ -6,7 +6,7 @@
 DATA_PATH='/opt/seqanalysis/static_data'
 
 hg38_ref_fasta=$DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.fasta
-known_dbsnp=$DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf
+known_dbsnp=$DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf.gz
 known_indel=$DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.known_indels.vcf.gz
 known_1000g=$DATA_PATH/hg38_v0_20231023/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
 known_hapmap=$DATA_PATH/hg38_v0_20231023/hapmap_3.3.hg38.vcf.gz

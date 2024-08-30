@@ -5,7 +5,7 @@
 # This is for interleaved paired-end FASTQs:
 
 DATA_PATH='/opt/seqanalysis/static_data'
-bash_ref_fasta=$(echo '$DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.fasta')
+bash_ref_fasta=$(echo '$DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.fasta.gz')
 
 pwd=$(pwd)
 PID=$(basename $pwd)
