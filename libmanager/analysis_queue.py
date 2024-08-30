@@ -120,7 +120,7 @@ class analysis_queue:
 
         return True
 
-    def __copy_all_pipeline_scripts(self, path):
+    def __copy_all_pipeline_scripts(self, path:str):
         pipeline_path = '/opt/seqanalysis/pipeline/'
         all_files = os.listdir(pipeline_path)
         for f in all_files:
@@ -128,6 +128,19 @@ class analysis_queue:
             if os.path.isfile(src_path):
                 dst_path = os.path.join(path, f)
                 shutil.copy(src_path, dst_path)
+
+    def __sweeper_get_strikes(self, patient_id:str):
+        if not os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', 'strikes')):
+            return 0
+
+        with open(os.path.join(self.data_path, f'PID.{patient_id}', 'strikes', 'r')) as oh:
+            strikes = int(oh.readline().strip())
+        return strikes
+
+    def __sweeper_set_strikes(self, patient_id:str):
+        with open(os.path.join(self.data_path, f'PID.{patient_id}', 'strikes', 'w')) as oh:
+            oh.write(f'{strikes}\n')
+        return
 
     def __sweeper(self):
         """
@@ -142,26 +155,56 @@ class analysis_queue:
         if self.q:
             return
 
-        self.log.info('Started sweeper')
-
-        for pid_path in glob.glob(os.path.join(self.data_path, 'PID.*'):
+        for pid_path in glob.glob(os.path.join(self.data_path, 'PID.*')):
             if os.path.exists(os.path.join(pid_path, 'full_logs.out.gz')):
-                # Irrecoverable, also likely a fatal error
+                # Seems done
                 continue
             if os.path.exists(os.path.join(pid_path, 'FATALERROR.out')):
-                # Irrecoverable
+                # Irrecoverable error.
                 continue
 
-            # More tests?
             patient_id = os.path.split(pid_path)[1][4:] # Can't use split or lstrip, or anything.
 
             self.log.info(f'Sweeper is attempting to rescue {patient_id}')
 
+            if self.__sweeper_get_strikes(self, patient_id) >= 4:
+                self.log.info(f'{patient_id} has too many fails. Writing a fatal error')
+                with os.path.join(pid_path, 'FATALERROR.out') as oh:
+                    oh.write('Too many strike failures for the sweeper. writing a FATALERROR\n')
+                return
+
             # Delete the last but 1 stage logs based on the progress.txt, so that a previosus
             # stage is reactivated instead of just continuing.
+            progress = self.analysis_progress(patient_id)
+            # {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
+            for stage in sorted(progress):
+                if stage == 9 and progress[stage] == 100:
+                    pass #!?!?
 
-            #with open(os.path.join(self.data_path, f'PID.{patient_id}', 'strikes', 'w'):
-            #    oh.write()
+                elif stage == 8 and progress[stage] == 100:
+                    os.remove(os.path.join(pid_path, 'annotate_snps.out'))
+
+                elif stage == 7 and progress[stage] == 100:
+                    os.remove(os.path.join(pid_path, 'variant_racalibrate.out'))
+
+                elif stage == 6 and progress[stage] == 100:
+                    os.remove(os.path.join(pid_path, 'gathervcfs.out'))
+
+                elif stage == 5 and progress[stage] == 100:
+                    [os.remove(f'genotypegvcfs.chr{i}.out') for i in range(1,23)]
+
+                elif stage == 4 and progress[stage] == 100:
+                    [os.remove(f'called.chr{i}.out') for i in range(1,23)]
+
+                elif stage == 3 and progress[stage] == 100:
+                    os.remove(os.path.join(pid_path, 'merge_bams.out'))
+
+                elif stage == 2 and progress[stage] == 100:
+                    [os.remove(f'{f.replace("_1.fastq.gz", "")}.bqsr.out') for f in glob.glob(os.path.join(pid_path, '*_1.fastq.gz'))]
+
+                elif stage == 1 and progress[stage] == 100:
+                    [os.remove(f'{f.replace("_1.fastq.gz", "")}.align.out') for f in glob.glob(os.path.join(pid_path, '*_1.fastq.gz'))]
+
 
             self.add_task(patient_id) # re-add it to the queue.
 
