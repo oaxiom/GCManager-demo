@@ -104,7 +104,7 @@ class analysis_queue:
         shutil.copy(os.path.join(self.script_path, 'bin', 'runner.py'),
             os.path.join(self.data_path, f'PID.{patient_id}'))
 
-        self._copy_all_pipeline_scripts(os.path.join(self.data_path, f'PID.{patient_id}'))
+        self.__copy_all_pipeline_scripts(os.path.join(self.data_path, f'PID.{patient_id}'))
 
         task = {
             'PID': patient_id,
@@ -120,10 +120,11 @@ class analysis_queue:
 
         return True
 
-    def _copy_all_pipeline_scripts(self, path):
-        all_files = os.listdir(os.path.join(self.script_path, 'pipeline/'))
+    def __copy_all_pipeline_scripts(self, path):
+        pipeline_path = '/opt/seqanalysis/pipeline/'
+        all_files = os.listdir(pipeline_path)
         for f in all_files:
-            src_path = os.path.join(self.script_path, 'pipeline', f)
+            src_path = os.path.join(pipeline_path, f)
             if os.path.isfile(src_path):
                 dst_path = os.path.join(path, f)
                 shutil.copy(src_path, dst_path)
@@ -158,6 +159,9 @@ class analysis_queue:
 
             # Delete the last but 1 stage logs based on the progress.txt, so that a previosus
             # stage is reactivated instead of just continuing.
+
+            #with open(os.path.join(self.data_path, f'PID.{patient_id}', 'strikes', 'w'):
+            #    oh.write()
 
             self.add_task(patient_id) # re-add it to the queue.
 
