@@ -155,6 +155,10 @@ class analysis_queue:
             patient_id = os.path.split(pid_path)[1][4:] # Can't use split or lstrip, or anything.
 
             self.log.info(f'Sweeper is attempting to rescue {patient_id}')
+
+            # Delete the last but 1 stage logs based on the progress.txt, so that a previosus
+            # stage is reactivated instead of just continuing.
+
             self.add_task(patient_id) # re-add it to the queue.
 
         return

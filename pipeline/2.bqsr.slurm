@@ -2,13 +2,13 @@
 #SBATCH --partition=batch
 #SBATCH -N 1
 
-HOME=$(echo ~)
+DATA_PATH='/opt/seqanalysis/static_data'
 
-bash_ref_fasta=$HOME/gcm/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta
-interval_list=$HOME/gcm/static_data/hg38_v0_20231023/wgs_coverage_regions.hg38.interval_list
-knwon_dbsnp=$HOME/gcm/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf
-known_indel=$HOME/gcm/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.known_indels.vcf.gz
-known_1000g=$HOME/gcm/static_data/hg38_v0_20231023/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
+bash_ref_fasta=$DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.fasta
+interval_list=$DATA_PATH/hg38_v0_20231023/wgs_coverage_regions.hg38.interval_list
+knwon_dbsnp=$DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf
+known_indel=$DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.known_indels.vcf.gz
+known_1000g=$DATA_PATH/hg38_v0_20231023/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
 
 bqfile=${bamfile%.bam}.recal_data.table
 recalfile=${bamfile%.bam}.recal.bam

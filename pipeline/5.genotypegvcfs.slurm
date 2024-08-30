@@ -3,9 +3,9 @@
 #SBATCH --partition=batch
 #SBATCH -N 1
 
-HOME=$(echo ~)
+DATA_PATH='/opt/seqanalysis/static_data'
 
-bash_ref_fasta=$HOME/gcm/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta
+bash_ref_fasta=$DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.fasta
 
 /opt/seqanalysis/bin/gatk --java-options "-Xmx30G -XX:ParallelGCThreads=2" \
 	GenotypeGVCFs \

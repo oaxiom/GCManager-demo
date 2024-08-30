@@ -5,7 +5,7 @@
 pwd=$(pwd)
 PID=$(basename $pwd)
 vcf=$PID.recalibrated_snps_recalibrated_indels.vcf.gz
-HOME=$(echo ~)
+DATA_PATH='/opt/seqanalysis/static_data'
 
 echo Started Stage 8 with PID = $PID vcf = $vcf
 
@@ -42,8 +42,7 @@ rm PID.*.recalibrated_*.vcf.gz
 rm PID.*.recalibrated_*.vcf.gz.tbi
 
 # Final BAM to CRAM:
-HOME=$(echo ~)
-bash_ref_fasta=$(echo $HOME/gcm/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta)
+bash_ref_fasta=$(echo $DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.fasta)
 
 /opt/seqanalysis/bin/samtools view -@ 2 -T $bash_ref_fasta -C -o $PID.cram $PID.sorted.final.bam
 

@@ -3,15 +3,15 @@
 #SBATCH -o variant_racalibrate.out
 #SBATCH -N 1
 
-HOME=$(echo ~)
+DATA_PATH='/opt/seqanalysis/static_data'
 
-hg38_ref_fasta=$HOME/gcm/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.fasta
-known_dbsnp=$HOME/gcm/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf
-known_indel=$HOME/gcm/static_data/hg38_v0_20231023/Homo_sapiens_assembly38.known_indels.vcf.gz
-known_1000g=$HOME/gcm/static_data/hg38_v0_20231023/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
-known_hapmap=$HOME/gcm/static_data/hg38_v0_20231023/hapmap_3.3.hg38.vcf.gz
-known_omni=$HOME/gcm/static_data/hg38_v0_20231023/1000G_omni2.5.hg38.vcf.gz
-known_1000g_snps=$HOME/gcm/static_data/hg38_v0_20231023/1000G_phase1.snps.high_confidence.hg38.vcf.gz
+hg38_ref_fasta=$DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.fasta
+known_dbsnp=$DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.dbsnp138.vcf
+known_indel=$DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.known_indels.vcf.gz
+known_1000g=$DATA_PATH/hg38_v0_20231023/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz
+known_hapmap=$DATA_PATH/hg38_v0_20231023/hapmap_3.3.hg38.vcf.gz
+known_omni=$DATA_PATH/hg38_v0_20231023/1000G_omni2.5.hg38.vcf.gz
+known_1000g_snps=$DATA_PATH/hg38_v0_20231023/1000G_phase1.snps.high_confidence.hg38.vcf.gz
 
 pwd=$(pwd)
 PID=$(basename $pwd)
@@ -59,7 +59,7 @@ echo Stage 7: VariantRecalibrator INDELs
 /opt/seqanalysis/bin/gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4" ApplyVQSR \
 	-R $hg38_ref_fasta \
 	-V genotype.raw.vcf.gz \
-        -O $PID.recalibrated_snps_raw_indels.vcf.gz \
+    -O $PID.recalibrated_snps_raw_indels.vcf.gz \
 	--truth-sensitivity-filter-level 99.7 \
 	--tranches-file recalibrate_SNP.tranches \
 	--recal-file recalibrate_SNP.recal \

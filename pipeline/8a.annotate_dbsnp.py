@@ -12,7 +12,8 @@ vcf = f'{PID}.recalibrated_snps_recalibrated_indels.vcf.gz'
 
 # I do this through python, as I can't think of a way to fix the path correctly in BASH:
 # output the toml file
-dbsnp_path=os.path.expanduser('~/gcm/static_data/dbsnp138/dbsnp.vcf.gz')
+
+dbsnp_path='/opt/seqanalysis/static_data/dbsnp138/dbsnp.vcf.gz'
 toml = f'''
 [[annotation]]
 file="{dbsnp_path}"
