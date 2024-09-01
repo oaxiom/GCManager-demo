@@ -166,7 +166,7 @@ class analysis_queue:
             if os.path.exists(os.path.join(pid_path, 'DONE.status')):
                 # A hack for existing DEMO data.
                 continue
-            if not len(glob.glob(os.path.join('*.fastq.gz')) >= 1:
+            if not len(glob.glob(os.path.join(pid_path, '*.fastq.gz'))) >= 1:
                 # Really broken. Ignore.
                 continue
 
