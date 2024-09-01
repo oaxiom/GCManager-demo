@@ -130,7 +130,7 @@ class analysis_queue:
                 dst_path = os.path.join(path, f)
                 shutil.copy(src_path, dst_path)
 
-    def __sweeper_get_strikes(self, patient_id:str):
+    def __sweeper_get_strikes(self, patient_id:str) -> int:
         if not os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', 'strikes')):
             return 0
 
@@ -168,7 +168,7 @@ class analysis_queue:
 
             self.log.info(f'Sweeper is attempting to rescue {patient_id}')
 
-            if self.__sweeper_get_strikes(self, patient_id) >= 4:
+            if self.__sweeper_get_strikes(patient_id) >= 4:
                 self.log.info(f'{patient_id} has too many fails. Writing a fatal error')
                 with os.path.join(pid_path, 'FATALERROR.out') as oh:
                     oh.write('Too many strike failures for the sweeper. writing a FATALERROR\n')
