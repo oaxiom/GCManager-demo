@@ -34,7 +34,7 @@ rm genotype.raw.vcf.gz
 rm genotype.raw.vcf.gz.tbi
 rm dbsnp.toml
 rm *.sorted.dedupe.bam
-rm *.sorted.dedupe.bai
+rm *.sorted.dedupe.bam.bai
 rm *.sorted.dedupe.recal.bam
 rm *.sorted.dedupe.recal.bai
 rm *.sorted.dedupe.recal_data.table
@@ -43,8 +43,6 @@ rm recalibrate_*.idx
 rm recalibrate_*.tranches
 rm PID.*.recalibrated_*.vcf.gz
 rm PID.*.recalibrated_*.vcf.gz.tbi
-rm PID.$PID.risk.txt
-rm PID.$PID.pharmagkb.txt
 
 # Final BAM to CRAM:
 bash_ref_fasta=$(echo $DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.fasta.gz)
@@ -52,9 +50,13 @@ bash_ref_fasta=$(echo $DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.fasta.
 /opt/seqanalysis/bin/samtools view -@ 2 -T $bash_ref_fasta -C -o $PID.cram $PID.sorted.final.bam
 
 rm $PID.sorted.final.bam
+rm $PID.sorted.final.bam.bai
 
 # Has to go before the pack_gcm 
 sh 8e.cleanup_logs.sh
 
 python3 8g.pack_gcm.py $PID
+
+rm $PID.risk.txt
+rm $PID.pharmagkb.txt
 
