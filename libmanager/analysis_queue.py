@@ -138,7 +138,7 @@ class analysis_queue:
             strikes = int(oh.readline().strip())
         return strikes
 
-    def __sweeper_set_strikes(self, patient_id:str):
+    def __sweeper_set_strikes(self, patient_id:str, strikes:int):
         with open(os.path.join(self.data_path, f'PID.{patient_id}', 'strikes', 'w')) as oh:
             oh.write(f'{strikes}\n')
         return
@@ -206,6 +206,8 @@ class analysis_queue:
                 elif stage == 1 and progress[stage] == 100:
                     [os.remove(f'{f.replace("_1.fastq.gz", "")}.align.out') for f in glob.glob(os.path.join(pid_path, '*_1.fastq.gz'))]
 
+            strikes = self.__sweeper_get_strikes(patient_id)
+            self.__sweeper_set_strikes(patient_id, strikes+1)
 
             self.add_task(patient_id) # re-add it to the queue.
 
