@@ -143,10 +143,15 @@ class analysis_queue:
             oh.write(f'{strikes}\n')
         return
 
-    def __sweeper(self):
+    def __sweeper(self, strike_limit=20):
         """
         If the q is idle, go through all PIDs, and attempt to re-add to the queue
         python runner.py if full_logs.
+
+        This will deal with e.g. a power off in the middle of a run, and will
+        attempt to restart.
+
+        At the moment there is <strike_limit> strikes and the sweeper will fail permanantly.
 
         """
         # Paranoia!
@@ -176,7 +181,7 @@ class analysis_queue:
             strikes = self.__sweeper_get_strikes(patient_id)
             self.log.info(f'Sweeper is attempting to rescue {patient_id}, strikes = {strikes}')
 
-            if strikes >= 4:
+            if strikes >= strike_limit:
                 self.log.info(f'{patient_id} has too many fails. Writing a fatal error')
                 with os.path.join(pid_path, 'FATALERROR.out') as oh:
                     oh.write('Too many strike failures for the sweeper. writing a FATALERROR\n')
@@ -187,28 +192,35 @@ class analysis_queue:
 
             if os.path.exists(os.path.join(pid_path, 'annotate_snps.out')):
                 os.remove(os.path.join(pid_path, 'annotate_snps.out'))
+                self.log.info('Removed Stage 8 logs (annotate_snps.out)')
 
             elif os.path.exists(os.path.join(pid_path, 'variant_racalibrate.out')):
                 os.remove(os.path.join(pid_path, 'variant_racalibrate.out'))
+                self.log.info('Removed Stage 7 logs (variant_racalibrate.out)')
 
             elif os.path.exists(os.path.join(pid_path, 'gathervcfs.out')):
                 os.remove(os.path.join(pid_path, 'gathervcfs.out'))
+                self.log.info('Removed Stage 6 logs (gathervcfs.out)')
 
             elif len(list(glob.glob(os.path.join(pid_path,'genotypegvcfs.chr*.out')))):
                 [os.remove(os.path.join(pid_path, f'genotypegvcfs.chr{i}.out')) for i in range(1,23)]
+                self.log.info('Removed Stage 5 logs (genotypegvcfs.chr*.out)')
 
             elif len(list(glob.glob(os.path.join(pid_path,'called.chr*.out')))):
                 [os.remove(os.path.join(pid_path, f'called.chr{i}.out')) for i in range(1,23)]
+                self.log.info('Removed Stage 4 logs (called.chr*.out)')
 
             elif os.path.exists(os.path.join(pid_path, 'merge_bams.out')):
                 os.remove(os.path.join(pid_path, 'merge_bams.out'))
+                self.log.info('Removed Stage 3 logs (merge_bams.out)')
 
             elif len(list(glob.glob(os.path.join(pid_path,'*.bqsr.out')))):
                 [os.remove(os.path.join(pid_path, f'{f.replace("_1.fastq.gz", "")}.bqsr.out')) for f in glob.glob(os.path.join(pid_path, '*_1.fastq.gz'))]
+                self.log.info('Removed Stage 2 logs (*.bqsr.out)')
 
             elif len(list(glob.glob(os.path.join(pid_path,'*.align.out')))):
                 [os.remove(os.path.join(pid_path, f'{f.replace("_1.fastq.gz", "")}.align.out')) for f in glob.glob(os.path.join(pid_path, '*_1.fastq.gz'))]
-
+                self.log.info('Removed Stage 1 logs (*.align.out)')
 
             self.__sweeper_set_strikes(patient_id, strikes+1)
 
