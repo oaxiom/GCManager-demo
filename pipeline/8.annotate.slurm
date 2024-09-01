@@ -30,19 +30,24 @@ rm called.chr*.recal.g.vcf.gz
 rm called.chr*.recal.g.vcf.gz.tbi
 rm genotype.chr*.vcf.gz
 rm genotype.chr*.vcf.gz.tbi
+rm genotype.raw.vcf.gz
+rm genotype.raw.vcf.gz.tbi
 rm dbsnp.toml
 rm *.sorted.dedupe.bam
-rm *.sorted.dedupe.bam.bai
+rm *.sorted.dedupe.bai
 rm *.sorted.dedupe.recal.bam
-rm *.sorted.dedupe.recal.bam.bai
+rm *.sorted.dedupe.recal.bai
+rm *.sorted.dedupe.recal_data.table
 rm recalibrate_*.recal
 rm recalibrate_*.idx
 rm recalibrate_*.tranches
 rm PID.*.recalibrated_*.vcf.gz
 rm PID.*.recalibrated_*.vcf.gz.tbi
+rm PID.$PID.risk.txt
+rm PID.$PID.pharmagkb.txt
 
 # Final BAM to CRAM:
-bash_ref_fasta=$(echo $DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.fasta)
+bash_ref_fasta=$(echo $DATA_PATH/hg38_v0_20231023/Homo_sapiens_assembly38.fasta.gz)
 
 /opt/seqanalysis/bin/samtools view -@ 2 -T $bash_ref_fasta -C -o $PID.cram $PID.sorted.final.bam
 
