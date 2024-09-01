@@ -168,13 +168,15 @@ class analysis_queue:
                 continue
             if not len(glob.glob(os.path.join(pid_path, '*.fastq.gz'))) >= 1:
                 # Really broken. Ignore.
+                # Or maybe the FASTQs haven't made it yet.
                 continue
 
             patient_id = os.path.split(pid_path)[1][4:] # Can't use split or lstrip, or anything.
 
-            self.log.info(f'Sweeper is attempting to rescue {patient_id}')
+            strikes = self.__sweeper_get_strikes(patient_id)
+            self.log.info(f'Sweeper is attempting to rescue {patient_id}, strikes = {strikes}')
 
-            if self.__sweeper_get_strikes(patient_id) >= 4:
+            if strikes >= 4:
                 self.log.info(f'{patient_id} has too many fails. Writing a fatal error')
                 with os.path.join(pid_path, 'FATALERROR.out') as oh:
                     oh.write('Too many strike failures for the sweeper. writing a FATALERROR\n')
@@ -212,7 +214,6 @@ class analysis_queue:
                 elif stage == 1 and progress[stage] == 100:
                     [os.remove(f'{f.replace("_1.fastq.gz", "")}.align.out') for f in glob.glob(os.path.join(pid_path, '*_1.fastq.gz'))]
 
-            strikes = self.__sweeper_get_strikes(patient_id)
             self.__sweeper_set_strikes(patient_id, strikes+1)
 
             self.add_task(patient_id) # re-add it to the queue.
@@ -232,6 +233,7 @@ class analysis_queue:
                 self.currently_processing['time_started_analysis'] = time.time()
                 self.log.info(f'Started analysing {self.currently_processing["PID"]}')
             else:
+                # Only run the sweeper if idle and nothing on the queue.
                 self.__sweeper()
 
         if self.currently_processing:
@@ -241,7 +243,7 @@ class analysis_queue:
                 shell=True)
 
             if self._analysis_complete(self.currently_processing):
-                # there is ~5 mins between when run() will get called again.
+                # there is 1 min between when run() will get called again.
                 # I think it's reasonable to wait till we go around again.
                 # This makes certain all buffers are flushed, etc.
                 # Gives a chance for some background tasks to complete

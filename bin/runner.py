@@ -61,10 +61,6 @@ class runner:
         # Step 1: Determine minimum requirements
         assert len(glob.glob('*_1.fastq.gz')) >= 1, 'No FASTQ files found'
 
-        # Step 2: Are we completely empty?
-        # libmanager deals with this now
-        #if not os.path.exists('1b.batch.sh'): self.setup_scripts()
-
         # Do we have the count_reads completed?
         if not os.path.exists('read_count.txt'):
             self.count_reads()
@@ -375,7 +371,7 @@ class runner:
             completion_status[file] = int(percent_done)
 
         if False not in really_finished.values():
-            return 100, True # 100% and really finsihed all samples
+            return 100, True # 100% and really finished all samples
 
         return int(statistics.mean(completion_status.values())), False # At least one sample not finished, or samtools still working
 
