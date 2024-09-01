@@ -182,37 +182,33 @@ class analysis_queue:
                     oh.write('Too many strike failures for the sweeper. writing a FATALERROR\n')
                 continue
 
-            # Delete the last but 1 stage logs based on the progress.txt, so that a previosus
+            # Delete the last most present log
             # stage is reactivated instead of just continuing.
-            progress = self.analysis_progress(patient_id)
-            # {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0}
-            for stage in sorted(progress):
-                if stage == 9 and progress[stage] == 100:
-                    pass #!?!?
 
-                elif stage == 8 and progress[stage] == 100:
-                    os.remove(os.path.join(pid_path, 'annotate_snps.out'))
+            if os.path.exists(os.path.join(pid_path, 'annotate_snps.out')):
+                os.remove(os.path.join(pid_path, 'annotate_snps.out'))
 
-                elif stage == 7 and progress[stage] == 100:
-                    os.remove(os.path.join(pid_path, 'variant_racalibrate.out'))
+            elif os.path.exists(os.path.join(pid_path, 'variant_racalibrate.out')):
+                os.remove(os.path.join(pid_path, 'variant_racalibrate.out'))
 
-                elif stage == 6 and progress[stage] == 100:
-                    os.remove(os.path.join(pid_path, 'gathervcfs.out'))
+            elif os.path.exists(os.path.join(pid_path, 'gathervcfs.out')):
+                os.remove(os.path.join(pid_path, 'gathervcfs.out'))
 
-                elif stage == 5 and progress[stage] == 100:
-                    [os.remove(f'genotypegvcfs.chr{i}.out') for i in range(1,23)]
+            elif len(list(glob.glob(os.path.join(pid_path,'genotypegvcfs.chr*.out')))):
+                [os.remove(os.path.join(pid_path, f'genotypegvcfs.chr{i}.out')) for i in range(1,23)]
 
-                elif stage == 4 and progress[stage] == 100:
-                    [os.remove(f'called.chr{i}.out') for i in range(1,23)]
+            elif len(list(glob.glob(os.path.join(pid_path,'called.chr*.out')))):
+                [os.remove(os.path.join(pid_path, f'called.chr{i}.out')) for i in range(1,23)]
 
-                elif stage == 3 and progress[stage] == 100:
-                    os.remove(os.path.join(pid_path, 'merge_bams.out'))
+            elif os.path.exists(os.path.join(pid_path, 'merge_bams.out')):
+                os.remove(os.path.join(pid_path, 'merge_bams.out'))
 
-                elif stage == 2 and progress[stage] == 100:
-                    [os.remove(f'{f.replace("_1.fastq.gz", "")}.bqsr.out') for f in glob.glob(os.path.join(pid_path, '*_1.fastq.gz'))]
+            elif len(list(glob.glob(os.path.join(pid_path,'*.bqsr.out')))):
+                [os.remove(os.path.join(pid_path, f'{f.replace("_1.fastq.gz", "")}.bqsr.out')) for f in glob.glob(os.path.join(pid_path, '*_1.fastq.gz'))]
 
-                elif stage == 1 and progress[stage] == 100:
-                    [os.remove(f'{f.replace("_1.fastq.gz", "")}.align.out') for f in glob.glob(os.path.join(pid_path, '*_1.fastq.gz'))]
+            elif len(list(glob.glob(os.path.join(pid_path,'*.align.out')))):
+                [os.remove(os.path.join(pid_path, f'{f.replace("_1.fastq.gz", "")}.align.out')) for f in glob.glob(os.path.join(pid_path, '*_1.fastq.gz'))]
+
 
             self.__sweeper_set_strikes(patient_id, strikes+1)
 
