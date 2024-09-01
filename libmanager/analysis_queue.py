@@ -163,6 +163,12 @@ class analysis_queue:
             if os.path.exists(os.path.join(pid_path, 'FATALERROR.out')):
                 # Irrecoverable error.
                 continue
+            if os.path.exists(os.path.join(pid_path, 'DONE.status')):
+                # A hack for existing DEMO data.
+                continue
+            if not len(glob.glob(os.path.join('*.fastq.gz')) >= 1:
+                # Really broken. Ignore.
+                continue
 
             patient_id = os.path.split(pid_path)[1][4:] # Can't use split or lstrip, or anything.
 
