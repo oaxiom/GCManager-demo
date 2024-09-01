@@ -134,12 +134,12 @@ class analysis_queue:
         if not os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', 'strikes')):
             return 0
 
-        with open(os.path.join(self.data_path, f'PID.{patient_id}', 'strikes', 'r')) as oh:
+        with open(os.path.join(self.data_path, f'PID.{patient_id}', 'strikes'), 'r') as oh:
             strikes = int(oh.readline().strip())
         return strikes
 
     def __sweeper_set_strikes(self, patient_id:str, strikes:int):
-        with open(os.path.join(self.data_path, f'PID.{patient_id}', 'strikes', 'w')) as oh:
+        with open(os.path.join(self.data_path, f'PID.{patient_id}', 'strikes'), 'w') as oh:
             oh.write(f'{strikes}\n')
         return
 
@@ -172,7 +172,7 @@ class analysis_queue:
                 self.log.info(f'{patient_id} has too many fails. Writing a fatal error')
                 with os.path.join(pid_path, 'FATALERROR.out') as oh:
                     oh.write('Too many strike failures for the sweeper. writing a FATALERROR\n')
-                return
+                continue
 
             # Delete the last but 1 stage logs based on the progress.txt, so that a previosus
             # stage is reactivated instead of just continuing.
