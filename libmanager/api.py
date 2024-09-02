@@ -51,26 +51,6 @@ class api:
         elif mode == 'Risk': # 疾病风险提示
             return self.manager.get_risk_table(patient_id)
 
-    def export_vcf(self, patient_id: str) -> str:
-        """
-        Returns the PATH to the VCF file for this patient, of None
-        if the VCF is not avaialable.
-
-        The 保存所选VCF button.
-
-        """
-        return self.manager.get_vcf_path(patient_id)
-
-    def export_cram(self, patient_id: str) -> str:
-        """
-        Returns the PATH to the CRAM file for this patient, of None
-        if the CRAM is not avaialable.
-
-        The 保存所选CRAM button.
-
-        """
-        return self.manager.get_cram_path(patient_id)
-
     def generate_report(self, user: str, mode: str, patient_id: str, selected_report:str) -> str:
         '''
         Generates the reports and returns the PATH to the HTML file, and the HTML data.

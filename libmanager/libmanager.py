@@ -548,7 +548,7 @@ class libmanager:
 
         return ''
 
-    def get_gcm_path(self, user: str, patient_id: str) -> str:
+    def get_gcm_path(self, user:str, patient_id:str) -> str:
         '''
         **Purpose**
             Return the VCF filename;
@@ -556,20 +556,20 @@ class libmanager:
         assert self.patient_exists(patient_id), f'{patient_id} not found'
 
         if not self._check_analysis_is_complete(patient_id):
-            self.log.info(f'Asked for {patient_id} GCM file, but GCM file is not available, analysis is incomplete')
+            self.log.info(f'{user} asked for {patient_id} GCM file, but GCM file is not available, analysis is incomplete')
             return False
 
         gcm_path = os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.data.gcm')
 
         if not os.path.exists(gcm_path):
-            self.log.error(f'Asked for {patient_id} GCM file, but GCM file does not exist (although it was reported to exist)')
+            self.log.error(f'{user} asked for {patient_id} GCM file, but GCM file does not exist (although it was reported to exist)')
             return False
 
         self.log.info(f'{user} asked to export GCM data file for {patient_id}')
 
         return gcm_path
 
-    def get_vcf_path(self, patient_id: str) -> str:
+    def get_vcf_path(self, user:str, patient_id:str) -> str:
         '''
         **Purpose**
             Return the VCF filename;
@@ -577,22 +577,22 @@ class libmanager:
         assert self.patient_exists(patient_id), f'{patient_id} not found'
 
         if not self._check_analysis_is_complete(patient_id):
-            self.log.warning(f'Asked for {patient_id} VCF file, but VCF file is not available, analysis is incomplete')
+            self.log.warning(f'{user} asked for {patient_id} VCF file, but VCF file is not available, analysis is incomplete')
             return False
 
         if not self._check_cram_vcf_status(patient_id, 'vcf'):
-            self.log.warning(f'Asked for {patient_id} VCF file, but VCF file is not available')
+            self.log.warning(f'{user} asked for {patient_id} VCF file, but VCF file is not available')
             return False
 
         vcf_path = os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.vcf.gz')
 
         if not os.path.exists(vcf_path):
-            self.log.error(f'Asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
+            self.log.error(f'{user} asked for {patient_id} VCF file, but VCF file does not exist (although it was reported to exist)')
             return False
 
         return vcf_path
 
-    def get_cram_path(self, patient_id: str) -> str:
+    def get_cram_path(self, user:str, patient_id:str) -> str:
         '''
         **Purpose**
             Return the CRAM filename;
@@ -600,17 +600,17 @@ class libmanager:
         assert self.patient_exists(patient_id), f'{patient_id} not found'
 
         if not self._check_analysis_is_complete(patient_id):
-            self.log.warning(f'Asked for {patient_id} CRAM file, but CRAM file is not available, analysis is incomplete')
+            self.log.warning(f'{user} asked for {patient_id} CRAM file, but CRAM file is not available, analysis is incomplete')
             return False
 
         if not self._check_cram_vcf_status(patient_id, 'cram'):
-            self.log.warning(f'Asked for {patient_id} CRAM file, but CRAM file is not available')
+            self.log.warning(f'{user} asked for {patient_id} CRAM file, but CRAM file is not available')
             return False
 
         cram_path = os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.cram')
 
         if not os.path.exists(cram_path):
-            self.log.error(f'Asked for {patient_id} CRAM file, but CRAM file does not exist (although it was reported to exist)')
+            self.log.error(f'{user} asked for {patient_id} CRAM file, but CRAM file does not exist (although it was reported to exist)')
             return False
 
         return cram_path

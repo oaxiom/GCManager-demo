@@ -290,7 +290,7 @@ def export_vcf(patient_id: str, user=Depends(user_manager)) -> dict:
     if not gcman.patient_exists(patient_id):
         raise HTTPException(status_code=500, detail=gcman.get_error('pid_not_found', patient_id=patient_id))
 
-    vcf_path = gcman.api.export_vcf(patient_id)
+    vcf_path = gcman.get_vcf_path(user=user, patient_id=patient_id)
     if not vcf_path:
         raise HTTPException(status_code=500, detail=gcman.get_error('file_not_available', filetype='VCF'))
 
@@ -305,7 +305,7 @@ def export_cram(patient_id: str, user=Depends(user_manager)) -> dict:
     if not gcman.patient_exists(patient_id):
         raise HTTPException(status_code=500, detail=gcman.get_error('pid_not_found', patient_id=patient_id))
 
-    cram_path = gcman.api.export_vcf(patient_id)
+    cram_path = gcman.get_cram_path(user=user, patient_id=patient_id)
     if not cram_path:
         raise HTTPException(status_code=500, detail=gcman.get_error('file_not_available', filetype='CRAM'))
 
@@ -320,7 +320,7 @@ def export_gcm(patient_id: str, user=Depends(user_manager)) -> dict:
     if not gcman.patient_exists(patient_id):
         raise HTTPException(status_code=500, detail=gcman.get_error('pid_not_found', patient_id=patient_id))
 
-    gcm_path = gcman.api.export_vcf(patient_id)
+    gcm_path = gcman.get_gcm_path(user=user, patient_id=patient_id)
     if not gcm_path:
         raise HTTPException(status_code=500, detail=gcman.get_error('file_not_available', filetype='GCM'))
 
