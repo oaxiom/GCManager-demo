@@ -15,7 +15,7 @@ bamfile=$PID.sorted.final.bam
 
 # This approach is invalid for X and Y chromsomes.
 # Need to use -ploidy and build separate models for male and female
-/opt/seqanalysis/bin/gatk --java-options "-Xmx40G -XX:+UseParallelGC -XX:ParallelGCThreads=2" \
+/opt/seqanalysis/bin/gatk --java-options "-Xmx7G -XX:+UseParallelGC -XX:ParallelGCThreads=2" \
                 HaplotypeCaller \
                 -R $bash_ref_fasta \
                 -I $bamfile \
