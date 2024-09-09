@@ -51,12 +51,14 @@ class libmanager:
         # initialise is called...
         if not os.path.exists(os.path.join(home_path, 'logs')):
             self.log = logger.basic_logger()
+            
         else: # Logs fine call the ful logger;
             self.log = logger.logger(os.path.join(home_path, 'logs'))
 
         self.end_type = None
         self.home_path = home_path
-        self.script_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], '..')
+        #self.script_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], '..')
+        self.script_path = os.path.realpath(os.path.join(os.path.split(os.path.realpath(__file__))[0], '..'))
         self.db_path = os.path.join(self.home_path, 'dbs')
         self.data_path = os.path.join(self.home_path, 'data')
         self.backup_path = os.path.join(os.path.expanduser('~'), 'gcm', 'gcmbackup/')
