@@ -1,6 +1,7 @@
 # This is for paired-end FASTQs:
 
-NPROC=$(nproc)
+NPROCall=$(nproc)
+NPROCm=$(($NPROCall-1))
 
 for p1 in *_1.fastq.gz
 do
@@ -10,6 +11,6 @@ do
 
 	echo Starting ... base \= $base \; p1 \= $p1 \; p2 \= $p2
 
-	sbatch -J $base -o $base.align.out -c $NPROC --export=ALL,base=$base,p1=$p1,p2=$p2 1b.align.slurm
+	sbatch -J $base -o $base.align.out -c $NPROCall --export=ALL,base=$base,p1=$p1,p2=$p2,NPROCm=$NPROC 1b.align.slurm
 
 done
