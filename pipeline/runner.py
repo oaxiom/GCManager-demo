@@ -58,6 +58,12 @@ class runner:
             # Stage 8 has been completed
             return
 
+        if not os.path.exists('runner_error.out'):
+            with open('runner_error.out', 'wt') as oh:
+                oh.write('####################################################\n')
+                oh.write('Runner Error outputs:\n')
+                oh.write('####################################################\n')
+
         # Step 1: Determine minimum requirements
         assert len(glob.glob('*_1.fastq.gz')) >= 1, 'No FASTQ files found'
 
@@ -83,7 +89,7 @@ class runner:
                 f.write('####################################################\n')
                 f.write(f'Fatal Error, too few reads {self.unmapped_reads_count:,}\n')
                 f.write('####################################################\n')
-                subprocess.run('sh 8e.cleanup_logs.sh', shell=True)
+                subprocess.Popen('sh 8e.cleanup_logs.sh', shell=True)
             log.info(f'Fatal Error for PID {self.PID}, too few reads {self.unmapped_reads_count:,}')
             return None
 
@@ -93,12 +99,14 @@ class runner:
         # Is Stage 1 (alignment) copmplete?
         align_outs = list(glob.glob('*.align.out'))
         all_file_sizes = [os.path.getsize(f) for f in align_outs]
-        if len(align_outs) == 0 or sum([fs==0 for fs in all_file_size]) == 0:
+        if len(align_outs) == 0 or sum(all_file_sizes) == 0:
             # Too early, we haven't started yet
             # start stage 1
             log.info('Submitting Stage 1: Align')
             self.touch_all_outs(1)
-            subprocess.run('bash 1b.batch.sh', shell=True)
+            with open('runner_error.out', 'at') as oh:
+                subprocess.Popen('bash 1b.batch.sh', shell=True,
+                    stdout=oh, stderr=oh)
             self.final_results(1)
             return None
         elif len(align_outs) >= 1:
@@ -113,7 +121,9 @@ class runner:
         if len(bqsr_outs) == 0: # We havne't started yet
             log.info('Submitting Stage 2: BQSR')
             self.touch_all_outs(2)
-            subprocess.run('sh 2.batch.sh', shell=True)
+            with open('runner_error.out', 'at') as oh:
+                subprocess.Popen('sh 2.batch.sh', shell=True,
+                    stdout=oh, stderr=oh)
             self.final_results(2)
             return None
         elif len(align_outs) >= 1:
@@ -127,7 +137,9 @@ class runner:
         if not os.path.exists('merge_bams.out'):
             # Not started
             self.touch_all_outs(3)
-            subprocess.run(f'sbatch -c {self.ncores} 3.merge_bams.slurm', shell=True)
+            with open('runner_error.out', 'at') as oh:
+                subprocess.Popen(f'sbatch -c {self.ncores} 3.merge_bams.slurm', shell=True,
+                    stdout=oh, stderr=oh)
             self.final_results(3)
             return None
         else:
@@ -145,7 +157,9 @@ class runner:
         call_outs = list(glob.glob('called.*.out'))
         if len(call_outs) == 0:
             self.touch_all_outs(4)
-            subprocess.run('sh 4.batch.sh', shell=True)
+            with open('runner_error.out', 'at') as oh:
+                subprocess.Popen('sh 4.batch.sh', shell=True,
+                    stdout=oh, stderr=oh)
             self.final_results(4)
             return None
         else:
@@ -158,7 +172,9 @@ class runner:
         outs = list(glob.glob('genotypegvcfs.*.out'))
         if len(outs) == 0:
             self.touch_all_outs(5)
-            subprocess.run('sh 5.batch.sh', shell=True)
+            with open('runner_error.out', 'at') as oh:
+                subprocess.Popen('sh 5.batch.sh', shell=True,
+                    stdout=oh, stderr=oh)
             self.final_results(5)
             return None
         elif len(outs) == 22:
@@ -171,7 +187,9 @@ class runner:
         if not os.path.exists('gathervcfs.out'):
             # Not started yet
             self.touch_all_outs(6)
-            subprocess.run('sbatch 6.merge_vcfs.slurm', shell=True)
+            with open('runner_error.out', 'at') as oh:
+                subprocess.Popen('sbatch 6.merge_vcfs.slurm', shell=True,
+                    stdout=oh, stderr=oh)
             self.final_results(6)
             return None
         else:
@@ -188,7 +206,9 @@ class runner:
         if not os.path.exists('variant_racalibrate.out'):
             # Not started yet
             self.touch_all_outs(7)
-            subprocess.run(f'sbatch -c {self.ncores} 7.variantrecalibrate.slurm', shell=True)
+            with open('runner_error.out', 'at') as oh:
+                subprocess.Popen(f'sbatch -c {self.ncores} 7.variantrecalibrate.slurm', shell=True,
+                    stdout=oh, stderr=oh)
             self.final_results(7)
             return None
         else:
@@ -211,7 +231,9 @@ class runner:
         if not os.path.exists('annotate_snps.out'):
             # Stage 8 not started
             self.touch_all_outs(8)
-            subprocess.run('sbatch -c 1 8.annotate.slurm', shell=True)
+            with open('runner_error.out', 'at') as oh:
+                subprocess.Popen('sbatch -c 1 8.annotate.slurm', shell=True,
+                    stdout=oh, stderr=oh)
             self.final_results(8)
             return None
         else:
@@ -385,9 +407,9 @@ class runner:
         self.log.info('Setting up scripts')
         # Script paths is hardcoded, to change when put in GCManager
         script_path = '~/tools/final_pipeline'
-        subprocess.run(f'ln -s {script_path}/*.sh .', shell=True)
-        subprocess.run(f'ln -s {script_path}/*.slurm .', shell=True)
-        subprocess.run(f'ln -s {script_path}/*.py .', shell=True)
+        subprocess.Popen(f'ln -s {script_path}/*.sh .', shell=True)
+        subprocess.Popen(f'ln -s {script_path}/*.slurm .', shell=True)
+        subprocess.Popen(f'ln -s {script_path}/*.py .', shell=True)
         return True
 
     def get_total_read_count(self):
@@ -416,7 +438,7 @@ class runner:
 
         for p1 in glob.glob('*1.fastq.gz'):
             self.log.info(f'Counting {p1}')
-            res = subprocess.run(f'gunzip -c {p1} | wc', shell=True, capture_output=True)
+            res = subprocess.Popen(f'gunzip -c {p1} | wc', shell=True, capture_output=True)
             counts.append(int(res.stdout.split()[0]) // 4)
 
         # merge the wc read counts
