@@ -440,7 +440,7 @@ class runner:
 
         for p1 in glob.glob('*1.fastq.gz'):
             self.log.info(f'Counting {p1}')
-            res = subprocess.Popen(f'gunzip -c {p1} | wc', shell=True, capture_output=True)
+            res = subprocess.run(f'gunzip -c {p1} | wc', shell=True, capture_output=True)
             counts.append(int(res.stdout.split()[0]) // 4)
 
         # merge the wc read counts

@@ -78,7 +78,7 @@ async def lifespan(app: FastAPI):
     # Run at startup
     asyncio.create_task(check_backups(60*60*2)) # Once every two hours, this does not force a DB backup, it only checks if one is required
     asyncio.create_task(check_security(60*60)) # Once an hour
-    asyncio.create_task(process_analysis_queue(60*1)) # Every minute;
+    asyncio.create_task(process_analysis_queue(30))
     yield
 
 app = FastAPI(lifespan=lifespan)

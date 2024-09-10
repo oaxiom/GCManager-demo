@@ -67,6 +67,11 @@ class analysis_queue:
         if os.path.exists(os.path.join(task['analysis_path'], 'FATALERROR.out')): # This is a tag left by runner to say we failed.
             return True
 
+        if os.path.exists(os.path.join(task['analysis_path'], 'full_logs.out.gz')): # No GCM, but full logs...
+            with open('FATALERROR.out', 'wt') as oh:
+                oh.write('FATALERROR\nFull logs are done, but no GCM was produced\n')
+            return True
+
         return False
 
     def patient_is_on_the_task_list(self, patient_id:str) -> bool:
