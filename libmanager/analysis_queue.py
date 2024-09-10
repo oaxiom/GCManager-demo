@@ -101,10 +101,7 @@ class analysis_queue:
                 self.log.info(f"Tried to add {patient_id} but it's already on the queue")
                 return True
 
-        # copy runner to the correct location.
-        shutil.copy(os.path.join(self.script_path, 'bin', 'runner.py'),
-            os.path.join(self.data_path, f'PID.{patient_id}'))
-
+        # copy all scripts to the correct location.
         self.__copy_all_pipeline_scripts(os.path.join(self.data_path, f'PID.{patient_id}'))
 
         task = {
