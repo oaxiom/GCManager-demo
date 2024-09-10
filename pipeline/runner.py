@@ -66,6 +66,8 @@ class runner:
 
         # Step 1: Determine minimum requirements
         assert len(glob.glob('*_1.fastq.gz')) >= 1, 'No FASTQ files found'
+        # This could be turned into an error, but probably best left like this
+        # In case the copy is not finished (?!?!)
 
         # Do we have the count_reads completed?
         if not os.path.exists('read_count.txt'):
