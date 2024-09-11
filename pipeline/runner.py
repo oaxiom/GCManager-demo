@@ -100,8 +100,7 @@ class runner:
 
         # Is Stage 1 (alignment) copmplete?
         align_outs = list(glob.glob('*.align.out'))
-        all_file_sizes = [os.path.getsize(f) for f in align_outs]
-        if len(align_outs) == 0 or sum(all_file_sizes) == 0:
+        if len(align_outs) == 0:
             # Too early, we haven't started yet
             # start stage 1
             log.info('Submitting Stage 1: Align')
