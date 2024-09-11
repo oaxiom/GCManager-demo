@@ -252,17 +252,6 @@ class runner:
         return True
 
     def final_results(self, stage):
-        log.info(f'Current Stage: {stage}, {stages[stage]}')
-        log.info(f'Stage 1: {self.stage1}%')
-        log.info(f'Stage 2: {self.stage2}%')
-        log.info(f'Stage 3: {self.stage3}%')
-        log.info(f'Stage 4: {self.stage4}%')
-        log.info(f'Stage 5: {self.stage5}%')
-        log.info(f'Stage 6: {self.stage6}%')
-        log.info(f'Stage 7: {self.stage7}%')
-        log.info(f'Stage 8: {self.stage8}%')
-        log.info(f'Stage 9: {self.stage9}%')
-
         with open('progress.txt', 'wt') as oh:
             oh.write(f'Current Stage: {stage}, {stages[stage]}\n')
             oh.write(f'Stage 1: {self.stage1}%\n')
@@ -274,7 +263,6 @@ class runner:
             oh.write(f'Stage 7: {self.stage7}%\n')
             oh.write(f'Stage 8: {self.stage8}%\n')
             oh.write(f'Stage 9: {self.stage9}%\n')
-
 
     def touch_all_outs(self, stage):
         """
