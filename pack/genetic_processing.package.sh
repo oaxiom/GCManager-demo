@@ -1,5 +1,5 @@
 pyinstaller genetic_processing.py \
-    --distpath . \
+    --distpath ../ \
     --hidden-import=passlib.handlers.bcrypt \
     --hidden-import=python_multipart \
     --hidden-import=zmq \
