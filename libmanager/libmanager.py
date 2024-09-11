@@ -51,7 +51,7 @@ class libmanager:
         # initialise is called...
         if not os.path.exists(os.path.join(home_path, 'logs')):
             self.log = logger.basic_logger()
-            
+
         else: # Logs fine call the ful logger;
             self.log = logger.logger(os.path.join(home_path, 'logs'))
 
@@ -668,7 +668,6 @@ class libmanager:
         self.db_PID_cursor.execute('UPDATE patients SET analysis_done=?, date_analysis=? WHERE PID=?', (1, datetime.datetime.now().isoformat(' '), patient_id, ))
         self.db_PID.commit()
         self.db_PID.close()
-        self.update_patient_space_used(patient_id)
         return True
 
     def set_vcf_available(self, patient_id:str) -> bool:
@@ -681,7 +680,6 @@ class libmanager:
         self.db_PID_cursor.execute('UPDATE patient_data SET vcf_available=?, data_packed=? WHERE PID=?', (1, datetime.datetime.now().isoformat(' '), patient_id, ))
         self.db_PID.commit()
         self.db_PID.close()
-        self.update_patient_space_used(patient_id)
         return True
 
     def set_cram_available(self, patient_id:str) -> bool:
@@ -694,7 +692,6 @@ class libmanager:
         self.db_PID_cursor.execute('UPDATE patient_data SET cram_available=?, data_packed=? WHERE PID=?', (1, datetime.datetime.now().isoformat(' '), patient_id, ))
         self.db_PID.commit()
         self.db_PID.close()
-        self.update_patient_space_used(patient_id)
         return True
 
     def dbsnp_vcf_to_gcm(self, vcf_filename, gcm_filename) -> bool:
@@ -1065,10 +1062,10 @@ class libmanager:
         if completed_patient_id:
             self.set_analysis_complete(completed_patient_id)
 
-            if os.path.exists(os.path.join(self.data_path, f'PID.{completed_patient_id}', 'PID.{completed_patient_id}.vcf.gz')):
+            if os.path.exists(os.path.join(self.data_path, f'PID.{completed_patient_id}', f'PID.{completed_patient_id}.vcf.gz')):
                 self.set_vcf_available(completed_patient_id)
 
-            if os.path.exists(os.path.join(self.data_path, f'PID.{completed_patient_id}', 'PID.{completed_patient_id}.cram')):
+            if os.path.exists(os.path.join(self.data_path, f'PID.{completed_patient_id}', f'PID.{completed_patient_id}.cram')):
                 self.set_cram_available(completed_patient_id)
 
             self.update_patient_space_used(completed_patient_id)

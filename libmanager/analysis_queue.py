@@ -248,9 +248,11 @@ class analysis_queue:
 
         if self.currently_processing:
             # Should run without waiting.
-            subprocess.Popen(f'python3 {self.currently_processing["runner_path"]}',
-                cwd=self.currently_processing["analysis_path"],
-                shell=True)
+            with open(os.path.join(self.currently_processing['analysis_path'], 'runner_error.out'), 'at') as oh:
+                subprocess.Popen(f'python3 {self.currently_processing["runner_path"]}',
+                    cwd=self.currently_processing["analysis_path"],
+                    stdout=oh, stderr=oh,
+                    shell=True)
 
             if self._analysis_complete(self.currently_processing):
                 # there is 1 min between when run() will get called again.
