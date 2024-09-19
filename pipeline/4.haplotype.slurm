@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-#SBATCH --cpus-per-task=2
-#SBATCH --partition=batch
 #SBATCH -N 1
+#SBATCH --mem=6G
 
 PWD=$(pwd)
 PID=$(basename $PWD)
