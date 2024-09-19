@@ -654,9 +654,31 @@ class libmanager:
         if len(r) > 1: raise Exception('Patient database returned more than one entry!')
         if len(r) == 0: return False
         r = int(r[0][0])
-        if not r: return False
+        if not r:
+            return self.check_if_analysis_is_complete(patient_id) # returns False if no GCM and True if a gcm is present
+            # i.e. the analysis completed, but the data files were not detected.
 
         return True
+
+    def check_if_analysis_is_complete(self, patient_id:str) -> bool:
+        """
+
+        Check if the analysis is complete
+
+        """
+        if os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.gcm')): # gcm file avaialble.
+            self.set_analysis_complete(completed_patient_id)
+
+            if os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.vcf.gz')):
+                self.set_vcf_available(completed_patient_id)
+
+            if os.path.exists(os.path.join(self.data_path, f'PID.{patient_id}', f'PID.{patient_id}.cram')):
+                self.set_cram_available(completed_patient_id)
+
+            self.update_patient_space_used(completed_patient_id)
+            return True
+
+        return False
 
     def set_analysis_complete(self, patient_id:str) -> bool:
         '''
