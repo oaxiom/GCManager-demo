@@ -921,12 +921,13 @@ class libmanager:
             descCN = res[2]
 
             self.log.info(f'Search found: {disease_code}, {descEN}, {descCN}')
+            self.log.info(f'2: {self.lang}')
 
             if not gcm.report_available(disease_code):
-                self.log.info(f'User {user} asked for a {mode} report for {patient_id} but a report for {search_term} is not avaialble')
+                self.log.info(f'User {user} asked for a {mode} report for {patient_id} but a report for {search_term} is not avaialable')
                 return None, None
 
-            self.log.info(f'{self.lang}')
+            self.log.info(f'1: {self.lang}')
 
             rep = reporter_pharma.reporter_pharma(self.data_path, self.script_path, patient_id, patient_data, gcm, disease_code, descEN, descCN, self.log, self.lang)
             self.log.info(f'Report gen')
