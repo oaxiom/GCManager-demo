@@ -51,7 +51,9 @@ class reporter_pharma:
             Generate a report, return the HTML filename
         """
         annotated_data, pharmagkb = self.__annotate_pharmagkb_snps(self.gcm_data.get_pharma())
+        self.log.info('Annotated')
         html_filename, html = self.__report_generator_pharmaGKB(annotated_data, pharmagkb)
+        self.log.info('Generated')
 
         return html_filename, html
 
