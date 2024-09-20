@@ -51,25 +51,6 @@ class api:
         elif mode == 'Risk': # 疾病风险提示
             return self.manager.get_risk_table(patient_id)
 
-    def generate_report(self, user: str, mode: str, patient_id: str, selected_report:str) -> str:
-        '''
-        Generates the reports and returns the PATH to the HTML file, and the HTML data.
-
-        Best to serve the HTML, right?
-
-        mode can be one of :
-
-        'Pharma': 疾病与用药指导
-
-        'ClinVAR': 临床表型相关变异
-
-        'Risk': 疾病风险提示
-
-        '''
-        assert mode in support.valid_genome_dbs, f'{mode} was not in {support.valid_genome_dbs.keys()}'
-
-        return self.manager.generate_report(user, mode, patient_id, selected_report)
-
     def add_new_patient(self,
         user:str,
         patient_id: str,

@@ -347,7 +347,7 @@ def generate_report(mode: str, patient_id: str, selected_report:str, user=Depend
     if not gcman.analysis_complete(patient_id):
         raise HTTPException(status_code=500, detail=gcman.get_error('analysis_not_complete', patient_id=patient_id))
 
-    html_filename, html = gcman.api.generate_report(user, mode, patient_id, selected_report)
+    html_filename, html = gcman.generate_report(user, mode, patient_id, selected_report)
 
     return {'code': 200, 'data': {'html_filename': html_filename, 'html': html}, 'msg': gcman.get_error('none')}
 
