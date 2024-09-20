@@ -926,6 +926,8 @@ class libmanager:
                 self.log.info(f'User {user} asked for a {mode} report for {patient_id} but a report for {search_term} is not avaialble')
                 return None, None
 
+            self.log.info(f'{self.lang}')
+
             rep = reporter_pharma.reporter_pharma(self.data_path, self.script_path, patient_id, patient_data, gcm, disease_code, descEN, descCN, self.log, self.lang)
             self.log.info(f'Report gen')
             html_file, html = rep.generate()
