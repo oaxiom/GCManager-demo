@@ -72,9 +72,9 @@ class reporter_pharma:
             in future versions.
         '''
         pharmagkb = tinyglbase.glload(os.path.join(self.script_path, 'static_data', 'PharmaGKB', 'pharma_table.glb' ))
-        self.log.info('Found pharma_table')
+        self.log.info(f'Found pharma_table {len(pharmagkb)}')
         over = pharmagkb.map(genelist=pharmagkb_snps, key='SNP')
-        self.log.info('Mapped')
+        self.log.info(f'Mapped {len(over)}')
 
         # I need to match the genotypes, but seems the genotype and patient_genotype can be in any order when heterozygote
         results = []
@@ -84,7 +84,7 @@ class reporter_pharma:
         over = tinyglbase.genelist(format=True, log=self.log)
         over.load_list(results)
 
-        self.log.info('generated overlap')
+        self.log.info('Generated overlap')
 
         return over, pharmagkb
 
