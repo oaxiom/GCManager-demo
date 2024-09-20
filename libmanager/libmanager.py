@@ -920,7 +920,7 @@ class libmanager:
             descEN = res[1]
             descCN = res[2]
 
-            self.log.info(f'Search found: {disease_code}, {descEN}, {descCN}')
+            self.log.info(f'Search found: {disease_code}, {descEN}, {descCN} 22222')
             self.log.info(f'2: {self.lang}')
 
             if not gcm.report_available(disease_code):
