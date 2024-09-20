@@ -928,7 +928,7 @@ class libmanager:
 
             rep = reporter_pharma.reporter_pharma(self.data_path, self.script_path, patient_id, patient_data, gcm, disease_code, descEN, descCN, self.log, self.lang)
             html_file, html = rep.generate()
-            self.log.info(f'Report is avaialble at {html_file}')
+            self.log.info(f'Report is avaialable at {html_file}')
 
         elif mode == 'ClinVAR':
             html = ''
